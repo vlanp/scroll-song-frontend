@@ -1,6 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import * as FileSystem from "expo-file-system";
-import * as Progress from "react-native-progress";
 import { useEffect, useRef, useState } from "react";
 import { DownloadProgressData } from "expo-file-system";
 import DoubleProgressBar from "../components/DoubleProgressBar";
@@ -12,8 +11,8 @@ import IPlayProgress from "../interfaces/IPlayProgress";
 
 const soundDatas = {
   url: "https://res.cloudinary.com/dwrfmnllk/video/upload/v1720173161/songs/audio/6682c6e9acd6a17089ebf7f7/lrul9ehxwwvte0knr0vk.mp3",
-  startTimeSec: 10,
-  endTimeSec: 40,
+  startTimeSec: 40,
+  endTimeSec: 60,
   duration: 211,
 };
 
@@ -85,12 +84,11 @@ function Index() {
         playingState.isPlaying = true;
         const currentProgressSec = playbackStatus.positionMillis / 1000;
         playingProgress.progressSec = currentProgressSec;
-        if (
-          currentProgressSec >=
-          playingProgress.endTimeSec - playingProgress.startTimeSec
-        ) {
+        if (currentProgressSec >= playingProgress.endTimeSec) {
           try {
-            await sound.current.setPositionAsync(playingProgress.startTimeSec);
+            await sound.current.setPositionAsync(
+              playingProgress.startTimeSec * 1000
+            );
           } catch (e) {
             playingState.isError = true;
             console.error(e);
@@ -171,12 +169,17 @@ function Index() {
     playingState.isPlayLoading = true;
     setPlayingState({ ...playingState });
     try {
-      const { sound: _sound } = await Audio.Sound.createAsync({
-        uri: downloadResumable.current.fileUri,
-      });
+      const { sound: _sound } = await Audio.Sound.createAsync(
+        {
+          uri: downloadResumable.current.fileUri,
+        },
+        {
+          positionMillis: playingProgress.startTimeSec * 1000,
+          progressUpdateIntervalMillis: 1000,
+        }
+      );
       sound.current = _sound;
       _sound.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-      await _sound.setPositionAsync(playingProgress.startTimeSec);
       await _sound.playAsync();
       console.log("Playing song");
     } catch (e) {
@@ -211,7 +214,7 @@ function Index() {
       <DoubleProgressBar
         loadingProgress={downloadingProgress.relativeProgress}
         readingProgress={
-          playingProgress.progressSec /
+          (playingProgress.progressSec - playingProgress.startTimeSec) /
           (playingProgress.endTimeSec - playingProgress.startTimeSec)
         }
         width={200}
