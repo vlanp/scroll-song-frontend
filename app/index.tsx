@@ -11,12 +11,20 @@ import IPlayProgress from "../interfaces/IPlayProgress";
 
 const soundDatas = {
   url: "https://res.cloudinary.com/dwrfmnllk/video/upload/v1720173161/songs/audio/6682c6e9acd6a17089ebf7f7/lrul9ehxwwvte0knr0vk.mp3",
-  startTimeSec: 40,
-  endTimeSec: 60,
-  duration: 211,
+  excerptStartTimeSec: 10,
+  excerptEndTimeSec: 40,
+  totalDurationSec: 185,
+  totalByteSize: 7420000,
 };
 
-// NE PAS OUBLIER DE UNLOAD
+const fileName = "Nananana.mp3";
+
+const bitRate = soundDatas.totalByteSize / soundDatas.totalDurationSec;
+const bytesToPreload = (soundDatas.excerptStartTimeSec + 10) * bitRate;
+const startExcerptByte = soundDatas.excerptStartTimeSec * bitRate;
+const endExcerptByte = soundDatas.excerptEndTimeSec * bitRate;
+
+// TODO Do not forget to add the part to unload sound
 function Index() {
   const [downloadingProgress, setDownloadingProgress] =
     useState<IDownloadProgress>({
@@ -25,10 +33,10 @@ function Index() {
     });
 
   const [playingProgress, setPlayingProgress] = useState<IPlayProgress>({
-    endTimeSec: soundDatas.endTimeSec,
+    endTimeSec: soundDatas.excerptEndTimeSec,
     progressSec: 0,
-    soundDuration: soundDatas.duration,
-    startTimeSec: soundDatas.startTimeSec,
+    soundDuration: soundDatas.totalDurationSec,
+    startTimeSec: soundDatas.excerptStartTimeSec,
   });
 
   const [downloadingState, setDownloadingState] = useState<IDownload>({
@@ -49,8 +57,10 @@ function Index() {
 
   const callback = (downloadProgress: DownloadProgressData) => {
     const progress =
-      downloadProgress.totalBytesWritten /
-      downloadProgress.totalBytesExpectedToWrite;
+      (downloadProgress.totalBytesWritten - startExcerptByte) /
+      (endExcerptByte - startExcerptByte);
+    console.log(progress);
+
     setDownloadingProgress({
       relativeProgress: progress,
       totalBytesWritten: downloadProgress.totalBytesWritten,
@@ -60,7 +70,7 @@ function Index() {
   const downloadResumable = useRef(
     FileSystem.createDownloadResumable(
       soundDatas.url,
-      FileSystem.documentDirectory + "Nananana.mp3",
+      FileSystem.documentDirectory + fileName,
       {},
       callback
     )
@@ -112,11 +122,28 @@ function Index() {
     setPlayingState({ ...playingState });
   };
 
+  const isSoundAlreadyLoaded = async () => {
+    const fileInfo = await FileSystem.getInfoAsync(
+      FileSystem.documentDirectory + fileName
+    );
+    if (fileInfo.exists) {
+      // TODO Check that the size of the file is correct
+      console.log(fileInfo);
+      return true;
+    }
+    return false;
+  };
+
   const preLoadSound = async () => {
     try {
-      downloadingState.isPreloading = true;
-      setDownloadingState({ ...downloadingState });
-      await downloadResumable.current.downloadAsync();
+      if (await isSoundAlreadyLoaded()) {
+        downloadingState.isLoaded = true;
+        setDownloadingState({ ...downloadingState });
+      } else {
+        downloadingState.isPreloading = true;
+        setDownloadingState({ ...downloadingState });
+        await downloadResumable.current.downloadAsync();
+      }
     } catch (e) {
       downloadingState.isError = true;
       setDownloadingState({ ...downloadingState });
@@ -195,7 +222,7 @@ function Index() {
   }, []);
 
   if (
-    downloadingProgress.totalBytesWritten > 500000 &&
+    downloadingProgress.totalBytesWritten > bytesToPreload &&
     downloadingState.isPreloading
   ) {
     endSoundPreload();

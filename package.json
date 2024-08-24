@@ -25,7 +25,8 @@
     "react-native-svg": "15.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/jsmediatags": "^3.9.6"
   },
   "private": true
 }
