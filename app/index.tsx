@@ -1,13 +1,13 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import * as FileSystem from "expo-file-system";
 import { useEffect, useRef, useState } from "react";
 import { DownloadProgressData } from "expo-file-system";
-import DoubleProgressBar from "../components/DoubleProgressBar";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import IDownloadProgress from "../interfaces/IDownloadProgress";
 import IDownload from "../interfaces/IDownload";
 import IPlay from "../interfaces/IPlay";
 import IPlayProgress from "../interfaces/IPlayProgress";
+import ProgressTrackBar from "../components/ProgressTrackBar";
 
 const soundDatas = {
   url: "https://res.cloudinary.com/dwrfmnllk/video/upload/v1720173161/songs/audio/6682c6e9acd6a17089ebf7f7/lrul9ehxwwvte0knr0vk.mp3",
@@ -92,6 +92,7 @@ function Index() {
 
       if (playbackStatus.isPlaying) {
         playingState.isPlaying = true;
+
         const currentProgressSec = playbackStatus.positionMillis / 1000;
         playingProgress.progressSec = currentProgressSec;
         if (currentProgressSec >= playingProgress.endTimeSec) {
@@ -127,6 +128,7 @@ function Index() {
       FileSystem.documentDirectory + fileName
     );
     if (fileInfo.exists) {
+      // TODO There is an issue where preloaded size is wrong and show the full loaded size
       const sizeDiff =
         (fileInfo.size - soundDatas.totalByteSize) / soundDatas.totalByteSize;
       console.log(sizeDiff);
@@ -242,19 +244,44 @@ function Index() {
     playSound();
   };
 
+  useEffect(() => {
+    if (Platform.OS === "android" && sound.current) {
+      const intervalId = setInterval(() => {
+        const updatePlaybackStatus = async () => {
+          await sound.current?.getStatusAsync();
+        };
+        updatePlaybackStatus();
+      }, 1000);
+      return () => clearInterval(intervalId);
+    }
+  }, [sound.current]);
+
   return (
     <View style={styles.mainView}>
       <Pressable onPress={handlePress} style={styles.playButton}>
         <Text>Play</Text>
       </Pressable>
-      <DoubleProgressBar
+      <ProgressTrackBar
         loadingProgress={downloadingProgress.relativeProgress}
         readingProgress={
           (playingProgress.progressSec - playingProgress.startTimeSec) /
           (playingProgress.endTimeSec - playingProgress.startTimeSec)
         }
-        width={200}
-        style={styles.doubleProgressBar}
+        onTouchStart={(e) => {
+          playingProgress.progressSec =
+            (playingProgress.endTimeSec - playingProgress.startTimeSec) *
+              (e.nativeEvent.locationX / 200) +
+            playingProgress.startTimeSec;
+          console.log(playingProgress.progressSec);
+          setPlayingProgress({
+            ...playingProgress,
+          });
+        }}
+        loadingColor="rgba(0, 167, 255, 1)"
+        readingColor="rgba(0, 76, 255, 1)"
+        trackBarBorderWidth={2}
+        trackBarHeigth={15}
+        trackBarWidth={200}
       />
     </View>
   );
@@ -273,9 +300,6 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center",
-  },
-  doubleProgressBar: {
     alignSelf: "center",
   },
 });
