@@ -14,7 +14,7 @@ const soundDatas = {
   excerptStartTimeSec: 10,
   excerptEndTimeSec: 40,
   totalDurationSec: 185,
-  totalByteSize: 7420000,
+  totalByteSize: 7785164,
 };
 
 const fileName = "Nananana.mp3";
@@ -127,10 +127,15 @@ function Index() {
       FileSystem.documentDirectory + fileName
     );
     if (fileInfo.exists) {
-      // TODO Check that the size of the file is correct
-      console.log(fileInfo);
-      return true;
+      const sizeDiff =
+        (fileInfo.size - soundDatas.totalByteSize) / soundDatas.totalByteSize;
+      console.log(sizeDiff);
+
+      if (sizeDiff < 0.01) {
+        return true;
+      }
     }
+
     return false;
   };
 
@@ -139,6 +144,10 @@ function Index() {
       if (await isSoundAlreadyLoaded()) {
         downloadingState.isLoaded = true;
         setDownloadingState({ ...downloadingState });
+        setDownloadingProgress({
+          relativeProgress: 1,
+          totalBytesWritten: soundDatas.totalByteSize,
+        });
       } else {
         downloadingState.isPreloading = true;
         setDownloadingState({ ...downloadingState });
