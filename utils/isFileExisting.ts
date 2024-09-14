@@ -1,8 +1,8 @@
 import * as FileSystem from "expo-file-system";
 
-const isFileExisting = async (fileName: string) => {
+const isFileExisting = async (fileName: string, directory?: string) => {
   const fileInfo = await FileSystem.getInfoAsync(
-    FileSystem.documentDirectory + fileName
+    FileSystem.documentDirectory + (directory ? directory + "/" : "") + fileName
   );
 
   if (fileInfo.exists) {

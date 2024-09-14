@@ -18,7 +18,6 @@ const soundDatas = {
 
 const fileName = "Nananana.mp3";
 
-// TODO Change the sound name in the storage to indicate that it is an excerpt
 function Index() {
   const excerptUri = getExcerptUri(
     soundDatas.url,
@@ -26,9 +25,9 @@ function Index() {
     soundDatas.excerptEndTimeSec
   );
   const { downloadingState, relativeProgress: downloadingRelativeProgress } =
-    useDownloader({ fileName, uri: excerptUri });
+    useDownloader({ fileName, uri: excerptUri, directory: "excerpt" });
   const { playingState, playingProgressSec, play, stop } = usePlayer({
-    uri: documentDirectory + fileName,
+    uri: documentDirectory + "excerpt/" + fileName,
   });
 
   const handlePress = () => {

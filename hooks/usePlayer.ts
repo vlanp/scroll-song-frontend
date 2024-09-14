@@ -52,6 +52,9 @@ const usePlayer = ({ uri }: { uri: string }) => {
   };
 
   const play = async () => {
+    if (playingState.isPlaying || playingState.isPlayLoading) {
+      return;
+    }
     setPlayingState({ ...playingState, isPlayLoading: true });
     try {
       const { sound: _sound } = await Audio.Sound.createAsync(
