@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import IDownload from "../interfaces/IDownload";
 import * as FileSystem from "expo-file-system";
 import isFileExisting from "../utils/isFileExisting";
+import { NetworkContext } from "../contexts/NetworkContext";
 
 const useDownloader = ({
   uri,
@@ -41,6 +42,11 @@ const useDownloader = ({
     try {
       await createDirectory();
 
+      if (await isFileExisting(fileName, directory)) {
+        setRelativeProgress(1);
+        return setDownloadingState({ ...downloadingState, isLoaded: true });
+      }
+
       const callback = (downloadProgress: FileSystem.DownloadProgressData) => {
         const progress =
           downloadProgress.totalBytesWritten /
@@ -57,10 +63,6 @@ const useDownloader = ({
         callback
       );
 
-      if (await isFileExisting(fileName, directory)) {
-        setRelativeProgress(1);
-        return setDownloadingState({ ...downloadingState, isLoaded: true });
-      }
       setDownloadingState({ ...downloadingState, isLoading: true });
       const { uri: _uri } = await downloadResumable.current.downloadAsync();
       setDownloadingState({
