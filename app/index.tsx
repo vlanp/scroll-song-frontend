@@ -5,6 +5,8 @@ import useDownloader from "../hooks/useDownloader";
 import getExcerptUri from "../utils/getExcerptUri";
 import usePlayer from "../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
+import { useContext } from "react";
+import { NetworkContext } from "../contexts/NetworkContext";
 
 Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
@@ -29,6 +31,8 @@ function Index() {
   const { playingState, playingProgressSec, play, stop } = usePlayer({
     uri: documentDirectory + "excerpt/" + fileName,
   });
+  const isNetworkOk = useContext(NetworkContext).isNetworkOk;
+  console.log(isNetworkOk);
 
   const handlePress = () => {
     play();
@@ -61,6 +65,9 @@ function Index() {
         trackBarHeigth={15}
         trackBarWidth={200}
       />
+      {isNetworkOk === false && (
+        <Text>Il semble qu'il y ait un problème réseau</Text>
+      )}
     </View>
   );
 }
