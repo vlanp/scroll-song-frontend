@@ -12,7 +12,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
     isPlayLoading: false,
     isStopLoading: false,
     isPlaying: false,
-    isError: false,
+    error: null,
   });
 
   const sound = useRef<Audio.Sound>();
@@ -21,7 +21,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
     if (!playbackStatus.isLoaded) {
       playingState.isLoaded = false;
       if ("error" in playbackStatus) {
-        playingState.isError = true;
+        playingState.error = "play";
         console.log(
           `Encountered a fatal error during playback: ${playbackStatus.error}`
         );
@@ -71,14 +71,17 @@ const usePlayer = ({ uri }: { uri: string }) => {
       await _sound.playAsync();
       console.log("Playing song");
     } catch (e) {
-      setPlayingState({ ...playingState, isError: true });
+      setPlayingState({ ...playingState, error: "play" });
       console.error(e);
     }
   };
 
   const stop = async () => {
     try {
-      setPlayingState({ ...playingState, isPlayLoading: true });
+      if (!playingState.isPlaying || playingState.isStopLoading) {
+        return;
+      }
+      setPlayingState({ ...playingState, isStopLoading: true });
       await sound.current.stopAsync();
       await sound.current.unloadAsync();
       setPlayingState({
@@ -88,7 +91,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
         isLoaded: false,
       });
     } catch (e) {
-      setPlayingState({ ...playingState, isError: true });
+      setPlayingState({ ...playingState, error: "stop" });
       console.error(e);
     }
   };
@@ -105,7 +108,38 @@ const usePlayer = ({ uri }: { uri: string }) => {
     }
   }, [sound.current]);
 
-  return { playingState, playingProgressSec, play, stop };
+  const retryPlaying = () => {
+    setPlayingState({
+      isLoaded: false,
+      isBuffering: false,
+      isPlayLoading: false,
+      isStopLoading: false,
+      isPlaying: false,
+      error: null,
+    });
+    play();
+  };
+
+  const retryStopping = () => {
+    setPlayingState({
+      isLoaded: false,
+      isBuffering: false,
+      isPlayLoading: false,
+      isStopLoading: false,
+      isPlaying: false,
+      error: null,
+    });
+    stop();
+  };
+
+  return {
+    playingState,
+    playingProgressSec,
+    play,
+    stop,
+    retryPlaying,
+    retryStopping,
+  };
 };
 
 export default usePlayer;

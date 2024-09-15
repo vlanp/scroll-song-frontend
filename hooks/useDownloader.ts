@@ -1,8 +1,7 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import IDownload from "../interfaces/IDownload";
 import * as FileSystem from "expo-file-system";
 import isFileExisting from "../utils/isFileExisting";
-import { NetworkContext } from "../contexts/NetworkContext";
 
 const useDownloader = ({
   uri,
@@ -81,7 +80,16 @@ const useDownloader = ({
     download();
   }, []);
 
-  return { downloadingState, relativeProgress };
+  const retry = () => {
+    setDownloadingState({
+      isLoading: false,
+      isLoaded: false,
+      isError: false,
+    });
+    download();
+  };
+
+  return { downloadingState, relativeProgress, retry };
 };
 
 export default useDownloader;

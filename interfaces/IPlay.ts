@@ -4,7 +4,7 @@ interface IPlay {
   isPlayLoading: boolean;
   isStopLoading: boolean;
   isPlaying: boolean;
-  isError: boolean;
+  error: "play" | "stop" | null;
 }
 
 export default IPlay;

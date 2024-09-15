@@ -1,3 +1,3 @@
 interface INetworkContext {
-  isNetworkOk: boolean | null;
+  isNetworkError: boolean | null;
 }

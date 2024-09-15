@@ -5,7 +5,7 @@ import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 export const NetworkContext = createContext<INetworkContext | null>(null);
 
 export const NetworkProvider = ({ children }: { children: ReactNode }) => {
-  const [isNetworkOk, setIsNetworkOk] = useState<boolean | null>(null);
+  const [isNetworkError, setIsNetworkError] = useState<boolean | null>(null);
 
   useEffect(() => {
     const handleNetInfo = (netInfo: NetInfoState) => {
@@ -13,9 +13,9 @@ export const NetworkProvider = ({ children }: { children: ReactNode }) => {
         netInfo.isConnected === false ||
         netInfo.isInternetReachable === false
       ) {
-        setIsNetworkOk(false);
+        setIsNetworkError(true);
       } else {
-        setIsNetworkOk(true);
+        setIsNetworkError(false);
       }
     };
 
@@ -42,7 +42,7 @@ export const NetworkProvider = ({ children }: { children: ReactNode }) => {
   });
 
   return (
-    <NetworkContext.Provider value={{ isNetworkOk }}>
+    <NetworkContext.Provider value={{ isNetworkError }}>
       {children}
     </NetworkContext.Provider>
   );

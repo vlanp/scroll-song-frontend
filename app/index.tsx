@@ -26,22 +26,30 @@ function Index() {
     soundDatas.excerptStartTimeSec,
     soundDatas.excerptEndTimeSec
   );
-  const { downloadingState, relativeProgress: downloadingRelativeProgress } =
-    useDownloader({ fileName, uri: excerptUri, directory: "excerpt" });
-  const { playingState, playingProgressSec, play, stop } = usePlayer({
+  const {
+    downloadingState,
+    relativeProgress: downloadingRelativeProgress,
+    retry: retryDownloading,
+  } = useDownloader({ fileName, uri: excerptUri, directory: "excerpt" });
+  const {
+    playingState,
+    playingProgressSec,
+    play,
+    stop,
+    retryPlaying,
+    retryStopping,
+  } = usePlayer({
     uri: documentDirectory + "excerpt/" + fileName,
   });
-  const isNetworkOk = useContext(NetworkContext).isNetworkOk;
-  console.log(isNetworkOk);
-
-  const handlePress = () => {
-    play();
-  };
+  const isNetworkError = useContext(NetworkContext).isNetworkError;
 
   return (
     <View style={styles.mainView}>
-      <Pressable onPress={handlePress} style={styles.playButton}>
+      <Pressable onPress={play} style={styles.playButton}>
         <Text>Play</Text>
+      </Pressable>
+      <Pressable onPress={stop} style={styles.playButton}>
+        <Text>Stop</Text>
       </Pressable>
       <ProgressTrackBar
         loadingProgress={downloadingRelativeProgress}
@@ -65,8 +73,35 @@ function Index() {
         trackBarHeigth={15}
         trackBarWidth={200}
       />
-      {isNetworkOk === false && (
+      {isNetworkError ? (
         <Text>Il semble qu'il y ait un problème réseau</Text>
+      ) : downloadingState.isError ? (
+        <>
+          <Text>
+            Une erreur est survenue lors du téléchargement de la musique. Merci
+            de réessayer ultérieurement.
+          </Text>
+          <Pressable onPress={retryDownloading}>
+            <Text>Réessayer</Text>
+          </Pressable>
+        </>
+      ) : (
+        playingState.error && (
+          <>
+            <Text>
+              Une erreur est lors{" "}
+              {playingState.error === "play" ? "du lancement" : "de l'arrêt"} de
+              la musique. Merci de réessayer ultérieurement.
+            </Text>
+            <Pressable
+              onPress={
+                playingState.error === "play" ? retryPlaying : retryStopping
+              }
+            >
+              <Text>Réessayer</Text>
+            </Pressable>
+          </>
+        )
       )}
     </View>
   );
