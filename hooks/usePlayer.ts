@@ -15,7 +15,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
     error: null,
   });
 
-  const sound = useRef<Audio.Sound>();
+  const sound = useRef<Audio.Sound | null>(null);
 
   const _onPlaybackStatusUpdate = async (playbackStatus: AVPlaybackStatus) => {
     if (!playbackStatus.isLoaded) {
@@ -57,18 +57,21 @@ const usePlayer = ({ uri }: { uri: string }) => {
     }
     setPlayingState({ ...playingState, isPlayLoading: true });
     try {
-      const { sound: _sound } = await Audio.Sound.createAsync(
-        {
-          uri,
-        },
-        {
-          progressUpdateIntervalMillis: 1000,
-          isLooping: true,
-        }
-      );
-      sound.current = _sound;
-      _sound.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-      await _sound.playAsync();
+      if (!sound.current || !playingState.isLoaded) {
+        sound.current = (
+          await Audio.Sound.createAsync(
+            {
+              uri,
+            },
+            {
+              progressUpdateIntervalMillis: 1000,
+              isLooping: true,
+            }
+          )
+        ).sound;
+      }
+      sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+      await sound.current.playAsync();
       console.log("Playing song");
     } catch (e) {
       setPlayingState({ ...playingState, error: "play" });
@@ -76,20 +79,29 @@ const usePlayer = ({ uri }: { uri: string }) => {
     }
   };
 
-  const stop = async () => {
+  const stop = async (isPause: boolean = false) => {
     try {
       if (!playingState.isPlaying || playingState.isStopLoading) {
         return;
       }
       setPlayingState({ ...playingState, isStopLoading: true });
-      await sound.current.stopAsync();
-      await sound.current.unloadAsync();
-      setPlayingState({
-        ...playingState,
-        isPlayLoading: false,
-        isPlaying: false,
-        isLoaded: false,
-      });
+      if (isPause) {
+        await sound.current.pauseAsync();
+        setPlayingState({
+          ...playingState,
+          isPlayLoading: false,
+          isPlaying: false,
+        });
+      } else {
+        await sound.current.stopAsync();
+        await sound.current.unloadAsync();
+        setPlayingState({
+          ...playingState,
+          isPlayLoading: false,
+          isPlaying: false,
+          isLoaded: false,
+        });
+      }
     } catch (e) {
       setPlayingState({ ...playingState, error: "stop" });
       console.error(e);

@@ -48,7 +48,7 @@ function Index() {
       <Pressable onPress={play} style={styles.playButton}>
         <Text>Play</Text>
       </Pressable>
-      <Pressable onPress={stop} style={styles.playButton}>
+      <Pressable onPress={(e) => stop()} style={styles.playButton}>
         <Text>Stop</Text>
       </Pressable>
       <ProgressTrackBar
