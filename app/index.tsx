@@ -1,4 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  GestureResponderEvent,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Audio } from "expo-av";
 import ProgressTrackBar from "../components/ProgressTrackBar";
 import useDownloader from "../hooks/useDownloader";
@@ -38,17 +44,26 @@ function Index() {
     stop,
     retryPlaying,
     retryStopping,
+    changePositionSec,
   } = usePlayer({
     uri: documentDirectory + "excerpt/" + fileName,
   });
   const isNetworkError = useContext(NetworkContext).isNetworkError;
+
+  const handleTouchAndDrag = (e: GestureResponderEvent) => {
+    stop(true);
+    changePositionSec(
+      (soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec) *
+        (e.nativeEvent.locationX / 200)
+    );
+  };
 
   return (
     <View style={styles.mainView}>
       <Pressable onPress={play} style={styles.playButton}>
         <Text>Play</Text>
       </Pressable>
-      <Pressable onPress={(e) => stop()} style={styles.playButton}>
+      <Pressable onPress={(e) => stop(true)} style={styles.playButton}>
         <Text>Stop</Text>
       </Pressable>
       <ProgressTrackBar
@@ -57,16 +72,9 @@ function Index() {
           playingProgressSec /
           (soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec)
         }
-        // onTouchStart={(e) => {
-        //   playingProgress.progressSec =
-        //     (playingProgress.endTimeSec - playingProgress.startTimeSec) *
-        //       (e.nativeEvent.locationX / 200) +
-        //     playingProgress.startTimeSec;
-        //   console.log(playingProgress.progressSec);
-        //   setPlayingProgress({
-        //     ...playingProgress,
-        //   });
-        // }}
+        onTouchStart={handleTouchAndDrag}
+        onTouchMove={handleTouchAndDrag}
+        onTouchEnd={play}
         loadingColor="rgba(0, 167, 255, 1)"
         readingColor="rgba(0, 76, 255, 1)"
         trackBarBorderWidth={2}

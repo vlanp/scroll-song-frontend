@@ -29,11 +29,11 @@ const usePlayer = ({ uri }: { uri: string }) => {
     } else {
       playingState.isLoaded = true;
 
+      const currentProgressSec = playbackStatus.positionMillis / 1000;
+      setPlayingProgressSec(currentProgressSec);
+
       if (playbackStatus.isPlaying) {
         playingState.isPlaying = true;
-
-        const currentProgressSec = playbackStatus.positionMillis / 1000;
-        setPlayingProgressSec(currentProgressSec);
       } else {
         playingState.isPlaying = false;
       }
@@ -69,8 +69,8 @@ const usePlayer = ({ uri }: { uri: string }) => {
             }
           )
         ).sound;
+        sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
       }
-      sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
       await sound.current.playAsync();
       console.log("Playing song");
     } catch (e) {
@@ -144,6 +144,29 @@ const usePlayer = ({ uri }: { uri: string }) => {
     stop();
   };
 
+  const changePositionSec = async (positionSec: number) => {
+    try {
+      if (!sound.current || !playingState.isLoaded) {
+        sound.current = (
+          await Audio.Sound.createAsync(
+            {
+              uri,
+            },
+            {
+              progressUpdateIntervalMillis: 1000,
+              isLooping: true,
+            }
+          )
+        ).sound;
+        sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+      }
+      sound.current.setPositionAsync(positionSec * 1000);
+    } catch (e) {
+      setPlayingState({ ...playingState, error: "play" });
+      console.error(e);
+    }
+  };
+
   return {
     playingState,
     playingProgressSec,
@@ -151,6 +174,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
     stop,
     retryPlaying,
     retryStopping,
+    changePositionSec,
   };
 };
 

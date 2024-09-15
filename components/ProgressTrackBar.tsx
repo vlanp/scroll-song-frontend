@@ -9,6 +9,8 @@ const ProgressTrackBar = ({
   loadingColor,
   readingColor,
   onTouchStart,
+  onTouchMove,
+  onTouchEnd,
 }: {
   trackBarWidth: number;
   trackBarHeigth: number;
@@ -18,6 +20,8 @@ const ProgressTrackBar = ({
   loadingColor: string;
   readingColor: string;
   onTouchStart?: (event: GestureResponderEvent) => void;
+  onTouchMove?: (event: GestureResponderEvent) => void;
+  onTouchEnd?: (event: GestureResponderEvent) => void;
 }) => {
   const styles = getStyles(
     trackBarWidth,
@@ -35,10 +39,14 @@ const ProgressTrackBar = ({
         <View
           style={[styles.progressView, styles.loadingProgressView]}
           onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         ></View>
         <View
           style={[styles.progressView, styles.readingProgressView]}
           onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         ></View>
       </View>
     </View>
