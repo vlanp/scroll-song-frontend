@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import IPlay from "../interfaces/IPlay";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Platform } from "react-native";
+import * as FileSystem from "expo-file-system";
 
 const usePlayer = ({ uri }: { uri: string }) => {
   const [playingProgressSec, setPlayingProgressSec] = useState<number>(0);
@@ -57,6 +58,14 @@ const usePlayer = ({ uri }: { uri: string }) => {
     }
     setPlayingState({ ...playingState, isPlayLoading: true });
     try {
+      const didFileExist = (await FileSystem.getInfoAsync(uri)).exists;
+      if (!didFileExist) {
+        return setPlayingState({
+          ...playingState,
+          isPlayLoading: false,
+          error: "fileNotReady",
+        });
+      }
       if (!sound.current || !playingState.isLoaded) {
         sound.current = (
           await Audio.Sound.createAsync(

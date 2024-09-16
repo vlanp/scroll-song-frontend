@@ -76,6 +76,35 @@ const useDownloader = ({
     }
   };
 
+  const deleteFile = async () => {
+    try {
+      const didFileExist = (
+        await FileSystem.getInfoAsync(
+          FileSystem.documentDirectory +
+            (directory ? directory + "/" : "") +
+            fileName
+        )
+      ).exists;
+      if (!didFileExist) {
+        return;
+      }
+      await FileSystem.deleteAsync(
+        FileSystem.documentDirectory +
+          (directory ? directory + "/" : "") +
+          fileName
+      );
+      setDownloadingState({
+        isLoading: false,
+        isLoaded: false,
+        isError: false,
+      });
+      setRelativeProgress(0);
+    } catch (e) {
+      setDownloadingState({ ...downloadingState, isError: true });
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     download();
   }, []);
@@ -89,7 +118,7 @@ const useDownloader = ({
     download();
   };
 
-  return { downloadingState, relativeProgress, retry };
+  return { downloadingState, relativeProgress, retry, deleteFile };
 };
 
 export default useDownloader;

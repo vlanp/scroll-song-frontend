@@ -4,7 +4,7 @@ interface IPlay {
   isPlayLoading: boolean;
   isStopLoading: boolean;
   isPlaying: boolean;
-  error: "play" | "stop" | null;
+  error: "play" | "stop" | "fileNotReady" | null;
 }
 
 export default IPlay;

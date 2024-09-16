@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   GestureResponderEvent,
   Pressable,
   StyleSheet,
@@ -36,6 +37,7 @@ function Index() {
     downloadingState,
     relativeProgress: downloadingRelativeProgress,
     retry: retryDownloading,
+    deleteFile,
   } = useDownloader({ fileName, uri: excerptUri, directory: "excerpt" });
   const {
     playingState,
@@ -66,6 +68,12 @@ function Index() {
       <Pressable onPress={(e) => stop(true)} style={styles.playButton}>
         <Text>Stop</Text>
       </Pressable>
+      <Pressable onPress={deleteFile} style={styles.playButton}>
+        <Text>DeleteFile</Text>
+      </Pressable>
+      <Pressable onPress={retryDownloading} style={styles.playButton}>
+        <Text>DownloadFile</Text>
+      </Pressable>
       <ProgressTrackBar
         loadingProgress={downloadingRelativeProgress}
         readingProgress={
@@ -81,6 +89,7 @@ function Index() {
         trackBarHeigth={15}
         trackBarWidth={200}
       />
+      {downloadingState.isLoading && <ActivityIndicator />}
       {isNetworkError ? (
         <Text>Il semble qu'il y ait un problème réseau</Text>
       ) : downloadingState.isError ? (
