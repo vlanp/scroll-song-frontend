@@ -1,11 +1,12 @@
-import { GestureResponderEvent, StyleSheet, View } from "react-native";
+import { GestureResponderEvent, StyleSheet, View, Text } from "react-native";
 
 const ProgressTrackBar = ({
   trackBarWidth,
   trackBarHeigth,
   trackBarBorderWidth,
   loadingProgress,
-  readingProgress,
+  progressSec,
+  durationSec,
   loadingColor,
   readingColor,
   onTouchStart,
@@ -16,13 +17,16 @@ const ProgressTrackBar = ({
   trackBarHeigth: number;
   trackBarBorderWidth: number;
   loadingProgress: number;
-  readingProgress: number;
+  progressSec: number;
+  durationSec: number;
   loadingColor: string;
   readingColor: string;
   onTouchStart?: (event: GestureResponderEvent) => void;
   onTouchMove?: (event: GestureResponderEvent) => void;
   onTouchEnd?: (event: GestureResponderEvent) => void;
 }) => {
+  const readingProgress = progressSec / durationSec;
+
   const styles = getStyles(
     trackBarWidth,
     trackBarHeigth,
@@ -35,6 +39,10 @@ const ProgressTrackBar = ({
 
   return (
     <View style={styles.mainView}>
+      <Text style={styles.progressText}>
+        {(Math.round(progressSec) < 10 ? "00:0" : "00:") +
+          Math.round(progressSec)}
+      </Text>
       <View style={styles.backgroundBarView}>
         <View
           style={[styles.progressView, styles.loadingProgressView]}
@@ -49,6 +57,9 @@ const ProgressTrackBar = ({
           onTouchEnd={onTouchEnd}
         ></View>
       </View>
+      <Text style={styles.progressText}>
+        {(durationSec < 10 ? "00:0" : "00:") + durationSec}
+      </Text>
     </View>
   );
 };
@@ -69,7 +80,15 @@ const getStyles = (
 
   const styles = StyleSheet.create({
     mainView: {
+      justifyContent: "space-evenly",
       alignItems: "center",
+      flexDirection: "row",
+    },
+    progressText: {
+      fontFamily: "LatoBold",
+      fontSize: 21,
+      color: "black",
+      width: 60,
     },
     backgroundBarView: {
       position: "relative",

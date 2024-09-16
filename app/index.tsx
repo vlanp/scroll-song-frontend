@@ -76,10 +76,10 @@ function Index() {
       </Pressable>
       <ProgressTrackBar
         loadingProgress={downloadingRelativeProgress}
-        readingProgress={
-          playingProgressSec /
-          (soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec)
+        durationSec={
+          soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec
         }
+        progressSec={playingProgressSec}
         onTouchStart={handleTouchAndDrag}
         onTouchMove={handleTouchAndDrag}
         onTouchEnd={play}
