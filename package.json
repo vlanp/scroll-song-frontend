@@ -11,6 +11,8 @@
   "dependencies": {
     "@react-native-community/netinfo": "11.3.1",
     "@types/react": "~18.2.79",
+    "array-shuffle": "^3.0.0",
+    "axios": "^1.7.7",
     "eslint": "^9.9.1",
     "expo": "~51.0.28",
     "expo-av": "~14.0.7",
@@ -19,6 +21,8 @@
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.23",
     "expo-status-bar": "~1.12.1",
+    "i": "^0.3.7",
+    "npm": "^10.8.3",
     "react": "18.2.0",
     "react-native": "0.74.5",
     "react-native-progress": "^5.0.1",

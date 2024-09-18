@@ -1,10 +1,13 @@
 import { Slot } from "expo-router";
 import { NetworkProvider } from "../contexts/NetworkContext";
+import { SoundsProvider } from "../contexts/SoundsContext";
 
 const RootLayout = () => {
   return (
     <NetworkProvider>
-      <Slot />
+      <SoundsProvider>
+        <Slot />
+      </SoundsProvider>
     </NetworkProvider>
   );
 };

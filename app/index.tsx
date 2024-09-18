@@ -14,6 +14,7 @@ import usePlayer from "../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
 import { useContext } from "react";
 import { NetworkContext } from "../contexts/NetworkContext";
+import { SoundsContext } from "../contexts/SoundsContext";
 
 Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
@@ -59,6 +60,10 @@ function Index() {
         (e.nativeEvent.locationX / 200)
     );
   };
+
+  const { data, error, isLoading, setData } = useContext(SoundsContext);
+
+  console.log(data, error, isLoading);
 
   return (
     <View style={styles.mainView}>
