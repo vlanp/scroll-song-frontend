@@ -11,7 +11,7 @@ const useData = <T, K = T>(
   const [data, setData] = useState<T | K | null>(null);
 
   useEffect(() => {
-    console.log("yo4");
+    console.log("Calling useData useEffect");
     setIsLoading(true);
     setError(null);
     setData(null);
@@ -27,7 +27,6 @@ const useData = <T, K = T>(
       })
       .then((response) => {
         if (!signal.aborted) {
-          console.log("yo5");
           const data = onReceivedData
             ? onReceivedData(response.data)
             : response.data;
