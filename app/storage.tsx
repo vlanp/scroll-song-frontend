@@ -1,22 +1,23 @@
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
-import { Pressable, Text, StyleSheet } from "react-native";
+import { Pressable, Text, StyleSheet, View } from "react-native";
 
 const Storage = () => {
-  const [storageInfo, setStorageInfo] = useState<string[]>([]);
+  const [documentStorageInfo, setDocumentStorageInfo] = useState<string[]>([]);
+  const [cacheStorageInfo, setCacheStorageInfo] = useState<string[]>([]);
 
   const handleClick = () => {
-    setStorageInfo([]);
-    getStorageInfo();
+    setDocumentStorageInfo([]);
+    getDocumentStorageInfo();
   };
 
-  const getStorageInfo = async (uri?: string) => {
+  const getDocumentStorageInfo = async (uri?: string) => {
     try {
       const documentDirectoryContent = await FileSystem.readDirectoryAsync(
         FileSystem.documentDirectory + (uri || "")
       );
       documentDirectoryContent.forEach(async (partialUri) => {
-        setStorageInfo((storageInfo) => [
+        setDocumentStorageInfo((storageInfo) => [
           ...storageInfo,
           (uri ? uri + "/" : "") + partialUri,
         ]);
@@ -26,7 +27,31 @@ const Storage = () => {
           )
         ).isDirectory;
         if (isDirectory) {
-          getStorageInfo((uri ? uri + "/" : "") + partialUri);
+          getDocumentStorageInfo((uri ? uri + "/" : "") + partialUri);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getCacheStorageInfo = async (uri?: string) => {
+    try {
+      const cacheDirectoryContent = await FileSystem.readDirectoryAsync(
+        FileSystem.cacheDirectory + (uri || "")
+      );
+      cacheDirectoryContent.forEach(async (partialUri) => {
+        setCacheStorageInfo((storageInfo) => [
+          ...storageInfo,
+          (uri ? uri + "/" : "") + partialUri,
+        ]);
+        const isDirectory = (
+          await FileSystem.getInfoAsync(
+            FileSystem.cacheDirectory + (uri ? uri + "/" : "") + partialUri
+          )
+        ).isDirectory;
+        if (isDirectory) {
+          getCacheStorageInfo((uri ? uri + "/" : "") + partialUri);
         }
       });
     } catch (e) {
@@ -39,7 +64,11 @@ const Storage = () => {
       <Pressable style={styles.storageButton} onPress={handleClick}>
         <Text>Récupérer les informations de stockage</Text>
       </Pressable>
-      {storageInfo.map((uri, index) => {
+      {documentStorageInfo.map((uri, index) => {
+        return <Text key={index}>{uri}</Text>;
+      })}
+      <View style={styles.blackView} />
+      {cacheStorageInfo.map((uri, index) => {
         return <Text key={index}>{uri}</Text>;
       })}
     </>
@@ -56,6 +85,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
+  },
+  blackView: {
+    backgroundColor: "black",
+    height: 20,
   },
 });
 
