@@ -9,7 +9,7 @@ const songsEndpoint = "/discover";
 
 //TODO Replace fixed auth token by a variable
 export const SoundsProvider = ({ children }: { children: ReactNode }) => {
-  const { isLoading, error, data, setData } = useData<IDiscoverSound[]>(
+  const { isLoading, error, data } = useData<IDiscoverSound[]>(
     process.env.EXPO_PUBLIC_API_URL + songsEndpoint,
     "5a6251db-8f7e-4101-9577-3f5accfade3c",
     handleReceivedData
@@ -21,7 +21,6 @@ export const SoundsProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         error,
         data,
-        setData,
       }}
     >
       {children}

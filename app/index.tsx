@@ -61,7 +61,7 @@ function Index() {
     );
   };
 
-  const { data, error, isLoading, setData } = useContext(SoundsContext);
+  const { data, error, isLoading } = useContext(SoundsContext);
 
   console.log(data, error, isLoading);
 
