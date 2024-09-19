@@ -1,4 +1,4 @@
-interface IDiscoverSong {
+interface IDiscoverSound {
   id: string;
   title: string;
   url: string;
@@ -6,4 +6,4 @@ interface IDiscoverSong {
   end_time_excerpt_ms: number;
 }
 
-export default IDiscoverSong;
+export default IDiscoverSound;

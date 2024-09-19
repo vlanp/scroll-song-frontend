@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
-import IDiscoverSong from "./IDiscoverSong";
+import IDiscoverSound from "./IDiscoverSound";
 
 interface ISoundsContext {
   isLoading: boolean;
   error: unknown;
-  data: IDiscoverSong[];
-  setData: Dispatch<SetStateAction<IDiscoverSong[]>>;
+  data: IDiscoverSound[];
+  setData: Dispatch<SetStateAction<IDiscoverSound[]>>;
 }
 
 export default ISoundsContext;

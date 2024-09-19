@@ -1,7 +1,7 @@
 import arrayShuffle from "array-shuffle";
-import IDiscoverSong from "../../interfaces/IDiscoverSong";
+import IDiscoverSound from "../../interfaces/IDiscoverSound";
 
-const handleReceivedData = (songs: IDiscoverSong[]) => {
+const handleReceivedData = (songs: IDiscoverSound[]) => {
   return arrayShuffle(songs);
 };
 
