@@ -1,28 +1,22 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  GestureResponderEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { Audio } from "expo-av";
-import ProgressTrackBar from "../components/ProgressTrackBar";
-import useDownloader from "../hooks/useDownloader (old)";
-import getExcerptUri from "../utils/getExcerptUri";
-import usePlayer from "../hooks/usePlayer";
-import { documentDirectory } from "expo-file-system";
-import { useContext } from "react";
-import { NetworkContext } from "../contexts/NetworkContext";
+import { useContext, useState } from "react";
 import { SoundsContext } from "../contexts/SoundsContext";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/DiscoverComp";
+import { useIsFocused } from "@react-navigation/native";
+import { useDownloadStore } from "../zustands/useDownloadStore";
 
 Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
 function Index() {
   const { data, error, isLoading } = useContext(SoundsContext);
+  const [height, setHeight] = useState<number>(0);
+  const styles = getStyles(height);
+  const isFocused = useIsFocused();
+  const setCurrentPosition = useDownloadStore(
+    (state) => state.setCurrentPosition
+  );
 
   if (isLoading) {
     return <LottieLoading />;
@@ -38,29 +32,44 @@ function Index() {
   }
 
   return (
-    <FlatList
-      data={data}
-      renderItem={({ item }) => <DiscoverComp sound={item} />}
-      keyExtractor={(item) => item.id}
-    />
+    <View
+      style={styles.mainView}
+      onLayout={(event) => {
+        setHeight(event.nativeEvent.layout.height);
+      }}
+    >
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <View style={styles.scrollPageView}>
+            <DiscoverComp sound={item} />
+          </View>
+        )}
+        keyExtractor={(item) => item.id}
+        pagingEnabled={true}
+        onMomentumScrollEnd={({ nativeEvent }) => {
+          // Needed because onMomentumScrollEnd is fired everytime the discover page is left
+          if (isFocused) {
+            const position = Math.round(nativeEvent.contentOffset.y / height);
+            setCurrentPosition(position);
+          }
+        }}
+      />
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  mainView: {
-    height: "100%",
-    justifyContent: "center",
-    gap: 20,
-  },
-  playButton: {
-    borderWidth: 2,
-    borderRadius: 50,
-    width: 100,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-  },
-});
+const getStyles = (height: number) => {
+  const styles = StyleSheet.create({
+    mainView: {
+      flex: 1,
+    },
+    scrollPageView: {
+      height: height,
+    },
+  });
+
+  return styles;
+};
 
 export default Index;

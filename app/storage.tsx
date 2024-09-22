@@ -1,6 +1,6 @@
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
-import { Pressable, Text, StyleSheet, View } from "react-native";
+import { Pressable, Text, StyleSheet, View, ScrollView } from "react-native";
 
 const Storage = () => {
   const [documentStorageInfo, setDocumentStorageInfo] = useState<string[]>([]);
@@ -64,13 +64,15 @@ const Storage = () => {
       <Pressable style={styles.storageButton} onPress={handleClick}>
         <Text>Récupérer les informations de stockage</Text>
       </Pressable>
-      {documentStorageInfo.map((uri, index) => {
-        return <Text key={index}>{uri}</Text>;
-      })}
-      <View style={styles.blackView} />
-      {cacheStorageInfo.map((uri, index) => {
-        return <Text key={index}>{uri}</Text>;
-      })}
+      <ScrollView>
+        {documentStorageInfo.map((uri, index) => {
+          return <Text key={index}>{uri}</Text>;
+        })}
+        <View style={styles.blackView} />
+        {cacheStorageInfo.map((uri, index) => {
+          return <Text key={index}>{uri}</Text>;
+        })}
+      </ScrollView>
     </>
   );
 };

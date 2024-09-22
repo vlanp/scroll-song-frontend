@@ -53,6 +53,8 @@ const usePlayer = ({ uri }: { uri: string }) => {
   };
 
   const play = async () => {
+    console.log("try playing");
+
     if (playingState.isPlaying || playingState.isPlayLoading) {
       return;
     }
@@ -127,7 +129,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
       }, 1000);
       return () => clearInterval(intervalId);
     }
-  }, [sound.current]);
+  }, []);
 
   const retryPlaying = () => {
     setPlayingState({

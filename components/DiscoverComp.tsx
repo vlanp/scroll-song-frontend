@@ -51,6 +51,7 @@ function DiscoverComp({ sound }: { sound: IDiscoverSound }) {
       <Pressable onPress={(e) => stop(true)} style={styles.playButton}>
         <Text>Stop</Text>
       </Pressable>
+      <Text>{sound.title}</Text>
       {/* <Pressable onPress={deleteFile} style={styles.playButton}>
         <Text>DeleteFile</Text>
       </Pressable>
