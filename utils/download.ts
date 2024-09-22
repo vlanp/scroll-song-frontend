@@ -27,7 +27,10 @@ export const createDirectory = async (
 
 const _isFileExisting = async (fileName: string, directory?: string) => {
   const fileInfo = await FileSystem.getInfoAsync(
-    FileSystem.documentDirectory + (directory ? directory + "/" : "") + fileName
+    FileSystem.documentDirectory +
+      (directory ? directory + "/" : "") +
+      fileName +
+      ".mp3"
   );
 
   if (fileInfo.exists) {
@@ -52,7 +55,10 @@ const _createDownloadResumable = (
 
   const downloadResumable = FileSystem.createDownloadResumable(
     url,
-    FileSystem.documentDirectory + (directory ? directory + "/" : "") + soundId,
+    FileSystem.documentDirectory +
+      (directory ? directory + "/" : "") +
+      soundId +
+      ".mp3",
     {},
     callback
   );

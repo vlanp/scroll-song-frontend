@@ -1,7 +1,7 @@
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
 import { useRef, useState } from "react";
-import { createDirectory, download } from "../utils/download";
+import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 
 const numberToDownload = 30;

@@ -18,6 +18,8 @@ const usePlayer = ({ uri }: { uri: string }) => {
 
   const sound = useRef<Audio.Sound | null>(null);
 
+  const intervalId = useRef<NodeJS.Timeout | null>(null);
+
   const _onPlaybackStatusUpdate = async (playbackStatus: AVPlaybackStatus) => {
     if (!playbackStatus.isLoaded) {
       playingState.isLoaded = false;
@@ -69,6 +71,8 @@ const usePlayer = ({ uri }: { uri: string }) => {
         });
       }
       if (!sound.current || !playingState.isLoaded) {
+        console.log(uri);
+
         sound.current = (
           await Audio.Sound.createAsync(
             {
@@ -77,10 +81,19 @@ const usePlayer = ({ uri }: { uri: string }) => {
             {
               progressUpdateIntervalMillis: 1000,
               isLooping: true,
-            }
+            },
+            _onPlaybackStatusUpdate
           )
         ).sound;
-        sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+
+        if (Platform.OS === "android") {
+          intervalId.current = setInterval(() => {
+            const updatePlaybackStatus = async () => {
+              await sound.current?.getStatusAsync();
+            };
+            updatePlaybackStatus();
+          }, 1000);
+        }
       }
       await sound.current.playAsync();
       console.log("Playing song");
@@ -106,6 +119,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
       } else {
         await sound.current.stopAsync();
         await sound.current.unloadAsync();
+        clearInterval(intervalId.current);
         setPlayingState({
           ...playingState,
           isPlayLoading: false,
@@ -118,18 +132,6 @@ const usePlayer = ({ uri }: { uri: string }) => {
       console.error(e);
     }
   };
-
-  useEffect(() => {
-    if (Platform.OS === "android" && sound.current) {
-      const intervalId = setInterval(() => {
-        const updatePlaybackStatus = async () => {
-          await sound.current?.getStatusAsync();
-        };
-        updatePlaybackStatus();
-      }, 1000);
-      return () => clearInterval(intervalId);
-    }
-  }, []);
 
   const retryPlaying = () => {
     setPlayingState({

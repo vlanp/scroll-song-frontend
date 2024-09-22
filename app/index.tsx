@@ -1,13 +1,10 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
-import { Audio } from "expo-av";
 import { useContext, useState } from "react";
 import { SoundsContext } from "../contexts/SoundsContext";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/DiscoverComp";
 import { useIsFocused } from "@react-navigation/native";
 import { useDownloadStore } from "../zustands/useDownloadStore";
-
-Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
 function Index() {
   const { data, error, isLoading } = useContext(SoundsContext);

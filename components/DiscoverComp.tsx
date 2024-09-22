@@ -28,7 +28,7 @@ function DiscoverComp({ sound }: { sound: IDiscoverSound }) {
     retryStopping,
     changePositionSec,
   } = usePlayer({
-    uri: documentDirectory + "excerpt/" + sound.id,
+    uri: documentDirectory + "excerpt/" + sound.id + ".mp3",
   });
   const isNetworkError = useContext(NetworkContext).isNetworkError;
   const { isError, isLoaded, isLoading, relativeProgress } = useDownloadStore(
