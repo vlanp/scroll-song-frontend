@@ -1,124 +1,70 @@
-import { useEffect, useRef, useState } from "react";
-import IDownload from "../interfaces/IDownload";
-import * as FileSystem from "expo-file-system";
-import isFileExisting from "../utils/isFileExisting";
+import IDiscoverSound from "../interfaces/IDiscoverSound";
+import { useDownloadStore } from "../zustands/useDownloadStore";
+import { useRef, useState } from "react";
+import { createDirectory, download } from "../utils/download";
+import getExcerptUri from "../utils/getExcerptUri";
 
-const useDownloader = ({
-  uri,
-  fileName,
-  directory,
-}: {
-  uri: string;
-  fileName: string;
-  directory?: "excerpt" | "full";
-}) => {
-  const [downloadingState, setDownloadingState] = useState<IDownload>({
-    isLoading: false,
-    isLoaded: false,
-    isError: false,
-  });
+const numberToDownload = 30;
 
-  const [relativeProgress, setRelativeProgress] = useState<number>(0);
+const useDownloader = (
+  isLoading: boolean,
+  error: unknown,
+  data: IDiscoverSound[],
+  directory?: string
+) => {
+  const currentPosition = useDownloadStore((state) => state.currentPosition);
+  const lastDownload = useRef<number>(null);
+  const setExcerptDownloadState = useDownloadStore(
+    (state) => state.setExcerptDownloadState
+  );
+  const setIsStorageError = useDownloadStore(
+    (state) => state.setIsStorageError
+  );
+  const [isDownloadStoreInit, setIsDownloadStoreInit] =
+    useState<boolean>(false);
 
-  const downloadResumable = useRef(null);
+  if (isLoading || error || !data) {
+    return;
+  }
 
-  const createDirectory = async () => {
-    if (!directory) {
-      return;
-    }
-    const info = await FileSystem.getInfoAsync(
-      FileSystem.documentDirectory + directory
-    );
-    if (info.exists) {
-      return;
-    }
-    await FileSystem.makeDirectoryAsync(
-      FileSystem.documentDirectory + directory
-    );
-  };
-
-  const download = async () => {
-    try {
-      await createDirectory();
-
-      if (await isFileExisting(fileName, directory)) {
-        setRelativeProgress(1);
-        return setDownloadingState({ ...downloadingState, isLoaded: true });
-      }
-
-      const callback = (downloadProgress: FileSystem.DownloadProgressData) => {
-        const progress =
-          downloadProgress.totalBytesWritten /
-          downloadProgress.totalBytesExpectedToWrite;
-        setRelativeProgress(progress);
-      };
-
-      downloadResumable.current = FileSystem.createDownloadResumable(
-        uri,
-        FileSystem.documentDirectory +
-          (directory ? directory + "/" : "") +
-          fileName,
-        {},
-        callback
-      );
-
-      setDownloadingState({ ...downloadingState, isLoading: true });
-      const { uri: _uri } = await downloadResumable.current.downloadAsync();
-      setDownloadingState({
-        ...downloadingState,
-        isLoading: false,
-        isLoaded: true,
-      });
-      console.log("Finished downloading to ", _uri);
-    } catch (e) {
-      setDownloadingState({ ...downloadingState, isError: true });
-      console.error(e);
-    }
-  };
-
-  const deleteFile = async () => {
-    try {
-      const didFileExist = (
-        await FileSystem.getInfoAsync(
-          FileSystem.documentDirectory +
-            (directory ? directory + "/" : "") +
-            fileName
-        )
-      ).exists;
-      if (!didFileExist) {
-        return;
-      }
-      await FileSystem.deleteAsync(
-        FileSystem.documentDirectory +
-          (directory ? directory + "/" : "") +
-          fileName
-      );
-      setDownloadingState({
-        isLoading: false,
-        isLoaded: false,
-        isError: false,
-      });
-      setRelativeProgress(0);
-    } catch (e) {
-      setDownloadingState({ ...downloadingState, isError: true });
-      console.error(e);
-    }
-  };
-
-  useEffect(() => {
-    download();
-  }, []);
-
-  const retry = () => {
-    setDownloadingState({
-      isLoading: false,
-      isLoaded: false,
-      isError: false,
+  if (!isDownloadStoreInit) {
+    data.forEach((sound) => {
+      setExcerptDownloadState(sound.id);
     });
-    download();
-  };
+    setIsDownloadStoreInit(true);
+  }
 
-  return { downloadingState, relativeProgress, retry, deleteFile };
+  const dataLastIndex = data.length - 1;
+
+  const limit =
+    currentPosition + numberToDownload <= dataLastIndex
+      ? currentPosition + numberToDownload
+      : dataLastIndex;
+
+  if ((lastDownload.current || 0) >= limit) {
+    return;
+  }
+
+  console.log("last download: ", lastDownload);
+
+  for (let i = lastDownload.current || 0; i <= limit; i++) {
+    const sound = data[i];
+
+    const excerptUri = getExcerptUri(
+      sound.url,
+      sound.start_time_excerpt_ms / 1000,
+      sound.end_time_excerpt_ms / 1000
+    );
+    download(
+      sound.id,
+      excerptUri,
+      setExcerptDownloadState,
+      setIsStorageError,
+      directory
+    );
+  }
+
+  lastDownload.current = limit;
 };
 
 export default useDownloader;

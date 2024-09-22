@@ -1,4 +1,4 @@
-import { Slot, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { NetworkProvider } from "../contexts/NetworkContext";
 import { SoundsProvider } from "../contexts/SoundsContext";
 

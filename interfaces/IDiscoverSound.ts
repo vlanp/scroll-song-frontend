@@ -1,3 +1,5 @@
+import { DownloadResumable } from "expo-file-system";
+
 interface IDiscoverSound {
   id: string;
   title: string;

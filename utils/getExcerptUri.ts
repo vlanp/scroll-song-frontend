@@ -6,7 +6,6 @@ const getExcerptUri = (
   const [part1, part3] = uri.split("upload/");
   const part2 =
     "upload/so_" + startTimeSec + ",du_" + (endTimeSec - startTimeSec) + "/";
-  console.log(part1 + part2 + part3);
 
   return part1 + part2 + part3;
 };

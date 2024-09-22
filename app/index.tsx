@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  FlatList,
   GestureResponderEvent,
   Pressable,
   StyleSheet,
@@ -8,124 +9,40 @@ import {
 } from "react-native";
 import { Audio } from "expo-av";
 import ProgressTrackBar from "../components/ProgressTrackBar";
-import useDownloader from "../hooks/useDownloader";
+import useDownloader from "../hooks/useDownloader (old)";
 import getExcerptUri from "../utils/getExcerptUri";
 import usePlayer from "../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
 import { useContext } from "react";
 import { NetworkContext } from "../contexts/NetworkContext";
 import { SoundsContext } from "../contexts/SoundsContext";
+import LottieLoading from "../components/LottieLoading";
+import DiscoverComp from "../components/DiscoverComp";
 
 Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
 
-const soundDatas = {
-  url: "https://res.cloudinary.com/dwrfmnllk/video/upload/v1720173161/songs/audio/6682c6e9acd6a17089ebf7f7/lrul9ehxwwvte0knr0vk.mp3",
-  excerptStartTimeSec: 10,
-  excerptEndTimeSec: 40,
-  totalDurationSec: 185,
-  totalByteSize: 7785164,
-};
-
-const fileName = "Nananana.mp3";
-
 function Index() {
-  const excerptUri = getExcerptUri(
-    soundDatas.url,
-    soundDatas.excerptStartTimeSec,
-    soundDatas.excerptEndTimeSec
-  );
-  const {
-    downloadingState,
-    relativeProgress: downloadingRelativeProgress,
-    retry: retryDownloading,
-    deleteFile,
-  } = useDownloader({ fileName, uri: excerptUri, directory: "excerpt" });
-  const {
-    playingState,
-    playingProgressSec,
-    play,
-    stop,
-    retryPlaying,
-    retryStopping,
-    changePositionSec,
-  } = usePlayer({
-    uri: documentDirectory + "excerpt/" + fileName,
-  });
-  const isNetworkError = useContext(NetworkContext).isNetworkError;
-
-  const handleTouchAndDrag = (e: GestureResponderEvent) => {
-    stop(true);
-    changePositionSec(
-      (soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec) *
-        (e.nativeEvent.locationX / 200)
-    );
-  };
-
   const { data, error, isLoading } = useContext(SoundsContext);
 
-  console.log(data, error, isLoading);
+  if (isLoading) {
+    return <LottieLoading />;
+  }
+
+  if (error || !data) {
+    return (
+      <Text>
+        "Une erreur inconnue est survenue lors du chargement de la page. Merci
+        de réessayer ultérieurement."
+      </Text>
+    );
+  }
 
   return (
-    <View style={styles.mainView}>
-      <Pressable onPress={play} style={styles.playButton}>
-        <Text>Play</Text>
-      </Pressable>
-      <Pressable onPress={(e) => stop(true)} style={styles.playButton}>
-        <Text>Stop</Text>
-      </Pressable>
-      <Pressable onPress={deleteFile} style={styles.playButton}>
-        <Text>DeleteFile</Text>
-      </Pressable>
-      <Pressable onPress={retryDownloading} style={styles.playButton}>
-        <Text>DownloadFile</Text>
-      </Pressable>
-      <ProgressTrackBar
-        loadingProgress={downloadingRelativeProgress}
-        durationSec={
-          soundDatas.excerptEndTimeSec - soundDatas.excerptStartTimeSec
-        }
-        progressSec={playingProgressSec}
-        onTouchStart={handleTouchAndDrag}
-        onTouchMove={handleTouchAndDrag}
-        onTouchEnd={play}
-        loadingColor="rgba(0, 167, 255, 1)"
-        readingColor="rgba(0, 76, 255, 1)"
-        trackBarBorderWidth={2}
-        trackBarHeigth={15}
-        trackBarWidth={200}
-      />
-      {downloadingState.isLoading && <ActivityIndicator />}
-      {isNetworkError ? (
-        <Text>Il semble qu'il y ait un problème réseau</Text>
-      ) : downloadingState.isError ? (
-        <>
-          <Text>
-            Une erreur est survenue lors du téléchargement de la musique. Merci
-            de réessayer ultérieurement.
-          </Text>
-          <Pressable onPress={retryDownloading}>
-            <Text>Réessayer</Text>
-          </Pressable>
-        </>
-      ) : (
-        playingState.error && (
-          <>
-            <Text>
-              Une erreur est lors{" "}
-              {playingState.error === "play" ? "du lancement" : "de l'arrêt"} de
-              la musique. Merci de réessayer ultérieurement.
-            </Text>
-            <Pressable
-              onPress={
-                playingState.error === "play" ? retryPlaying : retryStopping
-              }
-            >
-              <Text>Réessayer</Text>
-            </Pressable>
-          </>
-        )
-      )}
-    </View>
+    <FlatList
+      data={data}
+      renderItem={({ item }) => <DiscoverComp sound={item} />}
+      keyExtractor={(item) => item.id}
+    />
   );
 }
 
