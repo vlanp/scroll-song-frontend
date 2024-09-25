@@ -37,13 +37,14 @@ function Index() {
     >
       <FlatList
         data={data}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={styles.scrollPageView}>
-            <DiscoverComp sound={item} />
+            <DiscoverComp sound={item} selfPosition={index} />
           </View>
         )}
         keyExtractor={(item) => item.id}
         pagingEnabled={true}
+        initialNumToRender={3}
         onMomentumScrollEnd={({ nativeEvent }) => {
           // Needed because onMomentumScrollEnd is fired everytime the discover page is left
           if (isFocused) {

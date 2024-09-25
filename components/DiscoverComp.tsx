@@ -12,28 +12,28 @@ import useDownloader from "../hooks/useDownloader (old)";
 import getExcerptUri from "../utils/getExcerptUri";
 import usePlayer from "../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NetworkContext } from "../contexts/NetworkContext";
 import { SoundsContext } from "../contexts/SoundsContext";
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
 
-function DiscoverComp({ sound }: { sound: IDiscoverSound }) {
-  const {
-    playingState,
-    playingProgressSec,
-    play,
-    stop,
-    retryPlaying,
-    retryStopping,
-    changePositionSec,
-  } = usePlayer({
-    uri: documentDirectory + "excerpt/" + sound.id + ".mp3",
-  });
+function DiscoverComp({
+  sound,
+  selfPosition,
+}: {
+  sound: IDiscoverSound;
+  selfPosition: number;
+}) {
+  const { playingState, playingProgressSec, play, stop, changePositionSec } =
+    usePlayer({
+      uri: documentDirectory + "excerpt/" + sound.id + ".mp3",
+    });
   const isNetworkError = useContext(NetworkContext).isNetworkError;
   const { isError, isLoaded, isLoading, relativeProgress } = useDownloadStore(
     (state) => state.excerptsDownloadState[sound.id]
   );
+  const currentPosition = useDownloadStore((state) => state.currentPosition);
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
     stop(true);
@@ -43,14 +43,26 @@ function DiscoverComp({ sound }: { sound: IDiscoverSound }) {
     );
   };
 
+  useEffect(() => {
+    const handlePositionChange = async () => {
+      if (currentPosition === selfPosition) {
+        console.log(selfPosition);
+        await play();
+      } else {
+        await stop();
+      }
+    };
+    handlePositionChange();
+  }, [currentPosition, play, playingState.isPlaying, selfPosition, stop]);
+
   return (
     <View style={styles.mainView}>
-      <Pressable onPress={play} style={styles.playButton}>
+      {/* <Pressable onPress={play} style={styles.playButton}>
         <Text>Play</Text>
       </Pressable>
       <Pressable onPress={(e) => stop(true)} style={styles.playButton}>
         <Text>Stop</Text>
-      </Pressable>
+      </Pressable> */}
       <Text>{sound.title}</Text>
       {/* <Pressable onPress={deleteFile} style={styles.playButton}>
         <Text>DeleteFile</Text>
@@ -94,13 +106,6 @@ function DiscoverComp({ sound }: { sound: IDiscoverSound }) {
               {playingState.error === "play" ? "du lancement" : "de l'arrêt"} de
               la musique. Merci de réessayer ultérieurement.
             </Text>
-            <Pressable
-              onPress={
-                playingState.error === "play" ? retryPlaying : retryStopping
-              }
-            >
-              <Text>Réessayer</Text>
-            </Pressable>
           </>
         )
       )}

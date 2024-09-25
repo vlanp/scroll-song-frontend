@@ -16,42 +16,51 @@ const usePlayer = ({ uri }: { uri: string }) => {
     error: null,
   });
 
+  console.log(playingState);
+
   const sound = useRef<Audio.Sound | null>(null);
 
   const intervalId = useRef<NodeJS.Timeout | null>(null);
 
   const _onPlaybackStatusUpdate = async (playbackStatus: AVPlaybackStatus) => {
     if (!playbackStatus.isLoaded) {
-      playingState.isLoaded = false;
+      setPlayingState((ps) => ({ ...ps, isLoaded: false }));
       if ("error" in playbackStatus) {
-        playingState.error = "play";
+        setPlayingState((ps) => ({ ...ps, error: "play" }));
         console.log(
           `Encountered a fatal error during playback: ${playbackStatus.error}`
         );
       }
     } else {
-      playingState.isLoaded = true;
+      setPlayingState((ps) => ({ ...ps, isLoaded: true }));
 
       const currentProgressSec = playbackStatus.positionMillis / 1000;
       setPlayingProgressSec(currentProgressSec);
 
       if (playbackStatus.isPlaying) {
-        playingState.isPlaying = true;
+        setPlayingState((ps) => ({
+          ...ps,
+          isPlaying: true,
+          isPlayLoading: false,
+        }));
       } else {
-        playingState.isPlaying = false;
+        setPlayingState((ps) => ({
+          ...ps,
+          isPlaying: false,
+          isStopLoading: false,
+        }));
       }
 
       if (playbackStatus.isBuffering) {
-        playingState.isBuffering = true;
+        setPlayingState((ps) => ({ ...ps, isBuffering: true }));
       } else {
-        playingState.isBuffering = false;
+        setPlayingState((ps) => ({ ...ps, isBuffering: false }));
       }
 
       if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
         // The player has just finished playing and will stop. Maybe you want to play something else?
       }
     }
-    setPlayingState({ ...playingState });
   };
 
   const play = async () => {
@@ -60,15 +69,15 @@ const usePlayer = ({ uri }: { uri: string }) => {
     if (playingState.isPlaying || playingState.isPlayLoading) {
       return;
     }
-    setPlayingState({ ...playingState, isPlayLoading: true });
+    setPlayingState((ps) => ({ ...ps, isPlayLoading: true }));
     try {
       const didFileExist = (await FileSystem.getInfoAsync(uri)).exists;
       if (!didFileExist) {
-        return setPlayingState({
-          ...playingState,
+        return setPlayingState((ps) => ({
+          ...ps,
           isPlayLoading: false,
           error: "fileNotReady",
-        });
+        }));
       }
       if (!sound.current || !playingState.isLoaded) {
         console.log(uri);
@@ -98,7 +107,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
       await sound.current.playAsync();
       console.log("Playing song");
     } catch (e) {
-      setPlayingState({ ...playingState, error: "play" });
+      setPlayingState((ps) => ({ ...ps, error: "play" }));
       console.error(e);
     }
   };
@@ -108,76 +117,32 @@ const usePlayer = ({ uri }: { uri: string }) => {
       if (!playingState.isPlaying || playingState.isStopLoading) {
         return;
       }
-      setPlayingState({ ...playingState, isStopLoading: true });
+      setPlayingState((ps) => ({ ...ps, isStopLoading: true }));
       if (isPause) {
         await sound.current.pauseAsync();
-        setPlayingState({
-          ...playingState,
-          isPlayLoading: false,
-          isPlaying: false,
-        });
+        setPlayingState((ps) => ({ ...ps, isPlaying: false }));
       } else {
         await sound.current.stopAsync();
         await sound.current.unloadAsync();
         clearInterval(intervalId.current);
-        setPlayingState({
-          ...playingState,
-          isPlayLoading: false,
-          isPlaying: false,
-          isLoaded: false,
-        });
+        setPlayingState((ps) => ({ ...ps, isPlaying: false, isLoaded: false }));
       }
     } catch (e) {
-      setPlayingState({ ...playingState, error: "stop" });
+      setPlayingState((ps) => ({ ...ps, error: "stop" }));
       console.error(e);
     }
-  };
-
-  const retryPlaying = () => {
-    setPlayingState({
-      isLoaded: false,
-      isBuffering: false,
-      isPlayLoading: false,
-      isStopLoading: false,
-      isPlaying: false,
-      error: null,
-    });
-    play();
-  };
-
-  const retryStopping = () => {
-    setPlayingState({
-      isLoaded: false,
-      isBuffering: false,
-      isPlayLoading: false,
-      isStopLoading: false,
-      isPlaying: false,
-      error: null,
-    });
-    stop();
   };
 
   const changePositionSec = async (positionSec: number) => {
-    try {
-      if (!sound.current || !playingState.isLoaded) {
-        sound.current = (
-          await Audio.Sound.createAsync(
-            {
-              uri,
-            },
-            {
-              progressUpdateIntervalMillis: 1000,
-              isLooping: true,
-            }
-          )
-        ).sound;
-        sound.current.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-      }
-      sound.current.setPositionAsync(positionSec * 1000);
-    } catch (e) {
-      setPlayingState({ ...playingState, error: "play" });
-      console.error(e);
-    }
+    // try {
+    //   if (!playingState.isPlaying && !playingState.isPlayLoading) {
+    //     await play();
+    //   }
+    //   sound.current.setPositionAsync(positionSec * 1000);
+    // } catch (e) {
+    //   setPlayingState((ps) => ({ ...ps, error: "play" }));
+    //   console.error(e);
+    // }
   };
 
   return {
@@ -185,8 +150,6 @@ const usePlayer = ({ uri }: { uri: string }) => {
     playingProgressSec,
     play,
     stop,
-    retryPlaying,
-    retryStopping,
     changePositionSec,
   };
 };
