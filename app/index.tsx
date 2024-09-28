@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import { useContext, useRef, useState } from "react";
 import { SoundsContext } from "../contexts/SoundsContext";
 import LottieLoading from "../components/LottieLoading";
-import DiscoverComp from "../components/DiscoverComp";
+import DiscoverComp from "../components/discover/DiscoverComp";
 import { useDownloadStore } from "../zustands/useDownloadStore";
 
 function Index() {
