@@ -3,6 +3,7 @@ import { useDownloadStore } from "../zustands/useDownloadStore";
 import { useRef, useState } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
+import { useDiscoverStore } from "../zustands/useDiscoverStore";
 
 const numberToDownload = 30;
 
@@ -12,7 +13,7 @@ const useDownloader = (
   data: IDiscoverSound[],
   directory?: string
 ) => {
-  const currentPosition = useDownloadStore(
+  const currentPosition = useDiscoverStore(
     (state) => state.positionState.currentPosition
   );
   const lastDownload = useRef<number>(null);

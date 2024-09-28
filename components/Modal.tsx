@@ -13,6 +13,7 @@ export default function Modal({
   setModalVisible,
   closeButton = false,
   image = false,
+  onClose,
   zIndex = 1,
 }: {
   children: ReactNode;
@@ -20,6 +21,7 @@ export default function Modal({
   setModalVisible?: Dispatch<SetStateAction<boolean>>;
   closeButton?: boolean;
   image?: boolean;
+  onClose?: () => void;
   zIndex?: 1 | 3;
 }) {
   const styles = useStyle(zIndex);
@@ -31,6 +33,7 @@ export default function Modal({
             <Pressable
               onPress={() => {
                 setModalVisible(!modalVisible);
+                onClose && onClose();
               }}
               style={styles.closeButton}
             >

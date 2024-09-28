@@ -17,17 +17,6 @@ interface IExcerptDownloadAction {
   ) => void;
 }
 
-interface IPositionState {
-  positionState: {
-    currentPosition: number;
-    isScrolling: boolean;
-  };
-}
-
-interface IPositionAction {
-  setPositionState: (currentPosition?: number, isScrolling?: boolean) => void;
-}
-
 interface IStorageState {
   isStorageError: boolean;
 }
@@ -65,27 +54,9 @@ const setExcerptDownloadState = (
   };
 };
 
-const setPositionState = (
-  positionState: IPositionState["positionState"],
-  currentPosition?: number,
-  isScrolling?: boolean
-) => {
-  return {
-    positionState: {
-      currentPosition:
-        currentPosition !== undefined
-          ? currentPosition
-          : positionState.currentPosition,
-      isScrolling: isScrolling ?? positionState.isScrolling,
-    },
-  };
-};
-
 export const useDownloadStore = create<
   IExcerptsDownloadState &
     IExcerptDownloadAction &
-    IPositionState &
-    IPositionAction &
     IStorageState &
     IStorageAction
 >()((set) => ({
@@ -106,14 +77,6 @@ export const useDownloadStore = create<
         isLoaded,
         isError
       )
-    ),
-  positionState: {
-    currentPosition: 0,
-    isScrolling: false,
-  },
-  setPositionState: (currentPosition?: number, isScrolling?: boolean) =>
-    set((state) =>
-      setPositionState(state.positionState, currentPosition, isScrolling)
     ),
   isStorageError: false,
   setIsStorageError: (bool: boolean) => set(() => ({ isStorageError: bool })),

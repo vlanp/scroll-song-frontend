@@ -23,6 +23,7 @@ import GradientText from "../gradientText";
 import musicNote from "../../assets/images/music-note.png";
 import likeIcon from "../../assets/images/discoverIcons/like-icon.png";
 import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";
+import { useDiscoverStore } from "@/zustands/useDiscoverStore";
 
 function DiscoverComp({
   sound,
@@ -39,9 +40,12 @@ function DiscoverComp({
   const { isError, relativeProgress } = useDownloadStore(
     (state) => state.excerptsDownloadState[sound.id]
   );
-  const positionState = useDownloadStore((state) => state.positionState);
+  const positionState = useDiscoverStore((state) => state.positionState);
   const isFocused = useIsFocused();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const setIsMainScrollEnable = useDiscoverStore(
+    (state) => state.setIsMainScrollEnable
+  );
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
     stop(true);
@@ -80,6 +84,7 @@ function DiscoverComp({
         modalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
         closeButton={true}
+        onClose={() => setIsMainScrollEnable(true)}
         zIndex={3}
       >
         <ModalText />
@@ -91,6 +96,7 @@ function DiscoverComp({
               title="Découverte"
               onPressIcon={() => {
                 setIsModalVisible((currentState) => !currentState);
+                setIsMainScrollEnable(false);
               }}
             />
             <View style={styles.gradientText}>
