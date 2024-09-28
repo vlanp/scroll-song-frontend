@@ -3,14 +3,12 @@ import { useContext, useState } from "react";
 import { SoundsContext } from "../contexts/SoundsContext";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/DiscoverComp";
-import { useIsFocused } from "@react-navigation/native";
 import { useDownloadStore } from "../zustands/useDownloadStore";
 
 function Index() {
   const { data, error, isLoading } = useContext(SoundsContext);
   const [height, setHeight] = useState<number>(0);
   const styles = getStyles(height);
-  const isFocused = useIsFocused();
   const setCurrentPosition = useDownloadStore(
     (state) => state.setCurrentPosition
   );

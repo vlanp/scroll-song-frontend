@@ -17,6 +17,7 @@ import { NetworkContext } from "../contexts/NetworkContext";
 import { SoundsContext } from "../contexts/SoundsContext";
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
+import { useIsFocused } from "@react-navigation/native";
 
 function DiscoverComp({
   sound,
@@ -34,6 +35,7 @@ function DiscoverComp({
     (state) => state.excerptsDownloadState[sound.id]
   );
   const currentPosition = useDownloadStore((state) => state.currentPosition);
+  const isFocused = useIsFocused();
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
     stop(true);
@@ -45,7 +47,7 @@ function DiscoverComp({
 
   useEffect(() => {
     const handlePositionChange = async () => {
-      if (currentPosition === selfPosition) {
+      if (currentPosition === selfPosition && isFocused) {
         // console.log(selfPosition);
         await play();
       } else {
@@ -53,7 +55,14 @@ function DiscoverComp({
       }
     };
     handlePositionChange();
-  }, [currentPosition, play, playingState.isPlaying, selfPosition, stop]);
+  }, [
+    currentPosition,
+    play,
+    playingState.isPlaying,
+    selfPosition,
+    stop,
+    isFocused,
+  ]);
 
   return (
     <View style={styles.mainView}>
