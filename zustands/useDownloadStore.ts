@@ -7,26 +7,25 @@ interface IExcerptsDownloadState {
   };
 }
 
-export interface ISetExcerptDownloadState {
-  (
+interface IExcerptDownloadAction {
+  setExcerptDownloadState: (
     soundId: string,
     progress?: number,
     isLoading?: boolean,
     isLoaded?: boolean,
     isError?: boolean
-  ): void;
+  ) => void;
 }
 
-interface IExcerptDownloadAction {
-  setExcerptDownloadState: ISetExcerptDownloadState;
+interface IPositionState {
+  positionState: {
+    currentPosition: number;
+    isScrolling: boolean;
+  };
 }
 
-interface ICurrentPositionState {
-  currentPosition: number;
-}
-
-interface ICurrentPositionAction {
-  setCurrentPosition: (currentPosition: number) => void;
+interface IPositionAction {
+  setPositionState: (currentPosition?: number, isScrolling?: boolean) => void;
 }
 
 interface IStorageState {
@@ -39,13 +38,13 @@ interface IStorageAction {
 
 const setExcerptDownloadState = (
   soundId: string,
-  excerptsDownload: IExcerptsDownloadState["excerptsDownloadState"],
+  excerptsDownloadState: IExcerptsDownloadState["excerptsDownloadState"],
   progress?: number,
   isLoading?: boolean,
   isLoaded?: boolean,
   isError?: boolean
 ) => {
-  const existingDownload = excerptsDownload[soundId] || {
+  const existingDownload = excerptsDownloadState[soundId] || {
     isLoading: false,
     isLoaded: false,
     isError: false,
@@ -54,7 +53,7 @@ const setExcerptDownloadState = (
 
   return {
     excerptsDownloadState: {
-      ...excerptsDownload,
+      ...excerptsDownloadState,
       [soundId]: {
         relativeProgress:
           progress !== undefined ? progress : existingDownload.relativeProgress,
@@ -66,11 +65,27 @@ const setExcerptDownloadState = (
   };
 };
 
+const setPositionState = (
+  positionState: IPositionState["positionState"],
+  currentPosition?: number,
+  isScrolling?: boolean
+) => {
+  return {
+    positionState: {
+      currentPosition:
+        currentPosition !== undefined
+          ? currentPosition
+          : positionState.currentPosition,
+      isScrolling: isScrolling ?? positionState.isScrolling,
+    },
+  };
+};
+
 export const useDownloadStore = create<
   IExcerptsDownloadState &
     IExcerptDownloadAction &
-    ICurrentPositionState &
-    ICurrentPositionAction &
+    IPositionState &
+    IPositionAction &
     IStorageState &
     IStorageAction
 >()((set) => ({
@@ -92,9 +107,14 @@ export const useDownloadStore = create<
         isError
       )
     ),
-  currentPosition: 0,
-  setCurrentPosition: (currentPosition: number) =>
-    set(() => ({ currentPosition: currentPosition })),
+  positionState: {
+    currentPosition: 0,
+    isScrolling: false,
+  },
+  setPositionState: (currentPosition?: number, isScrolling?: boolean) =>
+    set((state) =>
+      setPositionState(state.positionState, currentPosition, isScrolling)
+    ),
   isStorageError: false,
   setIsStorageError: (bool: boolean) => set(() => ({ isStorageError: bool })),
 }));

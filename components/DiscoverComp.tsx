@@ -1,20 +1,15 @@
 import {
   ActivityIndicator,
   GestureResponderEvent,
-  Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { Audio } from "expo-av";
 import ProgressTrackBar from "./ProgressTrackBar";
-import useDownloader from "../hooks/useDownloader (old)";
-import getExcerptUri from "../utils/getExcerptUri";
 import usePlayer from "../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
 import { useContext, useEffect } from "react";
 import { NetworkContext } from "../contexts/NetworkContext";
-import { SoundsContext } from "../contexts/SoundsContext";
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
 import { useIsFocused } from "@react-navigation/native";
@@ -34,7 +29,7 @@ function DiscoverComp({
   const { isError, isLoaded, isLoading, relativeProgress } = useDownloadStore(
     (state) => state.excerptsDownloadState[sound.id]
   );
-  const currentPosition = useDownloadStore((state) => state.currentPosition);
+  const positionState = useDownloadStore((state) => state.positionState);
   const isFocused = useIsFocused();
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
@@ -47,8 +42,11 @@ function DiscoverComp({
 
   useEffect(() => {
     const handlePositionChange = async () => {
-      if (currentPosition === selfPosition && isFocused) {
-        // console.log(selfPosition);
+      if (
+        positionState.currentPosition === selfPosition &&
+        isFocused &&
+        !positionState.isScrolling
+      ) {
         await play();
       } else {
         await stop();
@@ -56,12 +54,13 @@ function DiscoverComp({
     };
     handlePositionChange();
   }, [
-    currentPosition,
     play,
     playingState.isPlaying,
     selfPosition,
     stop,
     isFocused,
+    positionState.currentPosition,
+    positionState.isScrolling,
   ]);
 
   return (

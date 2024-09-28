@@ -12,7 +12,9 @@ const useDownloader = (
   data: IDiscoverSound[],
   directory?: string
 ) => {
-  const currentPosition = useDownloadStore((state) => state.currentPosition);
+  const currentPosition = useDownloadStore(
+    (state) => state.positionState.currentPosition
+  );
   const lastDownload = useRef<number>(null);
   const setExcerptDownloadState = useDownloadStore(
     (state) => state.setExcerptDownloadState
@@ -45,7 +47,7 @@ const useDownloader = (
     return;
   }
 
-  console.log("last download: ", lastDownload);
+  // console.log("last download: ", lastDownload);
 
   for (let i = lastDownload.current || 0; i <= limit; i++) {
     const sound = data[i];

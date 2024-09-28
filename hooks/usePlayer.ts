@@ -82,8 +82,6 @@ const usePlayer = ({ uri }: { uri: string }) => {
         }));
       }
       if (!sound.current || !playingState.isLoaded) {
-        console.log(uri);
-
         sound.current = (
           await Audio.Sound.createAsync(
             {
