@@ -16,11 +16,13 @@ const usePlayer = ({ uri }: { uri: string }) => {
     error: null,
   });
 
-  console.log(playingState);
+  // console.log(playingState);
 
   const sound = useRef<Audio.Sound | null>(null);
 
   const intervalId = useRef<NodeJS.Timeout | null>(null);
+
+  const numberOfRetry = useRef<number>(0);
 
   const _onPlaybackStatusUpdate = async (playbackStatus: AVPlaybackStatus) => {
     if (!playbackStatus.isLoaded) {
@@ -64,7 +66,7 @@ const usePlayer = ({ uri }: { uri: string }) => {
   };
 
   const play = async () => {
-    console.log("try playing");
+    // console.log("try playing");
 
     if (playingState.isPlaying || playingState.isPlayLoading) {
       return;
@@ -105,8 +107,12 @@ const usePlayer = ({ uri }: { uri: string }) => {
         }
       }
       await sound.current.playAsync();
+      numberOfRetry.current = 0;
       console.log("Playing song");
     } catch (e) {
+      if (numberOfRetry.current < 3) {
+        return await retryPlay();
+      }
       setPlayingState((ps) => ({ ...ps, error: "play" }));
       console.error(e);
     }
@@ -134,15 +140,35 @@ const usePlayer = ({ uri }: { uri: string }) => {
   };
 
   const changePositionSec = async (positionSec: number) => {
-    // try {
-    //   if (!playingState.isPlaying && !playingState.isPlayLoading) {
-    //     await play();
-    //   }
-    //   sound.current.setPositionAsync(positionSec * 1000);
-    // } catch (e) {
-    //   setPlayingState((ps) => ({ ...ps, error: "play" }));
-    //   console.error(e);
-    // }
+    try {
+      if (!playingState.isPlaying && !playingState.isPlayLoading) {
+        await play();
+      }
+      sound.current.setPositionAsync(positionSec * 1000);
+    } catch (e) {
+      // setPlayingState((ps) => ({ ...ps, error: "play" })); // Not needed ?
+      console.error(e);
+    }
+  };
+
+  // It seems that sometimes when loading and unloading really quickly, onPlaybackStatusUpdate has isLoaded set to true whereas the sound is not loaded and is not loading
+  const retryPlay = async () => {
+    try {
+      await sound.current.unloadAsync();
+      clearInterval(intervalId.current);
+    } catch {}
+
+    setPlayingState({
+      isLoaded: false,
+      isBuffering: false,
+      isPlayLoading: false,
+      isStopLoading: false,
+      isPlaying: false,
+      error: null,
+    });
+    numberOfRetry.current = numberOfRetry.current + 1;
+    console.log(playingState);
+    console.log("retry " + numberOfRetry.current);
   };
 
   return {

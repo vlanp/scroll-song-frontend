@@ -44,13 +44,25 @@ function Index() {
         )}
         keyExtractor={(item) => item.id}
         pagingEnabled={true}
-        initialNumToRender={3}
-        onMomentumScrollEnd={({ nativeEvent }) => {
-          // Needed because onMomentumScrollEnd is fired everytime the discover page is left
-          if (isFocused) {
-            const position = Math.round(nativeEvent.contentOffset.y / height);
-            setCurrentPosition(position);
-          }
+        // initialNumToRender={10}
+        // onMomentumScrollEnd={({ nativeEvent }) => {
+        //   if (isFocused) {
+        //     const position = Math.round(nativeEvent.contentOffset.y / height);
+        //     setCurrentPosition(position);
+        //   }
+        // }}
+        // onMomentumScrollBegin={(responderEvent) => {
+        //   console.log(responderEvent.nativeEvent.layoutMeasurement);
+        //   responderEvent.currentTarget.measure((number) => console.log(number));
+        //   console.log(responderEvent.nativeEvent.contentOffset.y);
+        //   const position = Math.round(
+        //     responderEvent.nativeEvent.contentOffset.y / height
+        //   );
+        //   console.log(position);
+        // }}
+        onScroll={({ nativeEvent }) => {
+          const position = Math.round(nativeEvent.contentOffset.y / height);
+          setCurrentPosition(position);
         }}
       />
     </View>

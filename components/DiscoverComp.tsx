@@ -46,7 +46,7 @@ function DiscoverComp({
   useEffect(() => {
     const handlePositionChange = async () => {
       if (currentPosition === selfPosition) {
-        console.log(selfPosition);
+        // console.log(selfPosition);
         await play();
       } else {
         await stop();
