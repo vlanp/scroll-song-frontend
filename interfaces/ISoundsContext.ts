@@ -5,6 +5,7 @@ interface ISoundsContext {
   isLoading: boolean;
   error: unknown;
   data: IDiscoverSound[];
+  setData: Dispatch<SetStateAction<IDiscoverSound[]>>;
 }
 
 export default ISoundsContext;

@@ -45,7 +45,7 @@ const useData = <T, K = T>(
     return () => controller.abort();
   }, [onReceivedData, authToken, url]);
 
-  return { error, isLoading, data };
+  return { error, isLoading, data, setData };
 };
 
 export default useData;

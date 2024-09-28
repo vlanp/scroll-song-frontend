@@ -3,6 +3,7 @@ import { NetworkProvider } from "../contexts/NetworkContext";
 import { SoundsProvider } from "../contexts/SoundsContext";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const RootLayout = () => {
   let [fontsLoaded] = useFonts({
@@ -26,11 +27,13 @@ const RootLayout = () => {
   }
 
   return (
-    <NetworkProvider>
-      <SoundsProvider>
-        <Tabs />
-      </SoundsProvider>
-    </NetworkProvider>
+    <GestureHandlerRootView>
+      <NetworkProvider>
+        <SoundsProvider>
+          <Tabs />
+        </SoundsProvider>
+      </NetworkProvider>
+    </GestureHandlerRootView>
   );
 };
 

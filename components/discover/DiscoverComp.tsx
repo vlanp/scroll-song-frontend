@@ -6,6 +6,7 @@ import {
   View,
   Image,
   Pressable,
+  useWindowDimensions,
 } from "react-native";
 import ProgressTrackBar from "../ProgressTrackBar";
 import usePlayer from "../../hooks/usePlayer";
@@ -24,13 +25,20 @@ import musicNote from "../../assets/images/music-note.png";
 import likeIcon from "../../assets/images/discoverIcons/like-icon.png";
 import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";
 import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import { SharedValue, withTiming } from "react-native-reanimated";
+import likeSound from "@/utils/discover/likeSound";
+import { SoundsContext } from "@/contexts/SoundsContext";
 
 function DiscoverComp({
   sound,
   selfPosition,
+  swipePosition,
+  onSide,
 }: {
   sound: IDiscoverSound;
   selfPosition: number;
+  swipePosition: SharedValue<number>;
+  onSide: SharedValue<boolean>;
 }) {
   const { playingState, playingProgressSec, play, stop, changePositionSec } =
     usePlayer({
@@ -46,6 +54,14 @@ function DiscoverComp({
   const setIsMainScrollEnable = useDiscoverStore(
     (state) => state.setIsMainScrollEnable
   );
+  const likedTitleToDisplay = useDiscoverStore(
+    (state) => state.likedTitleToDisplay
+  );
+  const dislikedTitleToDisplay = useDiscoverStore(
+    (state) => state.dislikedTitleToDisplay
+  );
+  const { width } = useWindowDimensions();
+  const { data: sounds, setData: setSounds } = useContext(SoundsContext);
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
     stop(true);
@@ -54,13 +70,18 @@ function DiscoverComp({
         (e.nativeEvent.locationX / 200)
     );
   };
+  const setLikedTitleToDisplay = useDiscoverStore(
+    (state) => state.setLikedTitleToDisplay
+  );
 
   useEffect(() => {
     const handlePositionChange = async () => {
       if (
         positionState.currentPosition === selfPosition &&
         isFocused &&
-        !positionState.isScrolling
+        !positionState.isScrolling &&
+        likedTitleToDisplay?.id !== sound.id &&
+        dislikedTitleToDisplay?.id !== sound.id
       ) {
         await play();
       } else {
@@ -76,6 +97,9 @@ function DiscoverComp({
     isFocused,
     positionState.currentPosition,
     positionState.isScrolling,
+    likedTitleToDisplay?.id,
+    sound.id,
+    dislikedTitleToDisplay?.id,
   ]);
 
   return (
@@ -152,18 +176,17 @@ function DiscoverComp({
                 <Image source={dislikeIcon} style={styles.chooseIcon} />
               </Pressable>
               <Pressable
-              // onPress={() => {
-              //   swipePosition.value = withTiming(width, { duration: 100 });
-              //   onSide.value = false;
-              //   likeSong(
-              //     sounds,
-              //     setSounds,
-              //     scrollIndex,
-              //     setLikedTitleToDisplay,
-              //     authToken,
-              //     updateNumber
-              //   );
-              // }}
+                onPress={() => {
+                  swipePosition.value = withTiming(width, { duration: 100 });
+                  onSide.value = false;
+                  likeSound(
+                    sounds,
+                    setSounds,
+                    positionState.currentPosition,
+                    "5a6251db-8f7e-4101-9577-3f5accfade3c",
+                    setLikedTitleToDisplay
+                  );
+                }}
               >
                 <Image source={likeIcon} style={styles.chooseIcon} />
               </Pressable>

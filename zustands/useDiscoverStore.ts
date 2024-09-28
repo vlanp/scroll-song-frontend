@@ -11,14 +11,6 @@ interface IPositionAction {
   setPositionState: (currentPosition?: number, isScrolling?: boolean) => void;
 }
 
-interface IScrollState {
-  isMainScrollEnable: boolean;
-}
-
-interface IScrollAction {
-  setIsMainScrollEnable: (isMainScrollEnable: boolean) => void;
-}
-
 const setPositionState = (
   positionState: IPositionState["positionState"],
   currentPosition?: number,
@@ -35,8 +27,41 @@ const setPositionState = (
   };
 };
 
+interface IScrollState {
+  isMainScrollEnable: boolean;
+}
+
+interface IScrollAction {
+  setIsMainScrollEnable: (isMainScrollEnable: boolean) => void;
+}
+
+interface IDisplayTitleState {
+  likedTitleToDisplay: {
+    title: string;
+    id: string;
+  } | null;
+  dislikedTitleToDisplay: {
+    title: string;
+    id: string;
+  } | null;
+}
+
+interface IDisplayTitleAction {
+  setLikedTitleToDisplay: (
+    likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
+  ) => void;
+  setDislikedTitleToDisplay: (
+    dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
+  ) => void;
+}
+
 export const useDiscoverStore = create<
-  IPositionState & IPositionAction & IScrollState & IScrollAction
+  IPositionState &
+    IPositionAction &
+    IScrollState &
+    IScrollAction &
+    IDisplayTitleState &
+    IDisplayTitleAction
 >()((set) => ({
   positionState: {
     currentPosition: 0,
@@ -49,4 +74,12 @@ export const useDiscoverStore = create<
   isMainScrollEnable: true,
   setIsMainScrollEnable: (isMainScrollEnable: boolean) =>
     set(() => ({ isMainScrollEnable: isMainScrollEnable })),
+  likedTitleToDisplay: null,
+  setLikedTitleToDisplay: (
+    likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
+  ) => set(() => ({ likedTitleToDisplay: likedTitleToDisplay })),
+  dislikedTitleToDisplay: null,
+  setDislikedTitleToDisplay: (
+    dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
+  ) => set(() => ({ dislikedTitleToDisplay: dislikedTitleToDisplay })),
 }));

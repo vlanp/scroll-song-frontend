@@ -1,19 +1,30 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useContext, useRef, useState } from "react";
 import { SoundsContext } from "../contexts/SoundsContext";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/discover/DiscoverComp";
 import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import SwipeModals from "@/components/discover/SwipeModals";
+import { useSharedValue } from "react-native-reanimated";
 
 function Index() {
   const { data, error, isLoading } = useContext(SoundsContext);
   const [height, setHeight] = useState<number>(0);
-  const styles = getStyles(height);
+  const { width: _width, height: _height } = useWindowDimensions();
+  const styles = getStyles(_height, _width, height);
   const setPositionState = useDiscoverStore((state) => state.setPositionState);
   const isMainScrollEnable = useDiscoverStore(
     (state) => state.isMainScrollEnable
   );
   const endScrollingTimeout = useRef<NodeJS.Timeout>(null);
+  const swipePosition = useSharedValue(0);
+  const onSide = useSharedValue(true);
 
   if (isLoading) {
     return <LottieLoading />;
@@ -40,18 +51,27 @@ function Index() {
         scrollEnabled={isMainScrollEnable}
         renderItem={({ item, index }) => (
           <View style={styles.scrollPageView}>
-            <DiscoverComp sound={item} selfPosition={index} />
+            <SwipeModals
+              style={styles.pressableContainer}
+              swipePosition={swipePosition}
+              onSide={onSide}
+            >
+              <DiscoverComp
+                sound={item}
+                selfPosition={index}
+                onSide={onSide}
+                swipePosition={swipePosition}
+              />
+            </SwipeModals>
           </View>
         )}
         keyExtractor={(item) => item.id}
         pagingEnabled={true}
         onScrollBeginDrag={() => {
-          console.log("begin");
           clearTimeout(endScrollingTimeout.current);
           setPositionState(undefined, true);
         }}
         onMomentumScrollEnd={() => {
-          console.log("end");
           endScrollingTimeout.current = setTimeout(
             () => setPositionState(undefined, false),
             100
@@ -66,13 +86,21 @@ function Index() {
   );
 }
 
-const getStyles = (height: number) => {
+const getStyles = (_height: number, _width: number, height: number) => {
   const styles = StyleSheet.create({
     mainView: {
       flex: 1,
     },
     scrollPageView: {
       height: height,
+    },
+    pressableContainer: {
+      borderRadius: 40,
+      width: _width - 80,
+      marginHorizontal: 40,
+      marginVertical: 0.15 * (_height - 200),
+      height: 0.7 * (_height - 200),
+      alignItems: "center",
     },
   });
 

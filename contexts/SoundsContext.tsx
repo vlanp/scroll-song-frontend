@@ -6,7 +6,7 @@ export const SoundsContext = createContext<ISoundsContext>(null);
 
 //TODO Replace fixed auth token by a variable
 export const SoundsProvider = ({ children }: { children: ReactNode }) => {
-  const { data, error, isLoading } = useSounds();
+  const { data, error, isLoading, setData } = useSounds();
 
   return (
     <SoundsContext.Provider
@@ -14,6 +14,7 @@ export const SoundsProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         error,
         data,
+        setData,
       }}
     >
       {children}
