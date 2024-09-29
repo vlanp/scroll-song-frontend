@@ -12,8 +12,10 @@ import DiscoverComp from "../components/discover/DiscoverComp";
 import { useDiscoverStore } from "@/zustands/useDiscoverStore";
 import SwipeModals from "@/components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
+import useCountRender from "@/hooks/useCountRender";
 
 function Index() {
+  useCountRender();
   const { data, error, isLoading } = useContext(SoundsContext);
   const [height, setHeight] = useState<number>(0);
   const { width: _width, height: _height } = useWindowDimensions();
@@ -49,6 +51,7 @@ function Index() {
       <FlatList
         data={data}
         scrollEnabled={isMainScrollEnable}
+        initialNumToRender={3}
         renderItem={({ item, index }) => (
           <View style={styles.scrollPageView}>
             <SwipeModals
