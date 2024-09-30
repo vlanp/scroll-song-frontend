@@ -1,3 +1,4 @@
+import "../wdyr";
 import {
   FlatList,
   StyleSheet,
@@ -88,6 +89,8 @@ function Index() {
     </View>
   );
 }
+
+Index.whyDidYouRender = true;
 
 const getStyles = (_height: number, _width: number, height: number) => {
   const styles = StyleSheet.create({

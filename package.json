@@ -48,6 +48,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/jsmediatags": "^3.9.6",
+    "@welldone-software/why-did-you-render": "^8.0.3",
     "eslint-config-expo": "^7.1.2"
   },
   "private": true
