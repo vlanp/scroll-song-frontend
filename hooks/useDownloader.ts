@@ -1,6 +1,6 @@
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 import { useDiscoverStore } from "../zustands/useDiscoverStore";
@@ -34,42 +34,46 @@ const useDownloader = (
       return;
     }
 
+    const callback = (currentPosition: number) => {
+      const dataLastIndex = data.length - 1;
+
+      const limit =
+        currentPosition + numberToDownload <= dataLastIndex
+          ? currentPosition + numberToDownload
+          : dataLastIndex;
+
+      if ((lastDownload.current || 0) >= limit) {
+        return;
+      }
+
+      // console.log("last download: ", lastDownload);
+
+      for (let i = lastDownload.current || 0; i <= limit; i++) {
+        const sound = data[i];
+
+        const excerptUri = getExcerptUri(
+          sound.url,
+          sound.start_time_excerpt_ms / 1000,
+          sound.end_time_excerpt_ms / 1000
+        );
+        download(
+          sound.id,
+          excerptUri,
+          setExcerptDownloadState.current,
+          setIsStorageError.current,
+          directory
+        );
+      }
+
+      lastDownload.current = limit;
+    };
+
     const unsubscribe = useDiscoverStore.subscribe(
       (state) => state.positionState.currentPosition,
-      (currentPosition) => {
-        const dataLastIndex = data.length - 1;
-
-        const limit =
-          currentPosition + numberToDownload <= dataLastIndex
-            ? currentPosition + numberToDownload
-            : dataLastIndex;
-
-        if ((lastDownload.current || 0) >= limit) {
-          return;
-        }
-
-        // console.log("last download: ", lastDownload);
-
-        for (let i = lastDownload.current || 0; i <= limit; i++) {
-          const sound = data[i];
-
-          const excerptUri = getExcerptUri(
-            sound.url,
-            sound.start_time_excerpt_ms / 1000,
-            sound.end_time_excerpt_ms / 1000
-          );
-          download(
-            sound.id,
-            excerptUri,
-            setExcerptDownloadState.current,
-            setIsStorageError.current,
-            directory
-          );
-        }
-
-        lastDownload.current = limit;
-      }
+      callback
     );
+
+    callback(useDiscoverStore.getState().positionState.currentPosition);
 
     return () => {
       unsubscribe();
