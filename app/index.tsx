@@ -90,7 +90,7 @@ function Index() {
   );
 }
 
-Index.whyDidYouRender = true;
+Index.whyDidYouRender = { logOnDifferentValues: true };
 
 const getStyles = (_height: number, _width: number, height: number) => {
   const styles = StyleSheet.create({

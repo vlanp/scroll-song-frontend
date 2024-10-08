@@ -70,10 +70,9 @@ const useDownloader = (
 
     const unsubscribe = useDiscoverStore.subscribe(
       (state) => state.positionState.currentPosition,
-      callback
+      callback,
+      { fireImmediately: true }
     );
-
-    callback(useDiscoverStore.getState().positionState.currentPosition);
 
     return () => {
       unsubscribe();
