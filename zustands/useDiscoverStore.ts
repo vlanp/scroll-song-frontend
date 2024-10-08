@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { subscribeWithSelector } from "zustand/middleware";
 
 interface IPositionState {
   positionState: {
@@ -62,24 +63,26 @@ export const useDiscoverStore = create<
     IScrollAction &
     IDisplayTitleState &
     IDisplayTitleAction
->()((set) => ({
-  positionState: {
-    currentPosition: 0,
-    isScrolling: false,
-  },
-  setPositionState: (currentPosition?: number, isScrolling?: boolean) =>
-    set((state) =>
-      setPositionState(state.positionState, currentPosition, isScrolling)
-    ),
-  isMainScrollEnable: true,
-  setIsMainScrollEnable: (isMainScrollEnable: boolean) =>
-    set(() => ({ isMainScrollEnable: isMainScrollEnable })),
-  likedTitleToDisplay: null,
-  setLikedTitleToDisplay: (
-    likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
-  ) => set(() => ({ likedTitleToDisplay: likedTitleToDisplay })),
-  dislikedTitleToDisplay: null,
-  setDislikedTitleToDisplay: (
-    dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
-  ) => set(() => ({ dislikedTitleToDisplay: dislikedTitleToDisplay })),
-}));
+>()(
+  subscribeWithSelector((set) => ({
+    positionState: {
+      currentPosition: 0,
+      isScrolling: false,
+    },
+    setPositionState: (currentPosition?: number, isScrolling?: boolean) =>
+      set((state) =>
+        setPositionState(state.positionState, currentPosition, isScrolling)
+      ),
+    isMainScrollEnable: true,
+    setIsMainScrollEnable: (isMainScrollEnable: boolean) =>
+      set(() => ({ isMainScrollEnable: isMainScrollEnable })),
+    likedTitleToDisplay: null,
+    setLikedTitleToDisplay: (
+      likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
+    ) => set(() => ({ likedTitleToDisplay: likedTitleToDisplay })),
+    dislikedTitleToDisplay: null,
+    setDislikedTitleToDisplay: (
+      dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
+    ) => set(() => ({ dislikedTitleToDisplay: dislikedTitleToDisplay })),
+  }))
+);

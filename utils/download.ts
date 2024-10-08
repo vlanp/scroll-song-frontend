@@ -1,6 +1,6 @@
+import { IExcerptDownloadState } from "@/zustands/useDownloadStore";
 import * as FileSystem from "expo-file-system";
 import { DownloadProgressData } from "expo-file-system";
-import { ISetExcerptDownloadState } from "../zustands/useDownloadStore";
 
 export const createDirectory = async (
   directory: string,
@@ -44,13 +44,16 @@ const _createDownloadResumable = (
   soundId: string,
   url: string,
   directory: string,
-  setExcerptDownloadState: ISetExcerptDownloadState
+  setExcerptDownloadState: (
+    soundId: string,
+    updates: Partial<IExcerptDownloadState>
+  ) => void
 ) => {
   const callback = (downloadProgress: DownloadProgressData) => {
     const progress =
       downloadProgress.totalBytesWritten /
       downloadProgress.totalBytesExpectedToWrite;
-    setExcerptDownloadState(soundId, progress);
+    setExcerptDownloadState(soundId, { relativeProgress: progress });
   };
 
   const downloadResumable = FileSystem.createDownloadResumable(
@@ -69,7 +72,10 @@ const _createDownloadResumable = (
 export const download = async (
   soundId: string,
   soundUri: string,
-  setExcerptDownloadState: ISetExcerptDownloadState,
+  setExcerptDownloadState: (
+    soundId: string,
+    updates?: Partial<IExcerptDownloadState>
+  ) => void,
   setIsStorageError: (bool: boolean) => void,
   directory?: string
 ) => {
@@ -77,10 +83,15 @@ export const download = async (
     createDirectory(directory, setIsStorageError);
 
     if (await _isFileExisting(soundId, directory)) {
-      return setExcerptDownloadState(soundId, 1, false, true, false);
+      return setExcerptDownloadState(soundId, {
+        isLoaded: true,
+        relativeProgress: 1,
+      });
     }
 
-    setExcerptDownloadState(soundId, undefined, true);
+    setExcerptDownloadState(soundId, {
+      isLoading: true,
+    });
 
     const downloadResumable = _createDownloadResumable(
       soundId,
@@ -91,11 +102,11 @@ export const download = async (
 
     const { uri } = await downloadResumable.downloadAsync();
 
-    setExcerptDownloadState(soundId, undefined, false, true);
+    setExcerptDownloadState(soundId, { isLoaded: true, isLoading: false });
 
     console.log("Finished downloading to ", uri);
   } catch (e) {
-    setExcerptDownloadState(soundId, undefined, undefined, undefined, true);
+    setExcerptDownloadState(soundId, { isError: true });
     console.error(e);
   }
 };

@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import IExcerptDownloadState from "../interfaces/IExcerptDownload";
+
+export interface IExcerptDownloadState {
+  isLoading: boolean;
+  isLoaded: boolean;
+  isError: boolean;
+  relativeProgress: number;
+}
 
 interface IExcerptsDownloadState {
   excerptsDownloadState: {
@@ -10,10 +16,7 @@ interface IExcerptsDownloadState {
 interface IExcerptDownloadAction {
   setExcerptDownloadState: (
     soundId: string,
-    progress?: number,
-    isLoading?: boolean,
-    isLoaded?: boolean,
-    isError?: boolean
+    updates?: Partial<IExcerptDownloadState>
   ) => void;
 }
 
@@ -28,10 +31,7 @@ interface IStorageAction {
 const setExcerptDownloadState = (
   soundId: string,
   excerptsDownloadState: IExcerptsDownloadState["excerptsDownloadState"],
-  progress?: number,
-  isLoading?: boolean,
-  isLoaded?: boolean,
-  isError?: boolean
+  updates?: Partial<IExcerptDownloadState>
 ) => {
   const existingDownload = excerptsDownloadState[soundId] || {
     isLoading: false,
@@ -44,11 +44,8 @@ const setExcerptDownloadState = (
     excerptsDownloadState: {
       ...excerptsDownloadState,
       [soundId]: {
-        relativeProgress:
-          progress !== undefined ? progress : existingDownload.relativeProgress,
-        isLoading: isLoading ?? existingDownload.isLoading,
-        isLoaded: isLoaded ?? existingDownload.isLoaded,
-        isError: isError ?? existingDownload.isError,
+        ...existingDownload,
+        ...updates,
       },
     },
   };
@@ -63,20 +60,10 @@ export const useDownloadStore = create<
   excerptsDownloadState: {},
   setExcerptDownloadState: (
     soundId: string,
-    progress?: number,
-    isLoading?: boolean,
-    isLoaded?: boolean,
-    isError?: boolean
+    updates?: Partial<IExcerptDownloadState>
   ) =>
     set((state) =>
-      setExcerptDownloadState(
-        soundId,
-        state.excerptsDownloadState,
-        progress,
-        isLoading,
-        isLoaded,
-        isError
-      )
+      setExcerptDownloadState(soundId, state.excerptsDownloadState, updates)
     ),
   isStorageError: false,
   setIsStorageError: (bool: boolean) => set(() => ({ isStorageError: bool })),

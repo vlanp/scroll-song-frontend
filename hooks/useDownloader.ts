@@ -1,6 +1,6 @@
 import IDiscoverSound from "../interfaces/IDiscoverSound";
 import { useDownloadStore } from "../zustands/useDownloadStore";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 import { useDiscoverStore } from "../zustands/useDiscoverStore";
@@ -13,61 +13,68 @@ const useDownloader = (
   data: IDiscoverSound[],
   directory?: string
 ) => {
-  const currentPosition = useDiscoverStore(
-    (state) => state.positionState.currentPosition
+  const setExcerptDownloadState = useRef(
+    useDownloadStore.getState().setExcerptDownloadState
+  );
+  const setIsStorageError = useRef(
+    useDownloadStore.getState().setIsStorageError
   );
   const lastDownload = useRef<number>(null);
-  const setExcerptDownloadState = useDownloadStore(
-    (state) => state.setExcerptDownloadState
-  );
-  const setIsStorageError = useDownloadStore(
-    (state) => state.setIsStorageError
-  );
-  const [isDownloadStoreInit, setIsDownloadStoreInit] =
-    useState<boolean>(false);
+  const isInit = useRef<boolean>(false);
 
-  if (isLoading || error || !data) {
-    return;
-  }
-
-  if (!isDownloadStoreInit) {
+  if (!isLoading && !error && data && !isInit.current) {
     data.forEach((sound) => {
-      setExcerptDownloadState(sound.id);
+      setExcerptDownloadState.current(sound.id);
     });
-    setIsDownloadStoreInit(true);
+    isInit.current = true;
   }
 
-  const dataLastIndex = data.length - 1;
+  useEffect(() => {
+    if (!isInit.current) {
+      return;
+    }
 
-  const limit =
-    currentPosition + numberToDownload <= dataLastIndex
-      ? currentPosition + numberToDownload
-      : dataLastIndex;
+    const unsubscribe = useDiscoverStore.subscribe(
+      (state) => state.positionState.currentPosition,
+      (currentPosition) => {
+        const dataLastIndex = data.length - 1;
 
-  if ((lastDownload.current || 0) >= limit) {
-    return;
-  }
+        const limit =
+          currentPosition + numberToDownload <= dataLastIndex
+            ? currentPosition + numberToDownload
+            : dataLastIndex;
 
-  // console.log("last download: ", lastDownload);
+        if ((lastDownload.current || 0) >= limit) {
+          return;
+        }
 
-  for (let i = lastDownload.current || 0; i <= limit; i++) {
-    const sound = data[i];
+        // console.log("last download: ", lastDownload);
 
-    const excerptUri = getExcerptUri(
-      sound.url,
-      sound.start_time_excerpt_ms / 1000,
-      sound.end_time_excerpt_ms / 1000
+        for (let i = lastDownload.current || 0; i <= limit; i++) {
+          const sound = data[i];
+
+          const excerptUri = getExcerptUri(
+            sound.url,
+            sound.start_time_excerpt_ms / 1000,
+            sound.end_time_excerpt_ms / 1000
+          );
+          download(
+            sound.id,
+            excerptUri,
+            setExcerptDownloadState.current,
+            setIsStorageError.current,
+            directory
+          );
+        }
+
+        lastDownload.current = limit;
+      }
     );
-    download(
-      sound.id,
-      excerptUri,
-      setExcerptDownloadState,
-      setIsStorageError,
-      directory
-    );
-  }
 
-  lastDownload.current = limit;
+    return () => {
+      unsubscribe();
+    };
+  }, [data, directory, error, isLoading]);
 };
 
 export default useDownloader;
