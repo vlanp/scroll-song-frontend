@@ -22,7 +22,7 @@ const useSounds = () => {
     initExpoAv();
   }, []);
 
-  const { isLoading, error, data, setData } = useData<IDiscoverSound[]>(
+  const { isLoading, error, data, setDataState } = useData<IDiscoverSound[]>(
     process.env.EXPO_PUBLIC_API_URL + songsEndpoint,
     "5a6251db-8f7e-4101-9577-3f5accfade3c",
     handleReceivedData
@@ -30,7 +30,7 @@ const useSounds = () => {
 
   useDownloader(isLoading, error, data, excerptDirectory);
 
-  return { isLoading, error, data, setData };
+  return { isLoading, error, data, setDataState };
 };
 
 export default useSounds;

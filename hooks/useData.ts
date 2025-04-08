@@ -1,20 +1,30 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+interface IDataState<H> {
+  error: unknown;
+  isLoading: boolean;
+  data: H;
+}
+
 const useData = <T, K = T>(
   url: string,
   authToken?: string,
   onReceivedData?: (data: T) => K
 ) => {
-  const [error, setError] = useState<unknown>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [data, setData] = useState<T | K | null>(null);
+  const [dataState, setDataState] = useState<IDataState<T | K | null>>({
+    error: null,
+    isLoading: true,
+    data: null,
+  });
 
   useEffect(() => {
     console.log("Calling useData useEffect");
-    setIsLoading(true);
-    setError(null);
-    setData(null);
+    setDataState({
+      error: null,
+      isLoading: true,
+      data: null,
+    });
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -30,22 +40,28 @@ const useData = <T, K = T>(
           const data = onReceivedData
             ? onReceivedData(response.data)
             : response.data;
-          setData(data);
-          setIsLoading(false);
+          setDataState((ds) => ({
+            ...ds,
+            isLoading: false,
+            data,
+          }));
         }
       })
       .catch((error) => {
         if (!axios.isCancel(error)) {
           console.log(error);
-          setError(error);
-          setIsLoading(false);
+          setDataState((ds) => ({
+            ...ds,
+            error,
+            isLoading: false,
+          }));
         }
       });
 
     return () => controller.abort();
   }, [onReceivedData, authToken, url]);
 
-  return { error, isLoading, data, setData };
+  return { ...dataState, setDataState };
 };
 
 export default useData;
