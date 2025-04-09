@@ -2,7 +2,7 @@ import IDiscoverSound from "../interfaces/IDiscoverSound";
 import useDownloadStore, {
   excerptDownloadIdle,
 } from "../zustands/useDownloadStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 import { useDiscoverStore } from "../zustands/useDiscoverStore";
@@ -19,6 +19,7 @@ const useDownloader = (
   const setExcerptDownloadState = useRef(
     useDownloadStore.getState().setExcerptDownloadState
   );
+
   const setIsStorageError = useRef(useStorageStore.getState().setStorageState);
   const lastDownload = useRef<number>(null);
   const isInit = useRef<boolean>(false);
@@ -78,7 +79,7 @@ const useDownloader = (
     return () => {
       unsubscribe();
     };
-  }, [discoverSoundsState, directory, error, isLoading]);
+  }, [discoverSoundsState, directory]);
 };
 
 export default useDownloader;
