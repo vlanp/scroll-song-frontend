@@ -2,7 +2,7 @@ import IDiscoverSound from "../interfaces/IDiscoverSound";
 import useDownloadStore, {
   excerptDownloadIdle,
 } from "../zustands/useDownloadStore";
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 import { useDiscoverStore } from "../zustands/useDiscoverStore";
@@ -21,28 +21,26 @@ const useDownloader = (
   );
 
   const setIsStorageError = useRef(useStorageStore.getState().setStorageState);
-  const lastDownload = useRef<number>(null);
-  const isInit = useRef<boolean>(false);
+  const lastDownload = useRef<number | null>(null);
 
-  if (discoverSoundsState.status === "fetchDataSuccess" && !isInit.current) {
+  if (discoverSoundsState.status === "fetchDataSuccess") {
     discoverSoundsState.data.forEach((sound) => {
       setExcerptDownloadState.current(sound.id, excerptDownloadIdle);
     });
-    isInit.current = true;
   }
 
   useEffect(() => {
-    if (!isInit.current) {
+    if (discoverSoundsState.status !== "fetchDataSuccess") {
       return;
     }
 
     const callback = (currentPosition: number) => {
-      const dataLastIndex = discoverSoundsState.length - 1;
+      const discoverSoundsLastIndex = discoverSoundsState.data.length - 1;
 
       const limit =
-        currentPosition + numberToDownload <= dataLastIndex
+        currentPosition + numberToDownload <= discoverSoundsLastIndex
           ? currentPosition + numberToDownload
-          : dataLastIndex;
+          : discoverSoundsLastIndex;
 
       if ((lastDownload.current || 0) >= limit) {
         return;
