@@ -2,28 +2,32 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import { AppState, NativeModules, Platform } from "react-native";
 import NetInfo, { NetInfoState } from "@react-native-community/netinfo";
 import {
-  INetwork,
+  INetworkState,
   networkError,
   networkIdle,
   networkLoading,
   networkSuccess,
-} from "@/interfaces/INetworkContext";
+} from "@/interfaces/INetworkState";
 
-export const NetworkContext = createContext<INetwork>(networkIdle);
+export const NetworkContext = createContext<INetworkState>(networkIdle);
 
-export const NetworkProvider = ({ children }: { children: ReactNode }) => {
-  const [network, setNetwork] = useState<INetwork>(networkIdle);
+export const NetworkProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element => {
+  const [networkState, setNetworkState] = useState<INetworkState>(networkIdle);
 
   useEffect(() => {
-    setNetwork(networkLoading);
+    setNetworkState(networkLoading);
     const handleNetInfo = (netInfo: NetInfoState) => {
       if (
         netInfo.isConnected === false ||
         netInfo.isInternetReachable === false
       ) {
-        setNetwork(networkError);
+        setNetworkState(networkError);
       } else {
-        setNetwork(networkSuccess);
+        setNetworkState(networkSuccess);
       }
     };
 
@@ -50,7 +54,7 @@ export const NetworkProvider = ({ children }: { children: ReactNode }) => {
   });
 
   return (
-    <NetworkContext.Provider value={network}>
+    <NetworkContext.Provider value={networkState}>
       {children}
     </NetworkContext.Provider>
   );

@@ -1,70 +1,88 @@
+import Immutable from "@/interfaces/Immutable";
 import { create } from "zustand";
 
-export interface IExcerptDownloadState {
-  isLoading: boolean;
-  isLoaded: boolean;
-  isError: boolean;
+type IExcerptDownloadState =
+  | IExcerptDownloadIdle
+  | IExcerptDownloadLoading
+  | IExcerptDownloadError
+  | Immutable<ExcerptDownloadSuccess>;
+
+interface IExcerptDownloadIdle {
+  status: "excerptDownloadIdle";
+}
+const excerptDownloadIdle: IExcerptDownloadIdle = {
+  status: "excerptDownloadIdle",
+};
+interface IExcerptDownloadLoading {
+  status: "excerptDownloadLoading";
+}
+const excerptDownloadLoading: IExcerptDownloadLoading = {
+  status: "excerptDownloadLoading",
+};
+interface IExcerptDownloadError {
+  status: "excerptDownloadError";
+}
+const excerptDownloadError: IExcerptDownloadError = {
+  status: "excerptDownloadError",
+};
+class ExcerptDownloadSuccess {
+  status = "excerptDownloadSuccess";
   relativeProgress: number;
+  constructor(relativeProgress: number) {
+    this.relativeProgress = relativeProgress;
+  }
 }
 
+type soundId = string;
+
 interface IExcerptsDownloadState {
-  excerptsDownloadState: {
-    [soundId: string]: IExcerptDownloadState;
-  };
+  excerptsDownloadState: Record<soundId, Immutable<IExcerptDownloadState>>;
 }
 
 interface IExcerptDownloadAction {
   setExcerptDownloadState: (
     soundId: string,
-    updates?: Partial<IExcerptDownloadState>
+    excerptDownloadState: Immutable<IExcerptDownloadState>
   ) => void;
-}
-
-interface IStorageState {
-  isStorageError: boolean;
-}
-
-interface IStorageAction {
-  setIsStorageError: (bool: boolean) => void;
 }
 
 const setExcerptDownloadState = (
   soundId: string,
   excerptsDownloadState: IExcerptsDownloadState["excerptsDownloadState"],
-  updates?: Partial<IExcerptDownloadState>
-) => {
-  const existingDownload = excerptsDownloadState[soundId] || {
-    isLoading: false,
-    isLoaded: false,
-    isError: false,
-    relativeProgress: 0,
-  };
-
+  excerptDownloadState: Immutable<IExcerptDownloadState>
+): IExcerptsDownloadState => {
   return {
     excerptsDownloadState: {
       ...excerptsDownloadState,
-      [soundId]: {
-        ...existingDownload,
-        ...updates,
-      },
+      [soundId]: excerptDownloadState,
     },
   };
 };
 
-export const useDownloadStore = create<
-  IExcerptsDownloadState &
-    IExcerptDownloadAction &
-    IStorageState &
-    IStorageAction
+const useDownloadStore = create<
+  IExcerptsDownloadState & IExcerptDownloadAction
 >()((set) => ({
   excerptsDownloadState: {},
   setExcerptDownloadState: (
     soundId: string,
-    updates?: Partial<IExcerptDownloadState>
+    excerptDownloadState: Immutable<IExcerptDownloadState>
   ) =>
     set((state) =>
-      setExcerptDownloadState(soundId, state.excerptsDownloadState, updates)
+      setExcerptDownloadState(
+        soundId,
+        state.excerptsDownloadState,
+        excerptDownloadState
+      )
     ),
-  isStorageError: false,
-  setIsStorageError: (bool: boolean) => set(() => ({ isStorageError: bool })),
 }));
+
+export default useDownloadStore;
+export type {
+  IExcerptDownloadState,
+  IExcerptDownloadIdle,
+  IExcerptDownloadLoading,
+  IExcerptDownloadError,
+  ExcerptDownloadSuccess,
+  soundId,
+};
+export { excerptDownloadIdle, excerptDownloadLoading, excerptDownloadError };

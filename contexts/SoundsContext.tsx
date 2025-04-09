@@ -1,8 +1,8 @@
 import { createContext, ReactNode } from "react";
-import ISoundsContext from "../interfaces/ISoundsContext";
+import { ISoundsState } from "../interfaces/ISoundsState";
 import useSounds from "../hooks/useSounds";
 
-export const SoundsContext = createContext<ISoundsContext>(null);
+export const SoundsContext = createContext<ISoundsState>(null);
 
 //TODO Replace fixed auth token by a variable
 export const SoundsProvider = ({ children }: { children: ReactNode }) => {

@@ -1,4 +1,4 @@
-type INetwork =
+type INetworkState =
   | INetworkIdle
   | INetworkLoading
   | INetworkError
@@ -39,7 +39,7 @@ const networkSuccess: INetworkSuccess = {
 };
 
 export type {
-  INetwork,
+  INetworkState,
   INetworkError,
   INetworkLoading,
   INetworkSuccess,

@@ -1,14 +1,14 @@
 import { useEffect } from "react";
-import useData from "../hooks/useData";
-import IDiscoverSound from "../interfaces/IDiscoverSound";
+import useFetchData from "../hooks/useData";
 import handleReceivedData from "../utils/discover/handleReceivedData";
 import useDownloader from "./useDownloader";
 import { Audio } from "expo-av";
+import { ISoundsState } from "@/interfaces/ISoundsState";
 
 const songsEndpoint = "/discover";
 const excerptDirectory = "excerpt";
 
-const useSounds = () => {
+const useSounds = (): ISoundsState => {
   useEffect(() => {
     const initExpoAv = async () => {
       try {
@@ -22,13 +22,13 @@ const useSounds = () => {
     initExpoAv();
   }, []);
 
-  const { isLoading, error, data, setDataState } = useData<IDiscoverSound[]>(
+  const discoverSoundsState = useFetchData(
     process.env.EXPO_PUBLIC_API_URL + songsEndpoint,
     "5a6251db-8f7e-4101-9577-3f5accfade3c",
     handleReceivedData
   );
 
-  useDownloader(isLoading, error, data, excerptDirectory);
+  useDownloader(discoverSoundsState, excerptDirectory);
 
   return { isLoading, error, data, setDataState };
 };

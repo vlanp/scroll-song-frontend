@@ -1,7 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
 import IDiscoverSound from "./IDiscoverSound";
 
-type ISounds = ISoundsIdle | ISoundsLoading | ISoundsError | ISoundsSuccess;
+type ISoundsState = ISoundsIdle | ISoundsLoading | ISoundsError | SoundsSuccess;
 
 interface ISoundsIdle {
   status: "soundsIdle";
@@ -21,25 +20,26 @@ const soundsLoading: ISoundsLoading = {
 
 interface ISoundsError {
   status: "soundsError";
-  error: string | null;
 }
 
 const soundsError: ISoundsError = {
   status: "soundsError",
-  error: null,
 };
 
-interface ISoundsSuccess {
-  status: "soundsSuccess";
+class SoundsSuccess {
+  status = "soundsSuccess";
   sounds: IDiscoverSound[];
-  setSounds: Dispatch<SetStateAction<IDiscoverSound[]>>;
+
+  constructor(sounds: IDiscoverSound[]) {
+    this.sounds = sounds;
+  }
 }
 
 export type {
-  ISounds,
+  ISoundsState,
   ISoundsError,
   ISoundsLoading,
-  ISoundsSuccess,
+  SoundsSuccess,
   ISoundsIdle,
 };
 

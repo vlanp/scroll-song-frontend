@@ -1,30 +1,31 @@
 import IDiscoverSound from "../interfaces/IDiscoverSound";
-import { useDownloadStore } from "../zustands/useDownloadStore";
+import useDownloadStore, {
+  excerptDownloadIdle,
+} from "../zustands/useDownloadStore";
 import { useEffect, useRef } from "react";
 import { download } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 import { useDiscoverStore } from "../zustands/useDiscoverStore";
+import { IFetchDataState } from "./useData";
+import Immutable from "@/interfaces/Immutable";
+import useStorageStore from "@/zustands/useStorageStore";
 
 const numberToDownload = 30;
 
 const useDownloader = (
-  isLoading: boolean,
-  error: unknown,
-  data: IDiscoverSound[],
+  discoverSoundsState: Immutable<IFetchDataState<IDiscoverSound[]>>,
   directory?: string
 ) => {
   const setExcerptDownloadState = useRef(
     useDownloadStore.getState().setExcerptDownloadState
   );
-  const setIsStorageError = useRef(
-    useDownloadStore.getState().setIsStorageError
-  );
+  const setIsStorageError = useRef(useStorageStore.getState().setStorageState);
   const lastDownload = useRef<number>(null);
   const isInit = useRef<boolean>(false);
 
-  if (!isLoading && !error && data && !isInit.current) {
-    data.forEach((sound) => {
-      setExcerptDownloadState.current(sound.id);
+  if (discoverSoundsState.status === "fetchDataSuccess" && !isInit.current) {
+    discoverSoundsState.data.forEach((sound) => {
+      setExcerptDownloadState.current(sound.id, excerptDownloadIdle);
     });
     isInit.current = true;
   }
@@ -35,7 +36,7 @@ const useDownloader = (
     }
 
     const callback = (currentPosition: number) => {
-      const dataLastIndex = data.length - 1;
+      const dataLastIndex = discoverSoundsState.length - 1;
 
       const limit =
         currentPosition + numberToDownload <= dataLastIndex
@@ -49,7 +50,7 @@ const useDownloader = (
       // console.log("last download: ", lastDownload);
 
       for (let i = lastDownload.current || 0; i <= limit; i++) {
-        const sound = data[i];
+        const sound = discoverSoundsState[i];
 
         const excerptUri = getExcerptUri(
           sound.url,
@@ -77,7 +78,7 @@ const useDownloader = (
     return () => {
       unsubscribe();
     };
-  }, [data, directory, error, isLoading]);
+  }, [discoverSoundsState, directory, error, isLoading]);
 };
 
 export default useDownloader;

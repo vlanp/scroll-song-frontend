@@ -1,30 +1,58 @@
+import Immutable from "@/interfaces/Immutable";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-interface IDataState<H> {
-  error: unknown;
-  isLoading: boolean;
-  data: H;
+interface IFetchDataStatus {
+  status:
+    | "fetchDataIdle"
+    | "fetchDataLoading"
+    | "fetchDataError"
+    | "fetchDataSuccess";
 }
 
-const useData = <T, K = T>(
+type IFetchDataState<H> =
+  | IFetchDataIdle
+  | IFetchDataLoading
+  | IFetchDataError
+  | FetchDataSuccess<H>;
+
+interface IFetchDataIdle extends IFetchDataStatus {
+  status: "fetchDataIdle";
+}
+const fetchDataIdle: IFetchDataIdle = {
+  status: "fetchDataIdle",
+};
+interface IFetchDataLoading extends IFetchDataStatus {
+  status: "fetchDataLoading";
+}
+const fetchDataLoading: IFetchDataLoading = {
+  status: "fetchDataLoading",
+};
+interface IFetchDataError extends IFetchDataStatus {
+  status: "fetchDataError";
+}
+const dataError: IFetchDataError = {
+  status: "fetchDataError",
+};
+class FetchDataSuccess<H> implements IFetchDataStatus {
+  status = "fetchDataSuccess" as const;
+  data: H;
+  constructor(data: H) {
+    this.data = data;
+  }
+}
+
+const useFetchData = <T, K>(
   url: string,
   authToken?: string,
   onReceivedData?: (data: T) => K
-) => {
-  const [dataState, setDataState] = useState<IDataState<T | K | null>>({
-    error: null,
-    isLoading: true,
-    data: null,
-  });
+): Immutable<IFetchDataState<T | K>> => {
+  const [fetchDataState, setFetchDataState] =
+    useState<IFetchDataState<T | K>>(fetchDataIdle);
 
   useEffect(() => {
-    console.log("Calling useData useEffect");
-    setDataState({
-      error: null,
-      isLoading: true,
-      data: null,
-    });
+    console.log(`Calling ${useFetchData.name} useEffect`);
+    setFetchDataState(fetchDataLoading);
     const controller = new AbortController();
     const signal = controller.signal;
 
@@ -40,28 +68,28 @@ const useData = <T, K = T>(
           const data = onReceivedData
             ? onReceivedData(response.data)
             : response.data;
-          setDataState((ds) => ({
-            ...ds,
-            isLoading: false,
-            data,
-          }));
+          setFetchDataState(new FetchDataSuccess(data));
         }
       })
       .catch((error) => {
         if (!axios.isCancel(error)) {
           console.log(error);
-          setDataState((ds) => ({
-            ...ds,
-            error,
-            isLoading: false,
-          }));
+          setFetchDataState(dataError);
         }
       });
 
     return () => controller.abort();
   }, [onReceivedData, authToken, url]);
 
-  return { ...dataState, setDataState };
+  return fetchDataState;
 };
 
-export default useData;
+export default useFetchData;
+
+export type {
+  IFetchDataState,
+  IFetchDataIdle,
+  IFetchDataLoading,
+  FetchDataSuccess,
+  IFetchDataError,
+};
