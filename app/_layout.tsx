@@ -4,22 +4,35 @@ import { SoundsProvider } from "../contexts/SoundsContext";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import PoppinsRegularFont from "../assets/fonts/Poppins-Regular.ttf";
+import PoppinsBoldFont from "../assets/fonts/Poppins-Bold.ttf";
+import PoppinsMediumFont from "../assets/fonts/Poppins-Medium.ttf";
+import PoppinsSemiBoldFont from "../assets/fonts/Poppins-SemiBold.ttf";
+import LexendLightFont from "../assets/fonts/Lexend-Light.ttf";
+import LexendRegularFont from "../assets/fonts/Lexend-Regular.ttf";
+import LexendSemiBoldFont from "../assets/fonts/Lexend-SemiBold.ttf";
+import LexendBoldFont from "../assets/fonts/Lexend-Bold.ttf";
+import RobotoCondensedRegularFont from "../assets/fonts/RobotoCondensed-Regular.ttf";
+import RobotoCondensedBoldFont from "../assets/fonts/RobotoCondensed-Bold.ttf";
+import LatoBoldFont from "../assets/fonts/Lato-Bold.ttf";
+import LatoHeavyFont from "../assets/fonts/Lato-Heavy.ttf";
+import LatoSemiboldFont from "../assets/fonts/Lato-Semibold.ttf";
 
 const RootLayout = () => {
-  let [fontsLoaded] = useFonts({
-    PoppinsRegular: require("../assets/fonts/Poppins-Regular.ttf"),
-    PoppinsBold: require("../assets/fonts/Poppins-Bold.ttf"),
-    PoppinsMedium: require("../assets/fonts/Poppins-Medium.ttf"),
-    PoppinsSemiBold: require("../assets/fonts/Poppins-SemiBold.ttf"),
-    LexendLight: require("../assets/fonts/Lexend-Light.ttf"),
-    LexendRegular: require("../assets/fonts/Lexend-Regular.ttf"),
-    LexendSemiBold: require("../assets/fonts/Lexend-SemiBold.ttf"),
-    LexendBold: require("../assets/fonts/Lexend-Bold.ttf"),
-    RobotoCondensedRegular: require("../assets/fonts/RobotoCondensed-Regular.ttf"),
-    RobotoCondensedBold: require("../assets/fonts/RobotoCondensed-Bold.ttf"),
-    LatoBold: require("../assets/fonts/Lato-Bold.ttf"),
-    LatoHeavy: require("../assets/fonts/Lato-Heavy.ttf"),
-    LatoSemibold: require("../assets/fonts/Lato-Semibold.ttf"),
+  const [fontsLoaded] = useFonts({
+    PoppinsRegular: PoppinsRegularFont,
+    PoppinsBold: PoppinsBoldFont,
+    PoppinsMedium: PoppinsMediumFont,
+    PoppinsSemiBold: PoppinsSemiBoldFont,
+    LexendLight: LexendLightFont,
+    LexendRegular: LexendRegularFont,
+    LexendSemiBold: LexendSemiBoldFont,
+    LexendBold: LexendBoldFont,
+    RobotoCondensedRegular: RobotoCondensedRegularFont,
+    RobotoCondensedBold: RobotoCondensedBoldFont,
+    LatoBold: LatoBoldFont,
+    LatoHeavy: LatoHeavyFont,
+    LatoSemibold: LatoSemiboldFont,
   });
 
   if (!fontsLoaded) {

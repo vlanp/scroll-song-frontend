@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"] // Ici vous configurez l'alias @ pour pointer vers le dossier src
+      "@/*": ["./*"]
     }
   },
   "extends": "expo/tsconfig.base"
