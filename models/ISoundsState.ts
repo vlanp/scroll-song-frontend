@@ -1,4 +1,4 @@
-import IDiscoverSound from "./IDiscoverSound";
+import IDiscoverSound from "./DiscoverSound";
 
 type ISoundsState = ISoundsIdle | ISoundsLoading | ISoundsError | SoundsSuccess;
 

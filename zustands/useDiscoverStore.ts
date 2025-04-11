@@ -1,88 +1,100 @@
+import Immutable from "@/models/Immutable";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { fetchDataIdle, IFetchDataState } from "./storeFetchDataState";
+import DiscoverSound from "@/models/DiscoverSound";
+import { IDownloadSoundState } from "./storeDownloadSoundState";
 
-interface IPositionState {
-  positionState: {
-    currentPosition: number;
-    isScrolling: boolean;
-  };
+interface IDiscoverStoreStates {
+  downloadExcerptsState: Immutable<IDownloadExcerptsState>;
+  fetchDiscoverSoundsState: Immutable<IFetchDataState<DiscoverSound[]>>;
+  position: Immutable<Position>;
+  isMainScrollEnable: boolean;
+  likedTitleToDisplay: Immutable<TitleToDisplay> | null;
+  dislikedTitleToDisplay: Immutable<TitleToDisplay> | null;
 }
 
-interface IPositionAction {
-  setPositionState: (currentPosition?: number, isScrolling?: boolean) => void;
+type ISoundId = string;
+type IDownloadExcerptsState = Record<ISoundId, IDownloadSoundState>;
+
+class Position {
+  currentPosition: number;
+  isScrolling: boolean;
+  constructor(currentPosition: number, isScrolling: boolean) {
+    this.currentPosition = currentPosition;
+    this.isScrolling = isScrolling;
+  }
 }
 
-const setPositionState = (
-  positionState: IPositionState["positionState"],
-  currentPosition?: number,
-  isScrolling?: boolean
-) => {
+class TitleToDisplay {
+  title: string;
+  id: string;
+  constructor(title: string, id: string) {
+    this.title = title;
+    this.id = id;
+  }
+}
+
+interface IDiscoverStoreActions {
+  setDownloadExcerptState: (
+    soundId: ISoundId,
+    downloadExcerptState: IDownloadSoundState
+  ) => void;
+  setFetchDiscoverSoundsState: (
+    fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>
+  ) => void;
+  setPosition: (position: Immutable<Position>) => void;
+  setIsMainScrollEnable: (isMainScrollEnable: boolean) => void;
+  setLikedTitleToDisplay: (
+    likedTitleToDisplay: Immutable<TitleToDisplay> | null
+  ) => void;
+  setDislikedTitleToDisplay: (
+    dislikedTitleToDisplay: Immutable<TitleToDisplay> | null
+  ) => void;
+}
+
+const setDownloadExcerptState = (
+  soundId: string,
+  downloadExcerptsState: Immutable<IDownloadExcerptsState>,
+  downloadExcerptState: Immutable<IDownloadSoundState>
+): IDownloadExcerptsState => {
   return {
-    positionState: {
-      currentPosition:
-        currentPosition !== undefined
-          ? currentPosition
-          : positionState.currentPosition,
-      isScrolling: isScrolling ?? positionState.isScrolling,
-    },
+    ...downloadExcerptsState,
+    [soundId]: downloadExcerptState,
   };
 };
 
-interface IScrollState {
-  isMainScrollEnable: boolean;
-}
-
-interface IScrollAction {
-  setIsMainScrollEnable: (isMainScrollEnable: boolean) => void;
-}
-
-interface IDisplayTitleState {
-  likedTitleToDisplay: {
-    title: string;
-    id: string;
-  } | null;
-  dislikedTitleToDisplay: {
-    title: string;
-    id: string;
-  } | null;
-}
-
-interface IDisplayTitleAction {
-  setLikedTitleToDisplay: (
-    likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
-  ) => void;
-  setDislikedTitleToDisplay: (
-    dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
-  ) => void;
-}
-
 export const useDiscoverStore = create<
-  IPositionState &
-    IPositionAction &
-    IScrollState &
-    IScrollAction &
-    IDisplayTitleState &
-    IDisplayTitleAction
+  IDiscoverStoreStates & IDiscoverStoreActions
 >()(
   subscribeWithSelector((set) => ({
-    positionState: {
-      currentPosition: 0,
-      isScrolling: false,
-    },
-    setPositionState: (currentPosition?: number, isScrolling?: boolean) =>
+    downloadExcerptsState: {},
+    setDownloadExcerptState: (
+      soundId: ISoundId,
+      downloadExcerptState: IDownloadSoundState
+    ) =>
       set((state) =>
-        setPositionState(state.positionState, currentPosition, isScrolling)
+        setDownloadExcerptState(
+          soundId,
+          state.downloadExcerptsState,
+          downloadExcerptState
+        )
       ),
+    fetchDiscoverSoundsState: fetchDataIdle,
+    setFetchDiscoverSoundsState: (
+      fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>
+    ) => set(() => ({ fetchDiscoverSoundsState: fetchDiscoverSoundsState })),
+    position: new Position(0, false),
+    setPosition: (position: Position) => set(() => ({ position })),
     isMainScrollEnable: true,
     setIsMainScrollEnable: (isMainScrollEnable: boolean) =>
-      set(() => ({ isMainScrollEnable: isMainScrollEnable })),
+      set(() => ({ isMainScrollEnable })),
     likedTitleToDisplay: null,
-    setLikedTitleToDisplay: (
-      likedTitleToDisplay: IDisplayTitleState["likedTitleToDisplay"]
-    ) => set(() => ({ likedTitleToDisplay: likedTitleToDisplay })),
+    setLikedTitleToDisplay: (likedTitleToDisplay: TitleToDisplay | null) =>
+      set(() => ({ likedTitleToDisplay })),
     dislikedTitleToDisplay: null,
     setDislikedTitleToDisplay: (
-      dislikedTitleToDisplay: IDisplayTitleState["dislikedTitleToDisplay"]
-    ) => set(() => ({ dislikedTitleToDisplay: dislikedTitleToDisplay })),
+      dislikedTitleToDisplay: TitleToDisplay | null
+    ) => set(() => ({ dislikedTitleToDisplay })),
   }))
 );

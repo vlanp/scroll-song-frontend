@@ -1,15 +1,17 @@
-import { IExcerptDownloadState } from "@/zustands/useDownloadStore";
+import {
+  downloadSoundError,
+  DownloadSoundLoading,
+  downloadSoundSuccess,
+  IDownloadSoundState,
+} from "@/zustands/storeDownloadSoundState";
 import * as FileSystem from "expo-file-system";
 import { DownloadProgressData } from "expo-file-system";
 
-export const createDirectory = async (
+const createDirectory = async (
   directory: string,
-  setIsStorageError: (bool: boolean) => void
+  setIsStorageOk: (isStorageOk: boolean) => void
 ) => {
   try {
-    if (!directory) {
-      return;
-    }
     const info = await FileSystem.getInfoAsync(
       FileSystem.documentDirectory + directory
     );
@@ -20,17 +22,14 @@ export const createDirectory = async (
       FileSystem.documentDirectory + directory
     );
   } catch (e) {
-    setIsStorageError(true);
+    setIsStorageOk(false);
     console.error(e);
   }
 };
 
-const _isFileExisting = async (fileName: string, directory?: string) => {
+const isFileExisting = async (fileName: string, directory: string) => {
   const fileInfo = await FileSystem.getInfoAsync(
-    FileSystem.documentDirectory +
-      (directory ? directory + "/" : "") +
-      fileName +
-      ".mp3"
+    FileSystem.documentDirectory + directory + "/" + fileName + ".mp3"
   );
 
   if (fileInfo.exists) {
@@ -40,28 +39,25 @@ const _isFileExisting = async (fileName: string, directory?: string) => {
   return false;
 };
 
-const _createDownloadResumable = (
+const createDownloadResumable = (
   soundId: string,
   url: string,
   directory: string,
-  setExcerptDownloadState: (
+  setDownloadSoundState: (
     soundId: string,
-    updates: Partial<IExcerptDownloadState>
+    downloadSoundState: IDownloadSoundState
   ) => void
 ) => {
   const callback = (downloadProgress: DownloadProgressData) => {
     const progress =
       downloadProgress.totalBytesWritten /
       downloadProgress.totalBytesExpectedToWrite;
-    setExcerptDownloadState(soundId, { relativeProgress: progress });
+    setDownloadSoundState(soundId, new DownloadSoundLoading(progress));
   };
 
   const downloadResumable = FileSystem.createDownloadResumable(
     url,
-    FileSystem.documentDirectory +
-      (directory ? directory + "/" : "") +
-      soundId +
-      ".mp3",
+    FileSystem.documentDirectory + directory + "/" + soundId + ".mp3",
     {},
     callback
   );
@@ -69,44 +65,44 @@ const _createDownloadResumable = (
   return downloadResumable;
 };
 
-export const download = async (
+const downloadSound = async (
   soundId: string,
   soundUri: string,
-  setExcerptDownloadState: (
+  setDownloadSoundState: (
     soundId: string,
-    updates?: Partial<IExcerptDownloadState>
+    downloadSoundState: IDownloadSoundState
   ) => void,
-  setIsStorageError: (bool: boolean) => void,
-  directory?: string
+  setIsStorageOk: (isStorageOk: boolean) => void,
+  directory: string
 ) => {
   try {
-    createDirectory(directory, setIsStorageError);
+    createDirectory(directory, setIsStorageOk);
 
-    if (await _isFileExisting(soundId, directory)) {
-      return setExcerptDownloadState(soundId, {
-        isLoaded: true,
-        relativeProgress: 1,
-      });
+    if (await isFileExisting(soundId, directory)) {
+      console.warn(`${downloadSound.name}: File already exists`); // TODO: Replace by a retry in certain conditions ?
+      return;
     }
 
-    setExcerptDownloadState(soundId, {
-      isLoading: true,
-    });
+    setDownloadSoundState(soundId, new DownloadSoundLoading(0));
 
-    const downloadResumable = _createDownloadResumable(
+    const downloadResumable = createDownloadResumable(
       soundId,
       soundUri,
       directory,
-      setExcerptDownloadState
+      setDownloadSoundState
     );
 
-    const { uri } = await downloadResumable.downloadAsync();
+    const downloadResult = await downloadResumable.downloadAsync();
+    const uri = downloadResult?.uri;
 
-    setExcerptDownloadState(soundId, { isLoaded: true, isLoading: false });
+    setDownloadSoundState(soundId, downloadSoundSuccess);
 
     console.log("Finished downloading to ", uri);
   } catch (e) {
-    setExcerptDownloadState(soundId, { isError: true });
+    setDownloadSoundState(soundId, downloadSoundError);
     console.error(e);
   }
 };
+
+export default downloadSound;
+export { createDirectory };

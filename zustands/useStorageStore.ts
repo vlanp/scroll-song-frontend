@@ -1,32 +1,18 @@
 import { create } from "zustand";
 
-type IStorageState = IStorageOk | IStorageError;
-
-interface IStorageOk {
-  status: "storageOk";
-}
-const storageOk: IStorageOk = {
-  status: "storageOk",
-};
-interface IStorageError {
-  status: "storageError";
-}
-const storageError: IStorageError = {
-  status: "storageError",
-};
-
-interface IStorageAction {
-  setStorageState: (storageState: IStorageState) => void;
+interface IStorageStoreStates {
+  isStorageOk: boolean;
 }
 
-const useStorageStore = create<
-  { storageState: IStorageState } & IStorageAction
->((set) => ({
-  storageState: storageOk,
-  setStorageState: (storageState: IStorageState) =>
-    set(() => ({ storageState })),
-}));
+interface IStorageActions {
+  setIsStorageOk: (isStorageOk: boolean) => void;
+}
+
+const useStorageStore = create<IStorageStoreStates & IStorageActions>(
+  (set) => ({
+    isStorageOk: true,
+    setIsStorageOk: (isStorageOk: boolean) => set(() => ({ isStorageOk })),
+  })
+);
 
 export default useStorageStore;
-export type { IStorageState, IStorageOk, IStorageError };
-export { storageOk, storageError };

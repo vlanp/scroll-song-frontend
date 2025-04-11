@@ -1,6 +1,4 @@
 import { Tabs } from "expo-router";
-import { NetworkProvider } from "../contexts/NetworkContext";
-import { SoundsProvider } from "../contexts/SoundsContext";
 import { ActivityIndicator } from "react-native";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -17,6 +15,7 @@ import RobotoCondensedBoldFont from "../assets/fonts/RobotoCondensed-Bold.ttf";
 import LatoBoldFont from "../assets/fonts/Lato-Bold.ttf";
 import LatoHeavyFont from "../assets/fonts/Lato-Heavy.ttf";
 import LatoSemiboldFont from "../assets/fonts/Lato-Semibold.ttf";
+import StoresInitializer from "@/components/stores/StoresInitializer";
 
 const RootLayout = () => {
   const [fontsLoaded] = useFonts({
@@ -41,11 +40,9 @@ const RootLayout = () => {
 
   return (
     <GestureHandlerRootView>
-      <NetworkProvider>
-        <SoundsProvider>
-          <Tabs />
-        </SoundsProvider>
-      </NetworkProvider>
+      <StoresInitializer>
+        <Tabs />
+      </StoresInitializer>
     </GestureHandlerRootView>
   );
 };

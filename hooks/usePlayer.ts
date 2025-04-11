@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import IPlay from "../interfaces/IPlay";
+import IPlay from "../models/IPlay";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system";

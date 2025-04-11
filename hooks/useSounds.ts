@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import useFetchData from "../hooks/useData";
+import useFetchData from "./useFetchData";
 import handleReceivedData from "../utils/discover/handleReceivedData";
 import useDownloader from "./useDownloader";
 import { Audio } from "expo-av";
-import { ISoundsState } from "@/interfaces/ISoundsState";
+import { ISoundsState } from "@/models/ISoundsState";
 
 const songsEndpoint = "/discover";
 const excerptDirectory = "excerpt";

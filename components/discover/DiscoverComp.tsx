@@ -13,7 +13,7 @@ import usePlayer from "../../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
 import { useContext, useEffect, useState } from "react";
 import { NetworkContext } from "../../contexts/NetworkContext";
-import IDiscoverSound from "../../interfaces/IDiscoverSound";
+import IDiscoverSound from "../../models/DiscoverSound";
 import { useDownloadStore } from "../../zustands/useDownloadStore";
 import { useIsFocused } from "@react-navigation/native";
 import ModalText from "./modalText";

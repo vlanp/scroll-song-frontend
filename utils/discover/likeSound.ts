@@ -1,4 +1,4 @@
-import IDiscoverSound from "@/interfaces/IDiscoverSound";
+import IDiscoverSound from "@/models/DiscoverSound";
 import axios from "axios";
 import { Dispatch, SetStateAction } from "react";
 

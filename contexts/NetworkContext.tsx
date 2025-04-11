@@ -7,7 +7,7 @@ import {
   networkIdle,
   networkLoading,
   networkSuccess,
-} from "@/interfaces/INetworkState";
+} from "@/models/INetworkState";
 
 export const NetworkContext = createContext<INetworkState>(networkIdle);
 
@@ -51,7 +51,7 @@ export const NetworkProvider = ({
       }
       unsubNetState();
     };
-  });
+  }, []);
 
   return (
     <NetworkContext.Provider value={networkState}>
