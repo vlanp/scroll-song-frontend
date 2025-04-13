@@ -1,44 +1,10 @@
+import {
+  fetchDataError,
+  fetchDataLoading,
+  FetchDataSuccess,
+  IFetchDataState,
+} from "@/models/IFetchDataState";
 import axios from "axios";
-
-interface IFetchDataStatus {
-  status:
-    | "fetchDataIdle"
-    | "fetchDataLoading"
-    | "fetchDataError"
-    | "fetchDataSuccess";
-}
-
-type IFetchDataState<H> =
-  | IFetchDataIdle
-  | IFetchDataLoading
-  | IFetchDataError
-  | FetchDataSuccess<H>;
-
-interface IFetchDataIdle extends IFetchDataStatus {
-  status: "fetchDataIdle";
-}
-const fetchDataIdle: IFetchDataIdle = {
-  status: "fetchDataIdle",
-};
-interface IFetchDataLoading extends IFetchDataStatus {
-  status: "fetchDataLoading";
-}
-const fetchDataLoading: IFetchDataLoading = {
-  status: "fetchDataLoading",
-};
-interface IFetchDataError extends IFetchDataStatus {
-  status: "fetchDataError";
-}
-const dataError: IFetchDataError = {
-  status: "fetchDataError",
-};
-class FetchDataSuccess<H> implements IFetchDataStatus {
-  status = "fetchDataSuccess" as const;
-  data: H;
-  constructor(data: H) {
-    this.data = data;
-  }
-}
 
 const storeFetchDataState = <T, K>(
   url: string,
@@ -67,7 +33,7 @@ const storeFetchDataState = <T, K>(
     .catch((error) => {
       if (!axios.isCancel(error)) {
         console.log(error);
-        setFetchDataState(dataError);
+        setFetchDataState(fetchDataError);
       }
     });
 
@@ -75,13 +41,3 @@ const storeFetchDataState = <T, K>(
 };
 
 export default storeFetchDataState;
-
-export type {
-  IFetchDataState,
-  IFetchDataIdle,
-  IFetchDataLoading,
-  FetchDataSuccess,
-  IFetchDataError,
-};
-
-export { fetchDataIdle };

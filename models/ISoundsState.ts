@@ -1,4 +1,4 @@
-import IDiscoverSound from "./DiscoverSound";
+import DiscoverSound from "./DiscoverSound";
 
 type ISoundsState = ISoundsIdle | ISoundsLoading | ISoundsError | SoundsSuccess;
 
@@ -28,9 +28,9 @@ const soundsError: ISoundsError = {
 
 class SoundsSuccess {
   status = "soundsSuccess";
-  sounds: IDiscoverSound[];
+  sounds: DiscoverSound[];
 
-  constructor(sounds: IDiscoverSound[]) {
+  constructor(sounds: DiscoverSound[]) {
     this.sounds = sounds;
   }
 }

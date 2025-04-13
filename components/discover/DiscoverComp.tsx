@@ -11,10 +11,8 @@ import {
 import ProgressTrackBar from "../ProgressTrackBar";
 import usePlayer from "../../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
-import { useContext, useEffect, useState } from "react";
-import { NetworkContext } from "../../contexts/NetworkContext";
-import IDiscoverSound from "../../models/DiscoverSound";
-import { useDownloadStore } from "../../zustands/useDownloadStore";
+import { useEffect, useState } from "react";
+import DiscoverSound from "../../models/DiscoverSound";
 import { useIsFocused } from "@react-navigation/native";
 import ModalText from "./modalText";
 import Modal from "../Modal";
@@ -24,10 +22,11 @@ import GradientText from "../gradientText";
 import musicNote from "../../assets/images/music-note.png";
 import likeIcon from "../../assets/images/discoverIcons/like-icon.png";
 import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";
-import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
-import { SoundsContext } from "@/contexts/SoundsContext";
+import useNetworkStore from "@/zustands/useNetworkStore";
+import Immutable from "@/models/Immutable";
 
 function DiscoverComp({
   sound,
@@ -35,20 +34,25 @@ function DiscoverComp({
   swipePosition,
   onSide,
 }: {
-  sound: IDiscoverSound;
+  sound: Immutable<DiscoverSound>;
   selfPosition: number;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
 }) {
+  const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
   const { playingState, playingProgressSec, play, stop, changePositionSec } =
     usePlayer({
-      uri: documentDirectory + "excerpt/" + sound.id + ".mp3",
+      uri:
+        documentDirectory +
+        (excerptDirectory ? excerptDirectory + "/" : "") +
+        sound.id +
+        ".mp3",
     });
-  const isNetworkError = useContext(NetworkContext).isNetworkError;
-  const { isError, relativeProgress } = useDownloadStore(
-    (state) => state.excerptsDownloadState[sound.id]
+  const networkState = useNetworkStore((state) => state.networkState);
+  const downloadExcerptState = useDiscoverStore(
+    (state) => state.downloadExcerptsState[sound.id]
   );
-  const positionState = useDiscoverStore((state) => state.positionState);
+  const position = useDiscoverStore((state) => state.position);
   const isFocused = useIsFocused();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const setIsMainScrollEnable = useDiscoverStore(
@@ -61,25 +65,21 @@ function DiscoverComp({
     (state) => state.dislikedTitleToDisplay
   );
   const { width } = useWindowDimensions();
-  const { data: sounds, setData: setSounds } = useContext(SoundsContext);
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
     stop(true);
     changePositionSec(
-      ((sound.end_time_excerpt_ms - sound.start_time_excerpt_ms) / 1000) *
+      ((sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000) *
         (e.nativeEvent.locationX / 200)
     );
   };
-  const setLikedTitleToDisplay = useDiscoverStore(
-    (state) => state.setLikedTitleToDisplay
-  );
 
   useEffect(() => {
     const handlePositionChange = async () => {
       if (
-        positionState.currentPosition === selfPosition &&
+        position.currentPosition === selfPosition &&
         isFocused &&
-        !positionState.isScrolling &&
+        !position.isScrolling &&
         likedTitleToDisplay?.id !== sound.id &&
         dislikedTitleToDisplay?.id !== sound.id
       ) {
@@ -95,8 +95,8 @@ function DiscoverComp({
     selfPosition,
     stop,
     isFocused,
-    positionState.currentPosition,
-    positionState.isScrolling,
+    position.currentPosition,
+    position.isScrolling,
     likedTitleToDisplay?.id,
     sound.id,
     dislikedTitleToDisplay?.id,
@@ -149,10 +149,15 @@ function DiscoverComp({
                 <ActivityIndicator size={25} />
               ) : (
                 <ProgressTrackBar
-                  loadingProgress={relativeProgress}
+                  loadingProgress={
+                    downloadExcerptState.status === "downloadSoundLoading"
+                      ? downloadExcerptState.relativeProgress
+                      : downloadExcerptState.status === "downloadSoundSuccess"
+                        ? 1
+                        : 0
+                  }
                   durationSec={
-                    (sound.end_time_excerpt_ms - sound.start_time_excerpt_ms) /
-                    1000
+                    (sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000
                   }
                   progressSec={playingProgressSec}
                   onTouchStart={handleTouchAndDrag}
@@ -180,11 +185,8 @@ function DiscoverComp({
                   swipePosition.value = withTiming(width, { duration: 100 });
                   onSide.value = false;
                   likeSound(
-                    sounds,
-                    setSounds,
-                    positionState.currentPosition,
-                    "5a6251db-8f7e-4101-9577-3f5accfade3c",
-                    setLikedTitleToDisplay
+                    sound,
+                    "09454812-d5b2-4e33-896c-3b57056a4749" // TODO: Create a unique ID for each user
                   );
                 }}
               >
@@ -200,9 +202,9 @@ function DiscoverComp({
               textAlign="right"
             />
           </View>
-          {isNetworkError ? (
-            <Text>Il semble qu'il y ait un problème réseau</Text>
-          ) : isError ? (
+          {networkState.status === "networkError" ? (
+            <Text>Il semble qu&apos;il y ait un problème réseau</Text>
+          ) : downloadExcerptState.status === "downloadSoundError" ? (
             <>
               <Text>
                 Une erreur est survenue lors du téléchargement de la musique.

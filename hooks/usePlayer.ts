@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import IPlay from "../models/IPlay";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { Platform } from "react-native";
@@ -116,19 +116,21 @@ const usePlayer = ({ uri }: { uri: string }) => {
     }
   };
 
-  const stop = async (isPause: boolean = false) => {
+  const stop = async (isPause = false) => {
     try {
       if (!playingState.isPlaying || playingState.isStopLoading) {
         return;
       }
       setPlayingState((ps) => ({ ...ps, isStopLoading: true }));
       if (isPause) {
-        await sound.current.pauseAsync();
+        await sound.current?.pauseAsync();
         setPlayingState((ps) => ({ ...ps, isPlaying: false }));
       } else {
-        await sound.current.stopAsync();
-        await sound.current.unloadAsync();
-        clearInterval(intervalId.current);
+        await sound.current?.stopAsync();
+        await sound.current?.unloadAsync();
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+        }
         setPlayingState((ps) => ({ ...ps, isPlaying: false, isLoaded: false }));
       }
     } catch (e) {
@@ -142,7 +144,9 @@ const usePlayer = ({ uri }: { uri: string }) => {
       if (!playingState.isPlaying && !playingState.isPlayLoading) {
         await play();
       }
-      sound.current.setPositionAsync(positionSec * 1000);
+      if (sound.current) {
+        sound.current.setPositionAsync(positionSec * 1000);
+      }
     } catch (e) {
       // setPlayingState((ps) => ({ ...ps, error: "play" })); // Not needed ?
       console.error(e);
@@ -152,9 +156,13 @@ const usePlayer = ({ uri }: { uri: string }) => {
   // It seems that sometimes when loading and unloading really quickly, onPlaybackStatusUpdate has isLoaded set to true whereas the sound is not loaded and is not loading
   const retryPlay = async () => {
     try {
-      await sound.current.unloadAsync();
-      clearInterval(intervalId.current);
-    } catch {}
+      await sound.current?.unloadAsync();
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+      }
+    } catch {
+      /* empty */
+    }
 
     setPlayingState({
       isLoaded: false,

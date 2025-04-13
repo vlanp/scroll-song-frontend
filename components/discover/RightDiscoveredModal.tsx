@@ -11,27 +11,24 @@ import {
 import GradientButtons from "../gradientButtons";
 import dislikesImg from "../../assets/images/discoverImages/dislikes-img.png";
 import { SharedValue, withTiming } from "react-native-reanimated";
-import { useDiscoverStore } from "@/zustands/useDiscoverStore";
-import { useContext } from "react";
-import { SoundsContext } from "@/contexts/SoundsContext";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 import dislikeSound from "@/utils/discover/dislikeSound";
+import DiscoverSound from "@/models/DiscoverSound";
+import { Immutable } from "immer";
 
 const RightDiscoveredModal = ({
   style,
   swipePosition,
   onSide,
+  sound,
 }: {
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
+  sound: Immutable<DiscoverSound>;
 }) => {
   const { width } = useWindowDimensions();
   const styles = useStyle(width);
-  const { data: sounds, setData: setSounds } = useContext(SoundsContext);
-  const currentPosition = useDiscoverStore(
-    (state) => state.positionState.currentPosition
-  );
-  const dislikedTitleToDisplay = sounds[currentPosition].title;
   const setIsMainScrollEnable = useDiscoverStore(
     (state) => state.setIsMainScrollEnable
   );
@@ -51,8 +48,8 @@ const RightDiscoveredModal = ({
         <Text style={styles.swipeLeft}>Swiper à gauche ?</Text>
         <View style={{ marginTop: 10 }}></View>
         <Text style={styles.text}>
-          <Text style={styles.bold}>{dislikedTitleToDisplay}</Text> n'apparaîtra
-          plus jamais dans votre roue.
+          <Text style={styles.bold}>{sound.title}</Text> n&apos;apparaîtra plus
+          jamais dans votre roue.
         </Text>
         <View style={{ marginTop: 20 }}></View>
         <GradientButtons
@@ -68,12 +65,7 @@ const RightDiscoveredModal = ({
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
             setIsMainScrollEnable(true);
-            dislikeSound(
-              sounds,
-              setSounds,
-              currentPosition,
-              "5a6251db-8f7e-4101-9577-3f5accfade3c"
-            );
+            dislikeSound(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
           }}
         />
         <View style={{ marginTop: 10 }}></View>

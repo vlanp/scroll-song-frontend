@@ -3,7 +3,7 @@ import {
   DownloadSoundLoading,
   downloadSoundSuccess,
   IDownloadSoundState,
-} from "@/zustands/storeDownloadSoundState";
+} from "@/models/IDownloadSoundState";
 import * as FileSystem from "expo-file-system";
 import { DownloadProgressData } from "expo-file-system";
 

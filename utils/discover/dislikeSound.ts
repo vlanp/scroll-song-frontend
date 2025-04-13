@@ -1,33 +1,32 @@
-import IDiscoverSound from "@/models/DiscoverSound";
+import DiscoverSound from "@/models/DiscoverSound";
+import Immutable from "@/models/Immutable";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 import axios from "axios";
-import { Dispatch, SetStateAction } from "react";
 
-const dislikeSong = async (
-  sounds: IDiscoverSound[],
-  setSounds: Dispatch<SetStateAction<IDiscoverSound[]>>,
-  currentPosition: number,
+const dislikeSound = async (
+  sound: Immutable<DiscoverSound>,
   authToken: string
 ) => {
   try {
-    const currentSound = sounds[currentPosition];
-    const currentSoundId = currentSound.id;
-    const endpoint = "/discover/dislike/";
+    const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
+    const discoverEndpoint = process.env.EXPO_PUBLIC_DISCOVER_ENDPOINT;
+    const likeEndpoint = process.env.EXPO_PUBLIC_LIKE_ENDPOINT;
+    if (!discoverEndpoint || !likeEndpoint) {
+      throw new Error("Endpoints are not defined");
+    }
+    const endpoint = `${discoverEndpoint}${likeEndpoint}`;
     await axios.post(
-      process.env.EXPO_PUBLIC_API_URL + endpoint + currentSoundId,
+      process.env.EXPO_PUBLIC_DEV_API_URL + endpoint + sound.id,
       undefined,
       {
         headers: { Authorization: "Bearer " + authToken },
       }
     );
 
-    setSounds((sounds) => {
-      const _sounds = [...sounds];
-      _sounds.splice(currentPosition, 1);
-      return _sounds;
-    });
+    removeDiscoverSound(sound.id);
   } catch (error) {
     console.log("An error occured while disliking the song: " + error);
   }
 };
 
-export default dislikeSong;
+export default dislikeSound;

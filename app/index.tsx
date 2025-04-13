@@ -6,38 +6,47 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { useContext, useRef, useState } from "react";
-import { SoundsContext } from "../contexts/SoundsContext";
+import { useRef, useState } from "react";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/discover/DiscoverComp";
-import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import useDiscoverStore, {
+  ReceivedPosition,
+} from "@/zustands/useDiscoverStore";
 import SwipeModals from "@/components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
 import useCountRender from "@/hooks/useCountRender";
 
 function Index() {
   useCountRender();
-  const { data, error, isLoading } = useContext(SoundsContext);
+  const fetchDiscoverSoundsState = useDiscoverStore(
+    (state) => state.fetchDiscoverSoundsState
+  );
   const [height, setHeight] = useState<number>(0);
   const { width: _width, height: _height } = useWindowDimensions();
   const styles = getStyles(_height, _width, height);
-  const setPositionState = useDiscoverStore((state) => state.setPositionState);
+  const setPosition = useDiscoverStore((state) => state.setPosition);
   const isMainScrollEnable = useDiscoverStore(
     (state) => state.isMainScrollEnable
   );
-  const endScrollingTimeout = useRef<NodeJS.Timeout>(null);
+  const endScrollingTimeout = useRef<NodeJS.Timeout | null>(null);
   const swipePosition = useSharedValue(0);
   const onSide = useSharedValue(true);
 
-  if (isLoading) {
+  if (
+    fetchDiscoverSoundsState.status === "fetchDataLoading" ||
+    fetchDiscoverSoundsState.status === "fetchDataIdle"
+  ) {
     return <LottieLoading />;
   }
 
-  if (error || !data) {
+  if (
+    fetchDiscoverSoundsState.status === "fetchDataError" ||
+    !fetchDiscoverSoundsState.data
+  ) {
     return (
       <Text>
-        "Une erreur inconnue est survenue lors du chargement de la page. Merci
-        de réessayer ultérieurement."
+        Une erreur inconnue est survenue lors du chargement de la page. Merci de
+        réessayer ultérieurement.
       </Text>
     );
   }
@@ -50,7 +59,7 @@ function Index() {
       }}
     >
       <FlatList
-        data={data}
+        data={fetchDiscoverSoundsState.data}
         scrollEnabled={isMainScrollEnable}
         initialNumToRender={3}
         renderItem={({ item, index }) => (
@@ -59,6 +68,7 @@ function Index() {
               style={styles.pressableContainer}
               swipePosition={swipePosition}
               onSide={onSide}
+              sound={item}
             >
               <DiscoverComp
                 sound={item}
@@ -72,18 +82,20 @@ function Index() {
         keyExtractor={(item) => item.id}
         pagingEnabled={true}
         onScrollBeginDrag={() => {
-          clearTimeout(endScrollingTimeout.current);
-          setPositionState(undefined, true);
+          if (endScrollingTimeout.current) {
+            clearTimeout(endScrollingTimeout.current);
+          }
+          setPosition(new ReceivedPosition("keepPosition", true));
         }}
         onMomentumScrollEnd={() => {
           endScrollingTimeout.current = setTimeout(
-            () => setPositionState(undefined, false),
+            () => setPosition(new ReceivedPosition("keepPosition", false)),
             100
           );
         }}
         onScroll={({ nativeEvent }) => {
           const position = Math.round(nativeEvent.contentOffset.y / height);
-          setPositionState(position);
+          setPosition(new ReceivedPosition(position, "keepScrollingState"));
         }}
       />
     </View>

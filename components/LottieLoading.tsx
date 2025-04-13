@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, View } from "react-native";
 import LottieView from "lottie-react-native";
 import lottieMusicNote from "../assets/lotties/music-note.json";

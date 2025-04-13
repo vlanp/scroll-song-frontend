@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from "react";
+import { ReactNode } from "react";
 import { StyleSheet, useWindowDimensions, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -11,30 +11,26 @@ import Animated, {
 import LeftDiscoveredModal from "./LeftDiscoveredModal";
 import RightDiscoveredModal from "./RightDiscoveredModal";
 import likeSound from "@/utils/discover/likeSound";
-import { SoundsContext } from "@/contexts/SoundsContext";
-import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
+import DiscoverSound from "@/models/DiscoverSound";
+import Immutable from "@/models/Immutable";
 
 export default function SwipeModals({
   children,
   style,
   swipePosition,
   onSide,
+  sound,
 }: {
   children: ReactNode;
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
+  sound: Immutable<DiscoverSound>;
 }) {
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
     null
-  );
-  const { data: sounds, setData: setSounds } = useContext(SoundsContext);
-  const currentPosition = useDiscoverStore(
-    (state) => state.positionState.currentPosition
-  );
-  const setLikedTitleToDisplay = useDiscoverStore(
-    (state) => state.setLikedTitleToDisplay
   );
   const setIsMainScrollEnable = useDiscoverStore(
     (state) => state.setIsMainScrollEnable
@@ -79,13 +75,7 @@ export default function SwipeModals({
       if (swipePosition.value > width / 3) {
         swipePosition.value = withTiming(width, { duration: 100 });
         onSide.value = false;
-        runOnJS(likeSound)(
-          sounds,
-          setSounds,
-          currentPosition,
-          "5a6251db-8f7e-4101-9577-3f5accfade3c",
-          setLikedTitleToDisplay
-        );
+        runOnJS(likeSound)(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
         runOnJS(setIsMainScrollEnable)(false);
       } else if (Math.abs(swipePosition.value) > width / 3) {
         swipePosition.value = withTiming(-width, { duration: 100 });
@@ -118,6 +108,7 @@ export default function SwipeModals({
           swipePosition={swipePosition}
           style={style}
           onSide={onSide}
+          sound={sound}
         />
       </Animated.View>
     </View>

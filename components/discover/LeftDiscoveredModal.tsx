@@ -12,7 +12,7 @@ import GradientButtons from "../gradientButtons";
 import favoritesImg from "../../assets/images/discoverImages/favorites-img.png";
 import { router } from "expo-router";
 import { SharedValue, withTiming } from "react-native-reanimated";
-import { useDiscoverStore } from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 
 const LeftDiscoveredModal = ({
   style,
@@ -51,7 +51,7 @@ const LeftDiscoveredModal = ({
           {" "}
           Vous avez ajouté{" "}
           <Text style={styles.bold}>{likedTitleToDisplay}</Text> à vos favoris,
-          vous pouvez maintenant voter pour découvrir l'artiste !
+          vous pouvez maintenant voter pour découvrir l&apos;artiste !
         </Text>
         <View style={{ marginTop: 20 }}></View>
         <GradientButtons

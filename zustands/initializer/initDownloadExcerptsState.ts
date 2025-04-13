@@ -1,4 +1,4 @@
-import { useDiscoverStore } from "../useDiscoverStore";
+import useDiscoverStore from "../useDiscoverStore";
 import useStorageStore from "../useStorageStore";
 import storeDownloadSoundState from "@/zustands/storeDownloadSoundState";
 
@@ -8,10 +8,10 @@ const initDownloadExcerptsState = () => {
   const setIsStorageOk = useStorageStore.getState().setIsStorageOk;
   const setDownloadExcerptState =
     useDiscoverStore.getState().setDownloadExcerptState;
-  const excerptDirectory = process.env.EXCERPT_DIRECTORY;
+  const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
 
   if (!excerptDirectory) {
-    console.error("EXCERPT_DIRECTORY is not defined");
+    console.error("EXPO_PUBLIC_EXCERPT_DIRECTORY is not defined");
     return;
   }
 

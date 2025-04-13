@@ -6,6 +6,7 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import closeIcon from "@/assets/images/modalIcons/close.png";
 
 export default function Modal({
   children,
@@ -33,12 +34,14 @@ export default function Modal({
             <Pressable
               onPress={() => {
                 setModalVisible(!modalVisible);
-                onClose && onClose();
+                if (onClose) {
+                  onClose();
+                }
               }}
               style={styles.closeButton}
             >
               <Image
-                source={require("@/assets/images/modalIcons/close.png")}
+                source={closeIcon}
                 style={styles.image}
                 resizeMode="contain"
               />
