@@ -109,4 +109,4 @@ const downloadSound = async (
 };
 
 export default downloadSound;
-export { createDirectory };
+export { createDirectory, isFileExisting };

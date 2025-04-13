@@ -19,6 +19,9 @@ const initDownloadExcerptsState = () => {
     (state) => {
       const discoverSoundsState = state.fetchDiscoverSoundsState;
       const position = state.position;
+      // Since we create a new array every time, we need to use the equality function
+      // to override the default comparison that checks for reference equality of the arrays
+      // and not the content of the arrays => Without it, the function would be called infinite times
       return { discoverSoundsState, position };
     },
     (selectedState) => {
@@ -54,6 +57,21 @@ const initDownloadExcerptsState = () => {
     },
     {
       fireImmediately: true,
+      equalityFn: (current, prev) => {
+        const {
+          discoverSoundsState: currentDiscoverSoundsState,
+          position: currentPosition,
+        } = current;
+        const {
+          discoverSoundsState: prevDiscoverSoundsState,
+          position: prevPosition,
+        } = prev;
+        return (
+          currentDiscoverSoundsState.status ===
+            prevDiscoverSoundsState.status &&
+          currentPosition.currentPosition === prevPosition.currentPosition
+        );
+      },
     }
   );
 
