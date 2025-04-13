@@ -1,3 +1,5 @@
+import { create } from "zustand";
+
 type INetworkState =
   | INetworkIdle
   | INetworkLoading
@@ -37,6 +39,24 @@ interface INetworkSuccess {
 const networkSuccess: INetworkSuccess = {
   status: "networkSuccess",
 };
+
+interface INetworkStoreStates {
+  networkState: INetworkState;
+}
+
+interface INetworkStoreActions {
+  setNetworkState: (networkState: INetworkState) => void;
+}
+
+const useNetworkStore = create<INetworkStoreStates & INetworkStoreActions>(
+  (set) => ({
+    networkState: networkIdle,
+    setNetworkState: (networkState: INetworkState) =>
+      set(() => ({ networkState })),
+  })
+);
+
+export default useNetworkStore;
 
 export type {
   INetworkState,
