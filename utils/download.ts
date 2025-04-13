@@ -55,6 +55,10 @@ const createDownloadResumable = (
     setDownloadSoundState(soundId, new DownloadSoundLoading(progress));
   };
 
+  console.log(
+    `${createDownloadResumable.name}: Create downloadResumable from ${url} to ${FileSystem.documentDirectory}${directory}/${soundId}.mp3`
+  );
+
   const downloadResumable = FileSystem.createDownloadResumable(
     url,
     FileSystem.documentDirectory + directory + "/" + soundId + ".mp3",

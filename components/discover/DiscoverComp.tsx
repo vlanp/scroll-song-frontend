@@ -27,6 +27,7 @@ import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
 import useNetworkStore from "@/zustands/useNetworkStore";
 import Immutable from "@/models/Immutable";
+import { IDownloadSoundState } from "@/models/IDownloadSoundState";
 
 function DiscoverComp({
   sound,
@@ -49,7 +50,7 @@ function DiscoverComp({
         ".mp3",
     });
   const networkState = useNetworkStore((state) => state.networkState);
-  const downloadExcerptState = useDiscoverStore(
+  const downloadExcerptState = useDiscoverStore<IDownloadSoundState | null>(
     (state) => state.downloadExcerptsState[sound.id]
   );
   const position = useDiscoverStore((state) => state.position);
@@ -150,9 +151,9 @@ function DiscoverComp({
               ) : (
                 <ProgressTrackBar
                   loadingProgress={
-                    downloadExcerptState.status === "downloadSoundLoading"
+                    downloadExcerptState?.status === "downloadSoundLoading"
                       ? downloadExcerptState.relativeProgress
-                      : downloadExcerptState.status === "downloadSoundSuccess"
+                      : downloadExcerptState?.status === "downloadSoundSuccess"
                         ? 1
                         : 0
                   }
@@ -204,7 +205,7 @@ function DiscoverComp({
           </View>
           {networkState.status === "networkError" ? (
             <Text>Il semble qu&apos;il y ait un problème réseau</Text>
-          ) : downloadExcerptState.status === "downloadSoundError" ? (
+          ) : downloadExcerptState?.status === "downloadSoundError" ? (
             <>
               <Text>
                 Une erreur est survenue lors du téléchargement de la musique.
