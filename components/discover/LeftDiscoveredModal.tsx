@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from "react-native";
-import GradientButtons from "../gradientButtons";
+import GradientButton from "../GradientButton";
 import favoritesImg from "../../assets/images/discoverImages/favorites-img.png";
 import { router } from "expo-router";
 import { SharedValue, withTiming } from "react-native-reanimated";
@@ -54,7 +54,7 @@ const LeftDiscoveredModal = ({
           vous pouvez maintenant voter pour découvrir l&apos;artiste !
         </Text>
         <View style={{ marginTop: 20 }}></View>
-        <GradientButtons
+        <GradientButton
           style={{
             width: "90%",
             alignSelf: "center",
@@ -71,7 +71,7 @@ const LeftDiscoveredModal = ({
           }}
         />
         <View style={{ marginTop: 10 }}></View>
-        <GradientButtons
+        <GradientButton
           style={{
             width: "90%",
             alignSelf: "center",

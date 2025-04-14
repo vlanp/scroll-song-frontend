@@ -18,7 +18,7 @@ import ModalText from "./modalText";
 import Modal from "../Modal";
 import MarginSection from "../marginSection";
 import TabTitle from "../tabTitle";
-import GradientText from "../gradientText";
+import GradientText from "../GradientText";
 import musicNote from "../../assets/images/music-note.png";
 import likeIcon from "../../assets/images/discoverIcons/like-icon.png";
 import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";

@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from "react-native";
-import GradientButtons from "../gradientButtons";
+import GradientButton from "../GradientButton";
 import dislikesImg from "../../assets/images/discoverImages/dislikes-img.png";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
@@ -52,7 +52,7 @@ const RightDiscoveredModal = ({
           jamais dans votre roue.
         </Text>
         <View style={{ marginTop: 20 }}></View>
-        <GradientButtons
+        <GradientButton
           style={{
             width: "90%",
             alignSelf: "center",
@@ -69,7 +69,7 @@ const RightDiscoveredModal = ({
           }}
         />
         <View style={{ marginTop: 10 }}></View>
-        <GradientButtons
+        <GradientButton
           style={{
             width: "90%",
             alignSelf: "center",

@@ -12,7 +12,7 @@ import {
 
 const screenWidth = Dimensions.get("window").width;
 
-export default function GradientButtons({
+export default function GradientButton({
   text,
   borderOnly = false,
   loading,

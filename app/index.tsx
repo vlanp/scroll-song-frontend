@@ -1,11 +1,5 @@
 import "../wdyr";
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useRef, useState } from "react";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/discover/DiscoverComp";
@@ -15,12 +9,14 @@ import useDiscoverStore, {
 import SwipeModals from "@/components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
 import useCountRender from "@/hooks/useCountRender";
+import ErrorScreen from "@/components/ErrorScreen";
 
 function Index() {
   useCountRender();
   const fetchDiscoverSoundsState = useDiscoverStore(
     (state) => state.fetchDiscoverSoundsState
   );
+  const setRetryDiscover = useDiscoverStore((state) => state.setRetryDiscover);
   const [height, setHeight] = useState<number>(0);
   const { width: _width, height: _height } = useWindowDimensions();
   const styles = getStyles(_height, _width, height);
@@ -44,10 +40,11 @@ function Index() {
     !fetchDiscoverSoundsState.data
   ) {
     return (
-      <Text>
-        Une erreur inconnue est survenue lors du chargement de la page. Merci de
-        réessayer ultérieurement.
-      </Text>
+      <ErrorScreen
+        errorText="Une erreur inconnue est survenue lors du chargement de la page. Merci de
+        réessayer ultérieurement."
+        onRetry={setRetryDiscover}
+      />
     );
   }
 

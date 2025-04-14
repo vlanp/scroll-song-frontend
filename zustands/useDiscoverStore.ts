@@ -10,6 +10,7 @@ import DiscoverSound from "@/models/DiscoverSound";
 import { IDownloadSoundState } from "@/models/IDownloadSoundState";
 
 interface IDiscoverStoreStates {
+  retryDiscover: number;
   downloadExcerptsState: Immutable<IDownloadExcerptsState>;
   fetchDiscoverSoundsState: Immutable<IFetchDataState<DiscoverSound[]>>;
   position: Immutable<SavedPosition>;
@@ -52,6 +53,7 @@ class TitleToDisplay {
 }
 
 interface IDiscoverStoreActions {
+  setRetryDiscover: () => void;
   setDownloadExcerptState: (
     soundId: ISoundId,
     downloadExcerptState: IDownloadSoundState
@@ -109,6 +111,9 @@ const setPosition = (
 
 const useDiscoverStore = create<IDiscoverStoreStates & IDiscoverStoreActions>()(
   subscribeWithSelector((set) => ({
+    retryDiscover: 0,
+    setRetryDiscover: () =>
+      set((state) => ({ retryDiscover: state.retryDiscover + 1 })),
     downloadExcerptsState: {},
     setDownloadExcerptState: (
       soundId: ISoundId,

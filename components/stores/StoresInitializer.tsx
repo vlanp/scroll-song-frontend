@@ -1,6 +1,7 @@
 import initDownloadExcerptsState from "@/zustands/initializer/initDownloadExcerptsState";
 import initFetchDiscoverSoundsState from "@/zustands/initializer/initFetchDiscoverSoundsState";
 import initNetworkState from "@/zustands/initializer/initNetworkState";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { ReactNode, useEffect } from "react";
 
 const StoresInitializer = ({
@@ -9,16 +10,32 @@ const StoresInitializer = ({
   children: ReactNode;
 }): JSX.Element => {
   useEffect(() => {
-    const abortController = initFetchDiscoverSoundsState();
+    let abortController: AbortController | undefined;
+    const unsubscribeDiscoverStore1 = useDiscoverStore.subscribe(
+      (state) => state.retryDiscover,
+      (retryDiscover) => {
+        console.log("retryDiscover", retryDiscover);
+        if (abortController) {
+          abortController.abort();
+        }
+        abortController = initFetchDiscoverSoundsState();
+      },
+      {
+        fireImmediately: true,
+      }
+    );
 
-    const unsubscribeDiscoverStore = initDownloadExcerptsState();
+    const unsubscribeDiscoverStore2 = initDownloadExcerptsState();
 
     const unsubsribeNetworkUpdate = initNetworkState();
 
     return () => {
       abortController?.abort();
-      if (unsubscribeDiscoverStore) {
-        unsubscribeDiscoverStore();
+      if (unsubscribeDiscoverStore1) {
+        unsubscribeDiscoverStore1();
+      }
+      if (unsubscribeDiscoverStore2) {
+        unsubscribeDiscoverStore2();
       }
       unsubsribeNetworkUpdate();
     };
