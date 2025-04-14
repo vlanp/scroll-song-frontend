@@ -168,7 +168,7 @@ function DiscoverComp({
                   readingColor="rgba(0, 76, 255, 1)"
                   trackBarBorderWidth={2}
                   trackBarHeigth={15}
-                  trackBarWidth={200}
+                  trackBarWidth={0.5 * width}
                 />
               )}
             </View>

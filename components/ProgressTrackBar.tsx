@@ -86,9 +86,10 @@ const getStyles = (
     },
     progressText: {
       fontFamily: "LatoBold",
-      fontSize: 21,
+      fontSize: 18,
       color: "white",
       width: 60,
+      textAlign: "center",
     },
     backgroundBarView: {
       position: "relative",
