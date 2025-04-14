@@ -119,13 +119,13 @@ const useDiscoverStore = create<IDiscoverStoreStates & IDiscoverStoreActions>()(
       soundId: ISoundId,
       downloadExcerptState: IDownloadSoundState
     ) =>
-      set((state) =>
-        setDownloadExcerptState(
+      set((state) => ({
+        downloadExcerptsState: setDownloadExcerptState(
           soundId,
           state.downloadExcerptsState,
           downloadExcerptState
-        )
-      ),
+        ),
+      })),
     fetchDiscoverSoundsState: fetchDataIdle,
     setFetchDiscoverSoundsState: (
       fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>

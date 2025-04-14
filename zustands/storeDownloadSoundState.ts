@@ -3,7 +3,10 @@ import getExcerptUri from "../utils/getExcerptUri";
 import Immutable from "@/models/Immutable";
 import ISound from "@/models/ISound";
 import DiscoverSound from "@/models/DiscoverSound";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
+import {
+  downloadSoundSuccess,
+  IDownloadSoundState,
+} from "@/models/IDownloadSoundState";
 
 const storeDownloadSoundState = async (
   sound: Immutable<ISound>,
@@ -15,6 +18,7 @@ const storeDownloadSoundState = async (
   directory: string
 ) => {
   if (await isFileExisting(sound.id, directory)) {
+    setDownloadSoundState(sound.id, downloadSoundSuccess);
     return;
   }
   const excerptUri =
