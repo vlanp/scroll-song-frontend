@@ -10,13 +10,13 @@ const dislikeSound = async (
   try {
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
     const discoverEndpoint = process.env.EXPO_PUBLIC_DISCOVER_ENDPOINT;
-    const likeEndpoint = process.env.EXPO_PUBLIC_LIKE_ENDPOINT;
-    if (!discoverEndpoint || !likeEndpoint) {
+    const dislike = process.env.EXPO_PUBLIC_DISLIKE_ENDPOINT;
+    if (!discoverEndpoint || !dislike) {
       throw new Error("Endpoints are not defined");
     }
-    const endpoint = `${discoverEndpoint}${likeEndpoint}`;
+    const endpoint = `${discoverEndpoint}${dislike}`;
     await axios.post(
-      process.env.EXPO_PUBLIC_API_URL + endpoint + sound.id,
+      process.env.EXPO_PUBLIC_API_URL + endpoint + "/" + sound.id,
       undefined,
       {
         headers: { Authorization: "Bearer " + authToken },
