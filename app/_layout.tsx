@@ -49,10 +49,8 @@ const RootLayout = () => {
       <GestureHandlerRootView>
         <StoresInitializer>
           <Tabs
-            screenOptions={() => {
-              return {
-                headerShown: false,
-              };
+            screenOptions={{
+              headerShown: false,
             }}
           />
         </StoresInitializer>

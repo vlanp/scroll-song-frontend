@@ -126,8 +126,8 @@ function DiscoverComp({
             />
             <View style={styles.gradientText}>
               <GradientText
-                fontSize={24}
-                height={36}
+                fontSize={20}
+                height={0}
                 text="Scrollez pour découvrir !"
               />
             </View>
@@ -138,8 +138,8 @@ function DiscoverComp({
               <View style={styles.songMiddleView}>
                 <View style={styles.gradientText}>
                   <GradientText
-                    fontSize={30}
-                    height={45}
+                    fontSize={24}
+                    height={0}
                     text="À l’écoute :"
                     textAlign="center"
                   />
@@ -197,8 +197,8 @@ function DiscoverComp({
           </View>
           <View style={styles.gradientText}>
             <GradientText
-              fontSize={24}
-              height={36}
+              fontSize={20}
+              height={0}
               text="Swipez pour choisir !"
               textAlign="right"
             />
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     gap: 40,
   },
   musicNote: {
-    height: 101,
+    height: 60,
     width: 85,
     objectFit: "contain",
     alignSelf: "center",
@@ -262,19 +262,18 @@ const styles = StyleSheet.create({
   },
   songTitle: {
     color: "white",
-    fontSize: 30,
+    fontSize: 24,
     fontFamily: "PoppinsBold",
     alignSelf: "center",
     textAlign: "center",
-    lineHeight: 45,
   },
   botMiddleView: {
     flexDirection: "row",
     justifyContent: "space-evenly",
   },
   chooseIcon: {
-    height: 80,
-    width: 80,
+    height: 70,
+    width: 70,
   },
 });
 

@@ -19,7 +19,7 @@ const ErrorScreen = ({
       />
       <GradientButton
         text="Réessayer"
-        onPress={() => onRetry()}
+        onPress={onRetry}
         textColor="white"
         style={{
           flex: 1,
