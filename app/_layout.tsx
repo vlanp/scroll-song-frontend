@@ -1,5 +1,11 @@
 import { Tabs } from "expo-router";
-import { ActivityIndicator } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  SafeAreaView,
+  StatusBar,
+  StyleSheet,
+} from "react-native";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import PoppinsRegularFont from "../assets/fonts/Poppins-Regular.ttf";
@@ -39,12 +45,28 @@ const RootLayout = () => {
   }
 
   return (
-    <GestureHandlerRootView>
-      <StoresInitializer>
-        <Tabs />
-      </StoresInitializer>
-    </GestureHandlerRootView>
+    <SafeAreaView style={styles.AndroidSafeArea}>
+      <GestureHandlerRootView>
+        <StoresInitializer>
+          <Tabs
+            screenOptions={() => {
+              return {
+                headerShown: false,
+              };
+            }}
+          />
+        </StoresInitializer>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  AndroidSafeArea: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+});
 
 export default RootLayout;
