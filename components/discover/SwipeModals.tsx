@@ -92,9 +92,12 @@ export default function SwipeModals({
       }
     });
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: swipePosition.value }],
-  }));
+  const animatedStyle = useAnimatedStyle(() => {
+    console.log("Position actuelle:", swipePosition.value);
+    return {
+      transform: [{ translateX: swipePosition.value }],
+    };
+  });
 
   return (
     <View style={styles.globalContainer}>
