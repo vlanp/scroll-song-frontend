@@ -1,12 +1,9 @@
 import DiscoverSound from "@/models/DiscoverSound";
-import Immutable from "@/models/Immutable";
+
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import axios from "axios";
 
-const dislikeSound = async (
-  sound: Immutable<DiscoverSound>,
-  authToken: string
-) => {
+const dislikeSound = async (sound: DiscoverSound, authToken: string) => {
   try {
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
     const discoverEndpoint = process.env.EXPO_PUBLIC_DISCOVER_ENDPOINT;

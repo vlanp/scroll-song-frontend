@@ -14,7 +14,6 @@ import { SharedValue, withTiming } from "react-native-reanimated";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import dislikeSound from "@/utils/discover/dislikeSound";
 import DiscoverSound from "@/models/DiscoverSound";
-import { Immutable } from "immer";
 
 const RightDiscoveredModal = ({
   style,
@@ -25,12 +24,12 @@ const RightDiscoveredModal = ({
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
-  sound: Immutable<DiscoverSound>;
+  sound: DiscoverSound;
 }) => {
   const { width } = useWindowDimensions();
   const styles = useStyle(width);
-  const setIsMainScrollEnable = useDiscoverStore(
-    (state) => state.setIsMainScrollEnable
+  const setIsFlatListScrollEnable = useDiscoverStore(
+    (state) => state.setIsFlatListScrollEnable
   );
 
   return (
@@ -64,7 +63,7 @@ const RightDiscoveredModal = ({
           onPress={() => {
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
-            setIsMainScrollEnable(true);
+            setIsFlatListScrollEnable(true);
             dislikeSound(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
           }}
         />
@@ -83,7 +82,7 @@ const RightDiscoveredModal = ({
           onPress={() => {
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
-            setIsMainScrollEnable(true);
+            setIsFlatListScrollEnable(true);
           }}
         />
       </ScrollView>

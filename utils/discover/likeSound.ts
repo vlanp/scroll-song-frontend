@@ -1,12 +1,8 @@
 import DiscoverSound from "@/models/DiscoverSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import axios from "axios";
-import { Immutable } from "immer";
 
-const likeSound = async (
-  sound: Immutable<DiscoverSound>,
-  authToken: string
-) => {
+const likeSound = async (sound: DiscoverSound, authToken: string) => {
   try {
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
     const setLikedTitleToDisplay =

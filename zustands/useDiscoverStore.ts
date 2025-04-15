@@ -1,4 +1,3 @@
-import Immutable from "@/models/Immutable";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import {
@@ -8,15 +7,16 @@ import {
 } from "@/models/IFetchDataState";
 import DiscoverSound from "@/models/DiscoverSound";
 import { IDownloadSoundState } from "@/models/IDownloadSoundState";
+import { FlatList } from "react-native";
 
 interface IDiscoverStoreStates {
   retryDiscover: number;
-  downloadExcerptsState: Immutable<IDownloadExcerptsState>;
-  fetchDiscoverSoundsState: Immutable<IFetchDataState<DiscoverSound[]>>;
-  position: Immutable<SavedPosition>;
-  isMainScrollEnable: boolean;
-  likedTitleToDisplay: Immutable<TitleToDisplay> | null;
-  dislikedTitleToDisplay: Immutable<TitleToDisplay> | null;
+  downloadExcerptsState: IDownloadExcerptsState;
+  fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>;
+  position: SavedPosition;
+  flatList: FlatList<DiscoverSound> | null;
+  likedTitleToDisplay: TitleToDisplay | null;
+  dislikedTitleToDisplay: TitleToDisplay | null;
 }
 
 type ISoundId = string;
@@ -62,20 +62,27 @@ interface IDiscoverStoreActions {
     fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>
   ) => void;
   removeDiscoverSound: (soundId: ISoundId) => void;
-  setPosition: (position: Immutable<ReceivedPosition>) => void;
-  setIsMainScrollEnable: (isMainScrollEnable: boolean) => void;
-  setLikedTitleToDisplay: (
-    likedTitleToDisplay: Immutable<TitleToDisplay> | null
-  ) => void;
+  setPosition: (position: ReceivedPosition) => void;
+  setFlatList: (FlatList: FlatList<DiscoverSound> | null) => void;
+  setIsFlatListScrollEnable: (isScrollEnable: boolean) => void;
+  setLikedTitleToDisplay: (likedTitleToDisplay: TitleToDisplay | null) => void;
   setDislikedTitleToDisplay: (
-    dislikedTitleToDisplay: Immutable<TitleToDisplay> | null
+    dislikedTitleToDisplay: TitleToDisplay | null
   ) => void;
 }
 
+const setIsFlatListScrollEnable = (
+  isScrollEnable: boolean,
+  flatList: FlatList<DiscoverSound> | null
+) => {
+  flatList?.setNativeProps({ scrollEnabled: isScrollEnable });
+  return {};
+};
+
 const setDownloadExcerptState = (
   soundId: string,
-  downloadExcerptsState: Immutable<IDownloadExcerptsState>,
-  downloadExcerptState: Immutable<IDownloadSoundState>
+  downloadExcerptsState: IDownloadExcerptsState,
+  downloadExcerptState: IDownloadSoundState
 ): IDownloadExcerptsState => {
   return {
     ...downloadExcerptsState,
@@ -85,8 +92,8 @@ const setDownloadExcerptState = (
 
 const removeDiscoverSound = (
   soundId: string,
-  fetchDiscoverSoundsState: Immutable<IFetchDataState<DiscoverSound[]>>
-): Immutable<IFetchDataState<DiscoverSound[]>> => {
+  fetchDiscoverSoundsState: IFetchDataState<DiscoverSound[]>
+): IFetchDataState<DiscoverSound[]> => {
   if (fetchDiscoverSoundsState.status !== "fetchDataSuccess") {
     throw new Error("Cannot remove sound when fetch is not successful");
   }
@@ -96,9 +103,9 @@ const removeDiscoverSound = (
 };
 
 const setPosition = (
-  prevPosition: Immutable<SavedPosition>,
-  position: Immutable<ReceivedPosition>
-): Immutable<SavedPosition> => {
+  prevPosition: SavedPosition,
+  position: ReceivedPosition
+): SavedPosition => {
   return new SavedPosition(
     position.currentPosition === "keepPosition"
       ? prevPosition.currentPosition
@@ -140,9 +147,11 @@ const useDiscoverStore = create<IDiscoverStoreStates & IDiscoverStoreActions>()(
     position: new SavedPosition(0, false),
     setPosition: (position: ReceivedPosition) =>
       set((state) => ({ position: setPosition(state.position, position) })),
-    isMainScrollEnable: true,
-    setIsMainScrollEnable: (isMainScrollEnable: boolean) =>
-      set(() => ({ isMainScrollEnable })),
+    flatList: null,
+    setFlatList: (flatList: FlatList<DiscoverSound> | null) =>
+      set(() => ({ flatList })),
+    setIsFlatListScrollEnable: (isScrollEnable: boolean) =>
+      set((state) => setIsFlatListScrollEnable(isScrollEnable, state.flatList)),
     likedTitleToDisplay: null,
     setLikedTitleToDisplay: (likedTitleToDisplay: TitleToDisplay | null) =>
       set(() => ({ likedTitleToDisplay })),

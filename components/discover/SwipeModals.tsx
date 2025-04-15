@@ -13,7 +13,6 @@ import RightDiscoveredModal from "./RightDiscoveredModal";
 import likeSound from "@/utils/discover/likeSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import DiscoverSound from "@/models/DiscoverSound";
-import Immutable from "@/models/Immutable";
 
 export default function SwipeModals({
   children,
@@ -26,14 +25,14 @@ export default function SwipeModals({
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
-  readonly sound: Immutable<DiscoverSound>;
+  readonly sound: DiscoverSound;
 }) {
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
     null
   );
-  const setIsMainScrollEnable = useDiscoverStore(
-    (state) => state.setIsMainScrollEnable
+  const setIsFlatListScrollEnable = useDiscoverStore(
+    (state) => state.setIsFlatListScrollEnable
   );
   const styles = getStyle(width);
   // For weird reason when trying to access sound from panGesture, it retrieve an empty object
@@ -81,11 +80,11 @@ export default function SwipeModals({
           panGestureSound,
           "09454812-d5b2-4e33-896c-3b57056a4749"
         ); // TODO: Create a unique ID for each user
-        runOnJS(setIsMainScrollEnable)(false);
+        runOnJS(setIsFlatListScrollEnable)(false);
       } else if (Math.abs(swipePosition.value) > width / 3) {
         swipePosition.value = withTiming(-width, { duration: 100 });
         onSide.value = false;
-        runOnJS(setIsMainScrollEnable)(false);
+        runOnJS(setIsFlatListScrollEnable)(false);
       } else {
         swipePosition.value = withTiming(0, { duration: 100 });
         onSide.value = true;

@@ -12,7 +12,7 @@ type IFetchDataState<H> =
   | IFetchDataIdle
   | IFetchDataLoading
   | IFetchDataError
-  | Immutable<FetchDataSuccess<H>>;
+  | FetchDataSuccess<H>;
 
 interface IFetchDataIdle extends IFetchDataStatus {
   status: "fetchDataIdle";

@@ -8,7 +8,7 @@ interface IDownloadSoundStatus {
 }
 
 type IDownloadSoundState =
-  | Immutable<DownloadSoundLoading>
+  | DownloadSoundLoading
   | IDownloadSoundError
   | IDownloadSoundSuccess;
 

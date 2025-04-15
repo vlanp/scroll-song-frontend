@@ -27,8 +27,8 @@ const LeftDiscoveredModal = ({
   const likedTitleToDisplay = useDiscoverStore(
     (state) => state.likedTitleToDisplay?.title
   );
-  const setIsMainScrollEnable = useDiscoverStore(
-    (state) => state.setIsMainScrollEnable
+  const setIsFlatListScrollEnable = useDiscoverStore(
+    (state) => state.setIsFlatListScrollEnable
   );
 
   const styles = useStyle(width);
@@ -67,7 +67,7 @@ const LeftDiscoveredModal = ({
             router.navigate("/vote");
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
-            setIsMainScrollEnable(true);
+            setIsFlatListScrollEnable(true);
           }}
         />
         <View style={{ marginTop: 10 }}></View>
@@ -85,7 +85,7 @@ const LeftDiscoveredModal = ({
           onPress={() => {
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
-            setIsMainScrollEnable(true);
+            setIsFlatListScrollEnable(true);
           }}
         />
       </ScrollView>

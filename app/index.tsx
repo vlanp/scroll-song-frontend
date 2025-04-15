@@ -17,13 +17,11 @@ function Index() {
     (state) => state.fetchDiscoverSoundsState
   );
   const setRetryDiscover = useDiscoverStore((state) => state.setRetryDiscover);
-  const [height, setHeight] = useState<number>(0);
-  const { width: _width, height: _height } = useWindowDimensions();
-  const styles = getStyles(_height, _width, height);
+  const setFlatList = useDiscoverStore((state) => state.setFlatList);
+  const [mainViewHeight, setMainViewHeight] = useState<number>(0);
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const styles = getStyles(screenHeight, screenWidth, mainViewHeight);
   const setPosition = useDiscoverStore((state) => state.setPosition);
-  const isMainScrollEnable = useDiscoverStore(
-    (state) => state.isMainScrollEnable
-  );
   const endScrollingTimeout = useRef<NodeJS.Timeout | null>(null);
   const swipePosition = useSharedValue(0);
   const onSide = useSharedValue(true);
@@ -52,12 +50,12 @@ function Index() {
     <View
       style={styles.mainView}
       onLayout={(event) => {
-        setHeight(event.nativeEvent.layout.height);
+        setMainViewHeight(event.nativeEvent.layout.height);
       }}
     >
       <FlatList
+        ref={setFlatList}
         data={fetchDiscoverSoundsState.data}
-        scrollEnabled={isMainScrollEnable}
         initialNumToRender={3}
         renderItem={({ item, index }) => (
           <View style={styles.scrollPageView}>
@@ -91,7 +89,9 @@ function Index() {
           );
         }}
         onScroll={({ nativeEvent }) => {
-          const position = Math.round(nativeEvent.contentOffset.y / height);
+          const position = Math.round(
+            nativeEvent.contentOffset.y / mainViewHeight
+          );
           setPosition(new ReceivedPosition(position, "keepScrollingState"));
         }}
       />
@@ -101,20 +101,24 @@ function Index() {
 
 Index.whyDidYouRender = { logOnDifferentValues: true };
 
-const getStyles = (_height: number, _width: number, height: number) => {
+const getStyles = (
+  screenHeight: number,
+  screenWidth: number,
+  mainViewHeight: number
+) => {
   const styles = StyleSheet.create({
     mainView: {
       flex: 1,
     },
     scrollPageView: {
-      height: height,
+      height: mainViewHeight,
     },
     pressableContainer: {
       borderRadius: 40,
-      width: _width - 80,
+      width: screenWidth - 80,
       marginHorizontal: 40,
-      marginVertical: 0.15 * (_height - 200),
-      height: 0.7 * (_height - 200),
+      marginVertical: 0.15 * (screenHeight - 200),
+      height: 0.7 * (screenHeight - 200),
       alignItems: "center",
     },
   });

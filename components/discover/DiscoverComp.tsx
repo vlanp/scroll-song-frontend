@@ -26,7 +26,6 @@ import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
 import useNetworkStore from "@/zustands/useNetworkStore";
-import Immutable from "@/models/Immutable";
 import { IDownloadSoundState } from "@/models/IDownloadSoundState";
 
 function DiscoverComp({
@@ -35,7 +34,7 @@ function DiscoverComp({
   swipePosition,
   onSide,
 }: {
-  readonly sound: Immutable<DiscoverSound>;
+  readonly sound: DiscoverSound;
   selfPosition: number;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
@@ -56,8 +55,8 @@ function DiscoverComp({
   const position = useDiscoverStore((state) => state.position);
   const isFocused = useIsFocused();
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const setIsMainScrollEnable = useDiscoverStore(
-    (state) => state.setIsMainScrollEnable
+  const setIsFlatListScrollEnable = useDiscoverStore(
+    (state) => state.setIsFlatListScrollEnable
   );
   const likedTitleToDisplay = useDiscoverStore(
     (state) => state.likedTitleToDisplay
@@ -109,7 +108,7 @@ function DiscoverComp({
         modalVisible={isModalVisible}
         setModalVisible={setIsModalVisible}
         closeButton={true}
-        onClose={() => setIsMainScrollEnable(true)}
+        onClose={() => setIsFlatListScrollEnable(true)}
         zIndex={3}
       >
         <ModalText />
@@ -121,7 +120,7 @@ function DiscoverComp({
               title="Découverte"
               onPressIcon={() => {
                 setIsModalVisible((currentState) => !currentState);
-                setIsMainScrollEnable(false);
+                setIsFlatListScrollEnable(false);
               }}
             />
             <View style={styles.gradientText}>

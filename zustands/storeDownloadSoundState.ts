@@ -1,6 +1,6 @@
 import downloadSound, { isFileExisting } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
-import Immutable from "@/models/Immutable";
+
 import ISound from "@/models/ISound";
 import DiscoverSound from "@/models/DiscoverSound";
 import {
@@ -9,7 +9,7 @@ import {
 } from "@/models/IDownloadSoundState";
 
 const storeDownloadSoundState = async (
-  sound: Immutable<ISound>,
+  sound: ISound,
   setDownloadSoundState: (
     soundId: string,
     downloadSoundState: IDownloadSoundState
