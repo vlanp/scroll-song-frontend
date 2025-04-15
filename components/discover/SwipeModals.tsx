@@ -26,7 +26,7 @@ export default function SwipeModals({
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
-  sound: Immutable<DiscoverSound>;
+  readonly sound: Immutable<DiscoverSound>;
 }) {
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
@@ -35,8 +35,10 @@ export default function SwipeModals({
   const setIsMainScrollEnable = useDiscoverStore(
     (state) => state.setIsMainScrollEnable
   );
-
   const styles = getStyle(width);
+  // For weird reason when trying to access sound from panGesture, it retrieve an empty object
+  // However sound doesn't seems to be modified directly anywere
+  const panGestureSound = { ...sound };
 
   const panGesture = Gesture.Pan()
     .manualActivation(true)
@@ -75,7 +77,10 @@ export default function SwipeModals({
       if (swipePosition.value > width / 3) {
         swipePosition.value = withTiming(width, { duration: 100 });
         onSide.value = false;
-        runOnJS(likeSound)(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
+        runOnJS(likeSound)(
+          panGestureSound,
+          "09454812-d5b2-4e33-896c-3b57056a4749"
+        ); // TODO: Create a unique ID for each user
         runOnJS(setIsMainScrollEnable)(false);
       } else if (Math.abs(swipePosition.value) > width / 3) {
         swipePosition.value = withTiming(-width, { duration: 100 });

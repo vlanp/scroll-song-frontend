@@ -35,7 +35,7 @@ function DiscoverComp({
   swipePosition,
   onSide,
 }: {
-  sound: Immutable<DiscoverSound>;
+  readonly sound: Immutable<DiscoverSound>;
   selfPosition: number;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
@@ -174,10 +174,10 @@ function DiscoverComp({
             </View>
             <View style={styles.botMiddleView}>
               <Pressable
-              // onPress={() => {
-              //   swipePosition.value = withTiming(-width, { duration: 100 });
-              //   onSide.value = false;
-              // }}
+                onPress={() => {
+                  swipePosition.value = withTiming(-width, { duration: 100 });
+                  onSide.value = false;
+                }}
               >
                 <Image source={dislikeIcon} style={styles.chooseIcon} />
               </Pressable>
