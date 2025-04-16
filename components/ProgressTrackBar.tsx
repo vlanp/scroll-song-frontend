@@ -1,31 +1,92 @@
-import { GestureResponderEvent, StyleSheet, View, Text } from "react-native";
+import usePlayer from "@/hooks/usePlayer";
+import DiscoverSound from "@/models/DiscoverSound";
+import { IDownloadSoundState } from "@/models/IDownloadSoundState";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useNetworkStore from "@/zustands/useNetworkStore";
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect } from "react";
+import {
+  GestureResponderEvent,
+  StyleSheet,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 
 const ProgressTrackBar = ({
   trackBarWidth,
   trackBarHeigth,
   trackBarBorderWidth,
-  loadingProgress,
-  progressSec,
-  durationSec,
+  sound,
+  uri,
+  selfPosition,
   loadingColor,
   readingColor,
-  onTouchStart,
-  onTouchMove,
-  onTouchEnd,
 }: {
   trackBarWidth: number;
   trackBarHeigth: number;
   trackBarBorderWidth: number;
-  loadingProgress: number;
-  progressSec: number;
-  durationSec: number;
+  sound: DiscoverSound;
+  uri: string;
+  selfPosition: number;
   loadingColor: string;
   readingColor: string;
-  onTouchStart?: (event: GestureResponderEvent) => void;
-  onTouchMove?: (event: GestureResponderEvent) => void;
-  onTouchEnd?: (event: GestureResponderEvent) => void;
 }) => {
-  const readingProgress = progressSec / durationSec;
+  const networkState = useNetworkStore((state) => state.networkState);
+  const downloadExcerptState = useDiscoverStore<IDownloadSoundState | null>(
+    (state) => state.downloadExcerptsState[sound.id]
+  );
+  const { playingState, playingProgressSec, play, stop, changePositionSec } =
+    usePlayer({
+      uri: uri,
+    });
+  const likedTitleToDisplay = useDiscoverStore(
+    (state) => state.likedTitleToDisplay
+  );
+  const dislikedTitleToDisplay = useDiscoverStore(
+    (state) => state.dislikedTitleToDisplay
+  );
+  const position = useDiscoverStore((state) => state.position);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    const handlePositionChange = async () => {
+      if (
+        position.currentPosition === selfPosition &&
+        isFocused &&
+        !position.isScrolling &&
+        likedTitleToDisplay?.id !== sound.id &&
+        dislikedTitleToDisplay?.id !== sound.id
+      ) {
+        await play();
+      } else {
+        await stop();
+      }
+    };
+    handlePositionChange();
+  }, [
+    selfPosition,
+    isFocused,
+    position.currentPosition,
+    position.isScrolling,
+    likedTitleToDisplay?.id,
+    sound.id,
+    dislikedTitleToDisplay?.id,
+    play,
+    stop,
+  ]);
+
+  const loadingProgress =
+    downloadExcerptState?.status === "downloadSoundLoading"
+      ? downloadExcerptState.relativeProgress
+      : downloadExcerptState?.status === "downloadSoundSuccess"
+        ? 1
+        : 0;
+
+  const durationSec =
+    (sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000;
+
+  const readingProgress = playingProgressSec / durationSec;
 
   const styles = getStyles(
     trackBarWidth,
@@ -37,30 +98,64 @@ const ProgressTrackBar = ({
     readingColor
   );
 
+  const handleTouchAndDrag = (e: GestureResponderEvent) => {
+    stop(true);
+    changePositionSec(
+      ((sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000) *
+        (e.nativeEvent.locationX / 200)
+    );
+  };
+
+  if (!playingState.isLoaded) {
+    return <ActivityIndicator size={25} />;
+  }
+
   return (
-    <View style={styles.mainView}>
-      <Text style={styles.progressText}>
-        {(Math.round(progressSec) < 10 ? "00:0" : "00:") +
-          Math.round(progressSec)}
-      </Text>
-      <View style={styles.backgroundBarView}>
-        <View
-          style={[styles.progressView, styles.loadingProgressView]}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        ></View>
-        <View
-          style={[styles.progressView, styles.readingProgressView]}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        ></View>
+    <>
+      <View style={styles.mainView}>
+        <Text style={styles.progressText}>
+          {(Math.round(playingProgressSec) < 10 ? "00:0" : "00:") +
+            Math.round(playingProgressSec)}
+        </Text>
+        <View style={styles.backgroundBarView}>
+          <View
+            style={[styles.progressView, styles.loadingProgressView]}
+            onTouchStart={handleTouchAndDrag}
+            onTouchMove={handleTouchAndDrag}
+            onTouchEnd={play}
+          ></View>
+          <View
+            style={[styles.progressView, styles.readingProgressView]}
+            onTouchStart={handleTouchAndDrag}
+            onTouchMove={handleTouchAndDrag}
+            onTouchEnd={play}
+          ></View>
+        </View>
+        <Text style={styles.progressText}>
+          {(durationSec < 10 ? "00:0" : "00:") + durationSec}
+        </Text>
       </View>
-      <Text style={styles.progressText}>
-        {(durationSec < 10 ? "00:0" : "00:") + durationSec}
-      </Text>
-    </View>
+      {networkState.status === "networkError" ? (
+        <Text>Il semble qu&apos;il y ait un problème réseau</Text>
+      ) : downloadExcerptState?.status === "downloadSoundError" ? (
+        <>
+          <Text>
+            Une erreur est survenue lors du téléchargement de la musique. Merci
+            de réessayer ultérieurement.
+          </Text>
+        </>
+      ) : (
+        playingState.error && (
+          <>
+            <Text>
+              Une erreur est lors{" "}
+              {playingState.error === "play" ? "du lancement" : "de l'arrêt"} de
+              la musique. Merci de réessayer ultérieurement.
+            </Text>
+          </>
+        )
+      )}
+    </>
   );
 };
 

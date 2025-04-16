@@ -1,6 +1,4 @@
 import {
-  ActivityIndicator,
-  GestureResponderEvent,
   StyleSheet,
   Text,
   View,
@@ -9,11 +7,9 @@ import {
   useWindowDimensions,
 } from "react-native";
 import ProgressTrackBar from "../ProgressTrackBar";
-import usePlayer from "../../hooks/usePlayer";
 import { documentDirectory } from "expo-file-system";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DiscoverSound from "../../models/DiscoverSound";
-import { useIsFocused } from "@react-navigation/native";
 import ModalText from "./modalText";
 import Modal from "../Modal";
 import MarginSection from "../marginSection";
@@ -25,10 +21,9 @@ import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
-import useNetworkStore from "@/zustands/useNetworkStore";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
+import useCountRender from "@/hooks/useCountRender";
 
-function DiscoverComp({
+const DiscoverComp = function DiscoverComp({
   sound,
   selfPosition,
   swipePosition,
@@ -39,68 +34,20 @@ function DiscoverComp({
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
 }) {
+  useCountRender(sound.id);
   const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
-  const { playingState, playingProgressSec, play, stop, changePositionSec } =
-    usePlayer({
-      uri:
-        documentDirectory +
-        (excerptDirectory ? excerptDirectory + "/" : "") +
-        sound.id +
-        ".mp3",
-    });
-  const networkState = useNetworkStore((state) => state.networkState);
-  const downloadExcerptState = useDiscoverStore<IDownloadSoundState | null>(
-    (state) => state.downloadExcerptsState[sound.id]
-  );
-  const position = useDiscoverStore((state) => state.position);
-  const isFocused = useIsFocused();
+  const uri =
+    documentDirectory +
+    (excerptDirectory ? excerptDirectory + "/" : "") +
+    sound.id +
+    ".mp3";
+
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const setIsFlatListScrollEnable = useDiscoverStore(
     (state) => state.setIsFlatListScrollEnable
   );
-  const likedTitleToDisplay = useDiscoverStore(
-    (state) => state.likedTitleToDisplay
-  );
-  const dislikedTitleToDisplay = useDiscoverStore(
-    (state) => state.dislikedTitleToDisplay
-  );
+
   const { width } = useWindowDimensions();
-
-  const handleTouchAndDrag = (e: GestureResponderEvent) => {
-    stop(true);
-    changePositionSec(
-      ((sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000) *
-        (e.nativeEvent.locationX / 200)
-    );
-  };
-
-  useEffect(() => {
-    const handlePositionChange = async () => {
-      if (
-        position.currentPosition === selfPosition &&
-        isFocused &&
-        !position.isScrolling &&
-        likedTitleToDisplay?.id !== sound.id &&
-        dislikedTitleToDisplay?.id !== sound.id
-      ) {
-        await play();
-      } else {
-        await stop();
-      }
-    };
-    handlePositionChange();
-  }, [
-    play,
-    playingState.isPlaying,
-    selfPosition,
-    stop,
-    isFocused,
-    position.currentPosition,
-    position.isScrolling,
-    likedTitleToDisplay?.id,
-    sound.id,
-    dislikedTitleToDisplay?.id,
-  ]);
 
   return (
     <View style={styles.container}>
@@ -145,31 +92,16 @@ function DiscoverComp({
                 </View>
                 <Text style={styles.songTitle}>{sound.title}</Text>
               </View>
-              {!playingState.isLoaded ? (
-                <ActivityIndicator size={25} />
-              ) : (
-                <ProgressTrackBar
-                  loadingProgress={
-                    downloadExcerptState?.status === "downloadSoundLoading"
-                      ? downloadExcerptState.relativeProgress
-                      : downloadExcerptState?.status === "downloadSoundSuccess"
-                        ? 1
-                        : 0
-                  }
-                  durationSec={
-                    (sound.endTimeExcerptMs - sound.startTimeExcerptMs) / 1000
-                  }
-                  progressSec={playingProgressSec}
-                  onTouchStart={handleTouchAndDrag}
-                  onTouchMove={handleTouchAndDrag}
-                  onTouchEnd={play}
-                  loadingColor="rgba(0, 167, 255, 1)"
-                  readingColor="rgba(0, 76, 255, 1)"
-                  trackBarBorderWidth={2}
-                  trackBarHeigth={15}
-                  trackBarWidth={0.5 * width}
-                />
-              )}
+              <ProgressTrackBar
+                sound={sound}
+                uri={uri}
+                selfPosition={selfPosition}
+                loadingColor="rgba(0, 167, 255, 1)"
+                readingColor="rgba(0, 76, 255, 1)"
+                trackBarBorderWidth={2}
+                trackBarHeigth={15}
+                trackBarWidth={0.5 * width}
+              />
             </View>
             <View style={styles.botMiddleView}>
               <Pressable
@@ -202,33 +134,11 @@ function DiscoverComp({
               textAlign="right"
             />
           </View>
-          {networkState.status === "networkError" ? (
-            <Text>Il semble qu&apos;il y ait un problème réseau</Text>
-          ) : downloadExcerptState?.status === "downloadSoundError" ? (
-            <>
-              <Text>
-                Une erreur est survenue lors du téléchargement de la musique.
-                Merci de réessayer ultérieurement.
-              </Text>
-            </>
-          ) : (
-            playingState.error && (
-              <>
-                <Text>
-                  Une erreur est lors{" "}
-                  {playingState.error === "play"
-                    ? "du lancement"
-                    : "de l'arrêt"}{" "}
-                  de la musique. Merci de réessayer ultérieurement.
-                </Text>
-              </>
-            )
-          )}
         </MarginSection>
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -275,5 +185,7 @@ const styles = StyleSheet.create({
     width: 70,
   },
 });
+
+// DiscoverComp.whyDidYouRender = { logOnDifferentValues: true };
 
 export default DiscoverComp;

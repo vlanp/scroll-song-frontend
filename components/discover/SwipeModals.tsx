@@ -14,7 +14,7 @@ import likeSound from "@/utils/discover/likeSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import DiscoverSound from "@/models/DiscoverSound";
 
-export default function SwipeModals({
+function SwipeModals({
   children,
   style,
   swipePosition,
@@ -25,8 +25,10 @@ export default function SwipeModals({
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
-  readonly sound: DiscoverSound;
+  sound: DiscoverSound;
 }) {
+  // console.log("RENDERING");
+
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
     null
@@ -91,12 +93,9 @@ export default function SwipeModals({
       }
     });
 
-  const animatedStyle = useAnimatedStyle(() => {
-    console.log("Position actuelle:", swipePosition.value);
-    return {
-      transform: [{ translateX: swipePosition.value }],
-    };
-  });
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: swipePosition.value }],
+  }));
 
   return (
     <View style={styles.globalContainer}>
@@ -162,3 +161,5 @@ const getStyle = (width: number) => {
 
   return styles;
 };
+
+export default SwipeModals;

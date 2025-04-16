@@ -8,11 +8,9 @@ import useDiscoverStore, {
 } from "@/zustands/useDiscoverStore";
 import SwipeModals from "@/components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
-import useCountRender from "@/hooks/useCountRender";
 import ErrorScreen from "@/components/ErrorScreen";
 
 function Index() {
-  useCountRender();
   const fetchDiscoverSoundsState = useDiscoverStore(
     (state) => state.fetchDiscoverSoundsState
   );
@@ -99,7 +97,7 @@ function Index() {
   );
 }
 
-Index.whyDidYouRender = { logOnDifferentValues: true };
+// Index.whyDidYouRender = { logOnDifferentValues: true };
 
 const getStyles = (
   screenHeight: number,
