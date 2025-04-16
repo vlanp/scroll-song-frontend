@@ -1,5 +1,3 @@
-import { Immutable } from "immer";
-
 interface IDownloadSoundStatus {
   status:
     | "downloadSoundLoading"

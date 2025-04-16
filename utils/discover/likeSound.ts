@@ -18,7 +18,7 @@ const likeSound = async (sound: DiscoverSound, authToken: string) => {
     }
     const endpoint = `${discoverEndpoint}${likeEndpoint}`;
     await axios.post(
-      process.env.EXPO_PUBLIC_API_URL + endpoint + "/" + sound.id,
+      process.env.EXPO_PUBLIC_DEV_API_URL + endpoint + "/" + sound.id,
       undefined,
       {
         headers: { Authorization: "Bearer " + authToken },

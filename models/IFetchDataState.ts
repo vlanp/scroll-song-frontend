@@ -1,5 +1,3 @@
-import Immutable from "./Immutable";
-
 interface IFetchDataStatus {
   status:
     | "fetchDataIdle"

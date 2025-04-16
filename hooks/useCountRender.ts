@@ -18,7 +18,7 @@ const useCountRender = (debugId?: string) => {
     return () => {
       console.log(`Component unmount${debugId ? ` for id ${debugId}` : ""}`);
     };
-  }, []);
+  }, [debugId]);
 };
 
 export default useCountRender;

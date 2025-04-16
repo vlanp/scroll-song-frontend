@@ -1,6 +1,6 @@
 import "../wdyr";
 import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LottieLoading from "../components/LottieLoading";
 import DiscoverComp from "../components/discover/DiscoverComp";
 import useDiscoverStore, {
@@ -9,6 +9,8 @@ import useDiscoverStore, {
 import SwipeModals from "@/components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
 import ErrorScreen from "@/components/ErrorScreen";
+import { useIsFocused } from "@react-navigation/native";
+import { documentDirectory } from "expo-file-system";
 
 function Index() {
   const fetchDiscoverSoundsState = useDiscoverStore(
@@ -23,6 +25,69 @@ function Index() {
   const endScrollingTimeout = useRef<NodeJS.Timeout | null>(null);
   const swipePosition = useSharedValue(0);
   const onSide = useSharedValue(true);
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (fetchDiscoverSoundsState.status !== "fetchDataSuccess") {
+      return;
+    }
+    const setSoundPlayer = useDiscoverStore.getState().setSoundPlayer;
+    const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
+    fetchDiscoverSoundsState.data.forEach((discoverSound) => {
+      const uri =
+        documentDirectory +
+        (excerptDirectory ? excerptDirectory + "/" : "") +
+        discoverSound.id +
+        ".mp3";
+      setSoundPlayer(discoverSound.id, uri);
+    });
+  }, [fetchDiscoverSoundsState]);
+
+  useEffect(() => {
+    const unsubscribe = useDiscoverStore.subscribe(
+      (state) => {
+        const position = state.position;
+        const soundsPlayer = state.soundsPlayer;
+        const likedTitleToDisplay = state.likedTitleToDisplay;
+        const dislikedTitleToDisplay = state.dislikedTitleToDisplay;
+        return {
+          position,
+          soundsPlayer,
+          likedTitleToDisplay,
+          dislikedTitleToDisplay,
+        };
+      },
+      (selectedState) => {
+        const {
+          position,
+          soundsPlayer,
+          likedTitleToDisplay,
+          dislikedTitleToDisplay,
+        } = selectedState;
+        const soundPlayer = position.soundId && soundsPlayer[position.soundId];
+        if (!soundPlayer) {
+          return;
+        }
+        if (
+          isFocused &&
+          !position.isScrolling &&
+          likedTitleToDisplay?.id !== position.soundId &&
+          dislikedTitleToDisplay?.id !== position.soundId &&
+          soundPlayer
+        ) {
+          soundPlayer.play();
+        } else {
+          console.log("stop");
+
+          soundPlayer.stop();
+        }
+      },
+      {
+        fireImmediately: true,
+      }
+    );
+    return unsubscribe;
+  }, [isFocused]);
 
   if (
     fetchDiscoverSoundsState.status === "fetchDataLoading" ||
@@ -44,6 +109,15 @@ function Index() {
     );
   }
 
+  if (fetchDiscoverSoundsState.data.length === 0) {
+    return (
+      <ErrorScreen
+        errorText="Vous avez écoutez toutes les musiques disponibles. Veuillez attendre la publication de nouveaux extraits."
+        onRetry={setRetryDiscover}
+      />
+    );
+  }
+
   return (
     <View
       style={styles.mainView}
@@ -55,7 +129,7 @@ function Index() {
         ref={setFlatList}
         data={fetchDiscoverSoundsState.data}
         initialNumToRender={3}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View style={styles.scrollPageView}>
             <SwipeModals
               style={styles.pressableContainer}
@@ -65,7 +139,6 @@ function Index() {
             >
               <DiscoverComp
                 sound={item}
-                selfPosition={index}
                 onSide={onSide}
                 swipePosition={swipePosition}
               />
@@ -78,11 +151,16 @@ function Index() {
           if (endScrollingTimeout.current) {
             clearTimeout(endScrollingTimeout.current);
           }
-          setPosition(new ReceivedPosition("keepPosition", true));
+          setPosition(
+            new ReceivedPosition("keepPosition", true, "keepSoundId")
+          );
         }}
         onMomentumScrollEnd={() => {
           endScrollingTimeout.current = setTimeout(
-            () => setPosition(new ReceivedPosition("keepPosition", false)),
+            () =>
+              setPosition(
+                new ReceivedPosition("keepPosition", false, "keepSoundId")
+              ),
             100
           );
         }}
@@ -90,7 +168,13 @@ function Index() {
           const position = Math.round(
             nativeEvent.contentOffset.y / mainViewHeight
           );
-          setPosition(new ReceivedPosition(position, "keepScrollingState"));
+          setPosition(
+            new ReceivedPosition(
+              position,
+              "keepScrollingState",
+              fetchDiscoverSoundsState.data[position].id
+            )
+          );
         }}
       />
     </View>

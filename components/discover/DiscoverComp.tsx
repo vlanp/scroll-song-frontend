@@ -7,7 +7,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import ProgressTrackBar from "../ProgressTrackBar";
-import { documentDirectory } from "expo-file-system";
 import { useState } from "react";
 import DiscoverSound from "../../models/DiscoverSound";
 import ModalText from "./modalText";
@@ -25,22 +24,14 @@ import useCountRender from "@/hooks/useCountRender";
 
 const DiscoverComp = function DiscoverComp({
   sound,
-  selfPosition,
   swipePosition,
   onSide,
 }: {
   readonly sound: DiscoverSound;
-  selfPosition: number;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
 }) {
   useCountRender(sound.id);
-  const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
-  const uri =
-    documentDirectory +
-    (excerptDirectory ? excerptDirectory + "/" : "") +
-    sound.id +
-    ".mp3";
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const setIsFlatListScrollEnable = useDiscoverStore(
@@ -94,8 +85,6 @@ const DiscoverComp = function DiscoverComp({
               </View>
               <ProgressTrackBar
                 sound={sound}
-                uri={uri}
-                selfPosition={selfPosition}
                 loadingColor="rgba(0, 167, 255, 1)"
                 readingColor="rgba(0, 76, 255, 1)"
                 trackBarBorderWidth={2}
