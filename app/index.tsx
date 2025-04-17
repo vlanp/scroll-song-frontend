@@ -11,6 +11,7 @@ import { useSharedValue } from "react-native-reanimated";
 import ErrorScreen from "@/components/ErrorScreen";
 import { useIsFocused } from "@react-navigation/native";
 import { documentDirectory } from "expo-file-system";
+import { Mutex } from "async-mutex";
 
 function Index() {
   const fetchDiscoverSoundsState = useDiscoverStore(
@@ -26,11 +27,24 @@ function Index() {
   const swipePosition = useSharedValue(0);
   const onSide = useSharedValue(true);
   const isFocused = useIsFocused();
+  const stopSoundPlayer = useRef<((isPause?: boolean) => Promise<void>) | null>(
+    null
+  );
+  const stopSoundPlayerMutex = useRef<Mutex>(new Mutex());
 
   useEffect(() => {
     if (fetchDiscoverSoundsState.status !== "fetchDataSuccess") {
       return;
     }
+    const position = useDiscoverStore.getState().position;
+    setPosition(
+      new ReceivedPosition(
+        "keepPosition",
+        "keepScrollingState",
+        fetchDiscoverSoundsState.data[position.currentPosition]?.id ||
+          fetchDiscoverSoundsState.data[position.currentPosition - 1]?.id
+      )
+    );
     const setSoundPlayer = useDiscoverStore.getState().setSoundPlayer;
     const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
     fetchDiscoverSoundsState.data.forEach((discoverSound) => {
@@ -41,49 +55,54 @@ function Index() {
         ".mp3";
       setSoundPlayer(discoverSound.id, uri);
     });
-  }, [fetchDiscoverSoundsState]);
+  }, [fetchDiscoverSoundsState, setPosition]);
 
   useEffect(() => {
     const unsubscribe = useDiscoverStore.subscribe(
       (state) => {
         const position = state.position;
-        const soundsPlayer = state.soundsPlayer;
-        const likedTitleToDisplay = state.likedTitleToDisplay;
-        const dislikedTitleToDisplay = state.dislikedTitleToDisplay;
+        const play =
+          position.soundId && state.soundsPlayer[position.soundId]?.play;
+        const stop =
+          position.soundId && state.soundsPlayer[position.soundId]?.stop;
         return {
           position,
-          soundsPlayer,
-          likedTitleToDisplay,
-          dislikedTitleToDisplay,
+          play,
+          stop,
         };
       },
-      (selectedState) => {
-        const {
-          position,
-          soundsPlayer,
-          likedTitleToDisplay,
-          dislikedTitleToDisplay,
-        } = selectedState;
-        const soundPlayer = position.soundId && soundsPlayer[position.soundId];
-        if (!soundPlayer) {
-          return;
-        }
-        if (
-          isFocused &&
-          !position.isScrolling &&
-          likedTitleToDisplay?.id !== position.soundId &&
-          dislikedTitleToDisplay?.id !== position.soundId &&
-          soundPlayer
-        ) {
-          soundPlayer.play();
-        } else {
-          console.log("stop");
-
-          soundPlayer.stop();
-        }
+      async (selectedState) => {
+        await stopSoundPlayerMutex.current.runExclusive(async () => {
+          console.log("START : ", selectedState.position);
+          const { position, play, stop } = selectedState;
+          if (isFocused && !position.isScrolling && play) {
+            if (stopSoundPlayer.current) {
+              await stopSoundPlayer.current();
+            }
+            await play();
+            stopSoundPlayer.current = stop || null;
+          } else if (stop) {
+            await stop();
+            // stopSoundPlayer.current = null;
+          } else if (stopSoundPlayer.current) {
+            await stopSoundPlayer.current();
+          }
+          console.log("END : ", selectedState.position);
+        });
       },
       {
         fireImmediately: true,
+        equalityFn: (c, p) => {
+          const { position: cPosition, play: cPlay, stop: cStop } = c;
+          const { position: pPosition, play: pPlay, stop: pStop } = p;
+          return (
+            cPosition.currentPosition === pPosition.currentPosition &&
+            cPosition.isScrolling === pPosition.isScrolling &&
+            cPosition.soundId === pPosition.soundId &&
+            cPlay === pPlay &&
+            cStop === pStop
+          );
+        },
       }
     );
     return unsubscribe;
@@ -172,7 +191,7 @@ function Index() {
             new ReceivedPosition(
               position,
               "keepScrollingState",
-              fetchDiscoverSoundsState.data[position].id
+              fetchDiscoverSoundsState.data[position]?.id || "keepSoundId"
             )
           );
         }}

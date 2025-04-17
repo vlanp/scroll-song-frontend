@@ -6,7 +6,7 @@ import SoundPlayerState from "./SoundPlayerState";
 
 class SoundPlayer {
   private uri: string;
-  private soundId: string;
+  readonly soundId: string;
   private sound: Audio.Sound | null = null;
   private intervalId: NodeJS.Timeout | null = null;
   private numberOfRetry = 0;
@@ -68,22 +68,23 @@ class SoundPlayer {
     }
   };
 
-  play = async () => {
+  play = async (): Promise<boolean> => {
     try {
       // console.log("try playing");
       if (
         this.getPlayingState().isPlaying ||
         this.getPlayingState().isPlayLoading
       ) {
-        return;
+        return false;
       }
       this.setSoundPlayerState(this.soundId, { isPlayLoading: true });
       const didFileExist = (await FileSystem.getInfoAsync(this.uri)).exists;
       if (!didFileExist) {
-        return this.setSoundPlayerState(this.soundId, {
+        this.setSoundPlayerState(this.soundId, {
           isPlayLoading: false,
           error: "fileNotReady",
         });
+        return false;
       }
       if (!this.sound || !this.getPlayingState().isLoaded) {
         this.sound = (
@@ -111,12 +112,15 @@ class SoundPlayer {
       await this.sound.playAsync();
       this.numberOfRetry = 0;
       console.log("Playing song");
+      return true;
     } catch (e) {
       if (this.numberOfRetry < 3) {
-        return await this.retryPlay();
+        await this.retryPlay();
+        return false;
       }
       this.setSoundPlayerState(this.soundId, { error: "play" });
       console.error(e);
+      return false;
     }
   };
 
@@ -167,7 +171,7 @@ class SoundPlayer {
   };
 
   // It seems that sometimes when loading and unloading really quickly, onPlaybackStatusUpdate has isLoaded set to true whereas the sound is not loaded and is not loading
-  retryPlay = async () => {
+  private retryPlay = async () => {
     try {
       await this.sound?.unloadAsync();
       if (this.intervalId) {

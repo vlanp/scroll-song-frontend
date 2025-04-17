@@ -95,6 +95,7 @@ const DiscoverComp = function DiscoverComp({
             <View style={styles.botMiddleView}>
               <Pressable
                 onPress={() => {
+                  setIsFlatListScrollEnable(false);
                   swipePosition.value = withTiming(-width, { duration: 100 });
                   onSide.value = false;
                 }}
@@ -103,6 +104,7 @@ const DiscoverComp = function DiscoverComp({
               </Pressable>
               <Pressable
                 onPress={() => {
+                  setIsFlatListScrollEnable(false);
                   swipePosition.value = withTiming(width, { duration: 100 });
                   onSide.value = false;
                   likeSound(
