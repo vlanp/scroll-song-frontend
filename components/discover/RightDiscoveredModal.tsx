@@ -14,6 +14,7 @@ import { SharedValue, withTiming } from "react-native-reanimated";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import dislikeSound from "@/utils/discover/dislikeSound";
 import DiscoverSound from "@/models/DiscoverSound";
+import { memo } from "react";
 
 const RightDiscoveredModal = ({
   style,
@@ -90,7 +91,7 @@ const RightDiscoveredModal = ({
   );
 };
 
-export default RightDiscoveredModal;
+export default memo(RightDiscoveredModal);
 
 const useStyle = (width: number) => {
   const styles = StyleSheet.create({

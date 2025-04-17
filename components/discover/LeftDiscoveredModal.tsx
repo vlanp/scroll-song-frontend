@@ -13,6 +13,8 @@ import favoritesImg from "../../assets/images/discoverImages/favorites-img.png";
 import { router } from "expo-router";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
+import { memo } from "react";
+import useCountRender from "@/hooks/useCountRender";
 
 const LeftDiscoveredModal = ({
   style,
@@ -93,7 +95,9 @@ const LeftDiscoveredModal = ({
   );
 };
 
-export default LeftDiscoveredModal;
+// LeftDiscoveredModal.whyDidYouRender = { logOnDifferentValues: true };
+
+export default memo(LeftDiscoveredModal);
 
 const useStyle = (width: number) => {
   const styles = StyleSheet.create({

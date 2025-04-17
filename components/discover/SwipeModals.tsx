@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { memo, ReactNode, useMemo } from "react";
 import { StyleSheet, useWindowDimensions, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -13,6 +13,7 @@ import RightDiscoveredModal from "./RightDiscoveredModal";
 import likeSound from "@/utils/discover/likeSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import DiscoverSound from "@/models/DiscoverSound";
+import useCountRender from "@/hooks/useCountRender";
 
 function SwipeModals({
   children,
@@ -27,8 +28,7 @@ function SwipeModals({
   onSide: SharedValue<boolean>;
   sound: DiscoverSound;
 }) {
-  // console.log("RENDERING");
-
+  useCountRender(SwipeModals.name + " " + sound.id);
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
     null
@@ -37,61 +37,66 @@ function SwipeModals({
     (state) => state.setIsFlatListScrollEnable
   );
   const styles = getStyle(width);
-  // For weird reason when trying to access sound from panGesture, it retrieve an empty object
-  // However sound doesn't seems to be modified directly anywere
-  const panGestureSound = { ...sound };
 
-  const panGesture = Gesture.Pan()
-    .manualActivation(true)
-    .onBegin((e) => {
-      initialTouchLocation.value = { x: e.x, y: e.y };
-    })
-    .onTouchesMove((e, state) => {
-      // Sanity checks
-      if (!initialTouchLocation.value || !e.changedTouches.length) {
-        state.fail();
-        return;
-      }
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .manualActivation(true)
+        .onBegin((e) => {
+          initialTouchLocation.value = { x: e.x, y: e.y };
+        })
+        .onTouchesMove((e, state) => {
+          // Sanity checks
+          if (!initialTouchLocation.value || !e.changedTouches.length) {
+            state.fail();
+            return;
+          }
 
-      const xDiff = Math.abs(
-        e.changedTouches[0].x - initialTouchLocation.value.x
-      );
-      const yDiff = Math.abs(
-        e.changedTouches[0].y - initialTouchLocation.value.y
-      );
-      const isHorizontalPanning = xDiff > yDiff;
+          const xDiff = Math.abs(
+            e.changedTouches[0].x - initialTouchLocation.value.x
+          );
+          const yDiff = Math.abs(
+            e.changedTouches[0].y - initialTouchLocation.value.y
+          );
+          const isHorizontalPanning = xDiff > yDiff;
 
-      if (isHorizontalPanning) {
-        state.activate();
-      } else {
-        state.fail();
-      }
-    })
-    .onUpdate((e) => {
-      if (onSide.value) {
-        swipePosition.value = e.translationX;
-      } else {
-        swipePosition.value = width + e.translationX;
-      }
-    })
-    .onEnd(() => {
-      if (swipePosition.value > width / 3) {
-        swipePosition.value = withTiming(width, { duration: 100 });
-        onSide.value = false;
-        runOnJS(likeSound)(
-          panGestureSound,
-          "09454812-d5b2-4e33-896c-3b57056a4749"
-        ); // TODO: Create a unique ID for each user
-        runOnJS(setIsFlatListScrollEnable)(false);
-      } else if (Math.abs(swipePosition.value) > width / 3) {
-        swipePosition.value = withTiming(-width, { duration: 100 });
-        onSide.value = false;
-        runOnJS(setIsFlatListScrollEnable)(false);
-      } else {
-        swipePosition.value = withTiming(0, { duration: 100 });
-        onSide.value = true;
-      }
-    });
+          if (isHorizontalPanning) {
+            state.activate();
+          } else {
+            state.fail();
+          }
+        })
+        .onUpdate((e) => {
+          if (onSide.value) {
+            swipePosition.value = e.translationX;
+          } else {
+            swipePosition.value = width + e.translationX;
+          }
+        })
+        .onEnd(() => {
+          if (swipePosition.value > width / 3) {
+            swipePosition.value = withTiming(width, { duration: 100 });
+            onSide.value = false;
+            runOnJS(likeSound)(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
+            runOnJS(setIsFlatListScrollEnable)(false);
+          } else if (Math.abs(swipePosition.value) > width / 3) {
+            swipePosition.value = withTiming(-width, { duration: 100 });
+            onSide.value = false;
+            runOnJS(setIsFlatListScrollEnable)(false);
+          } else {
+            swipePosition.value = withTiming(0, { duration: 100 });
+            onSide.value = true;
+          }
+        }),
+    [
+      initialTouchLocation,
+      onSide,
+      sound,
+      setIsFlatListScrollEnable,
+      swipePosition,
+      width,
+    ]
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: swipePosition.value }],
@@ -162,4 +167,8 @@ const getStyle = (width: number) => {
   return styles;
 };
 
-export default SwipeModals;
+SwipeModals.whyDidYouRender = {
+  logOnDifferentValues: true,
+};
+
+export default memo(SwipeModals);

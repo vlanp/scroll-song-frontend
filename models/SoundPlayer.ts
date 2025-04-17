@@ -1,5 +1,4 @@
 import { Audio, AVPlaybackStatus } from "expo-av";
-import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import SoundPlayerState from "./SoundPlayerState";
@@ -8,7 +7,6 @@ class SoundPlayer {
   private uri: string;
   readonly soundId: string;
   private sound: Audio.Sound | null = null;
-  private intervalId: NodeJS.Timeout | null = null;
   private numberOfRetry = 0;
   private setSoundPlayerState: (
     soundId: string,
@@ -99,15 +97,6 @@ class SoundPlayer {
             this.onPlaybackStatusUpdate
           )
         ).sound;
-
-        if (Platform.OS === "android") {
-          this.intervalId = setInterval(() => {
-            const updatePlaybackStatus = async () => {
-              await this.sound?.getStatusAsync();
-            };
-            updatePlaybackStatus();
-          }, 1000);
-        }
       }
       await this.sound.playAsync();
       this.numberOfRetry = 0;
@@ -139,9 +128,6 @@ class SoundPlayer {
       } else {
         await this.sound?.stopAsync();
         await this.sound?.unloadAsync();
-        if (this.intervalId) {
-          clearInterval(this.intervalId);
-        }
         this.setSoundPlayerState(this.soundId, {
           isPlaying: false,
           isLoaded: false,
@@ -174,9 +160,6 @@ class SoundPlayer {
   private retryPlay = async () => {
     try {
       await this.sound?.unloadAsync();
-      if (this.intervalId) {
-        clearInterval(this.intervalId);
-      }
     } catch {
       /* empty */
     }

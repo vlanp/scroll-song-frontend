@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import ProgressTrackBar from "../ProgressTrackBar";
-import { useState } from "react";
+import { memo, useState } from "react";
 import DiscoverSound from "../../models/DiscoverSound";
 import ModalText from "./modalText";
 import Modal from "../Modal";
@@ -22,16 +22,16 @@ import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
 import useCountRender from "@/hooks/useCountRender";
 
-const DiscoverComp = function DiscoverComp({
+function DiscoverComp({
   sound,
   swipePosition,
   onSide,
 }: {
-  readonly sound: DiscoverSound;
+  sound: DiscoverSound;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
 }) {
-  useCountRender(sound.id);
+  useCountRender(DiscoverComp.name + " " + sound.id);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const setIsFlatListScrollEnable = useDiscoverStore(
@@ -129,7 +129,7 @@ const DiscoverComp = function DiscoverComp({
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -179,4 +179,4 @@ const styles = StyleSheet.create({
 
 // DiscoverComp.whyDidYouRender = { logOnDifferentValues: true };
 
-export default DiscoverComp;
+export default memo(DiscoverComp);

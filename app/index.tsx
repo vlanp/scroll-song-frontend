@@ -12,8 +12,10 @@ import ErrorScreen from "@/components/ErrorScreen";
 import { useIsFocused } from "@react-navigation/native";
 import { documentDirectory } from "expo-file-system";
 import { Mutex } from "async-mutex";
+import useCountRender from "@/hooks/useCountRender";
 
 function Index() {
+  useCountRender("Index");
   const fetchDiscoverSoundsState = useDiscoverStore(
     (state) => state.fetchDiscoverSoundsState
   );
@@ -22,6 +24,7 @@ function Index() {
   const [mainViewHeight, setMainViewHeight] = useState<number>(0);
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const styles = getStyles(screenHeight, screenWidth, mainViewHeight);
+
   const setPosition = useDiscoverStore((state) => state.setPosition);
   const endScrollingTimeout = useRef<NodeJS.Timeout | null>(null);
   const swipePosition = useSharedValue(0);
@@ -77,7 +80,7 @@ function Index() {
       },
       async (selectedState) => {
         await stopSoundPlayerMutex.current.runExclusive(async () => {
-          console.log("START : ", selectedState.position);
+          // console.log("START : ", selectedState.position);
           const { position, play, stop } = selectedState;
           if (isFocused && !position.isScrolling && play) {
             if (stopSoundPlayer.current) {
@@ -90,7 +93,7 @@ function Index() {
           } else if (stopSoundPlayer.current) {
             await stopSoundPlayer.current();
           }
-          console.log("END : ", selectedState.position);
+          // console.log("END : ", selectedState.position);
         });
       },
       {
@@ -161,7 +164,7 @@ function Index() {
       <FlatList
         ref={setFlatList}
         data={fetchDiscoverSoundsState.data}
-        initialNumToRender={3}
+        initialNumToRender={1}
         renderItem={({ item }) => (
           <View style={styles.scrollPageView}>
             <SwipeModals
