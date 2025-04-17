@@ -46,7 +46,7 @@ export default function GradientText({
       }
     >
       <LinearGradient
-        colors={["#FCA445", "#FED03A"]}
+        colors={["#4FACFE", "#00F2FE"]}
         start={{ x: 0.1, y: 0.2 }}
         end={{ x: 0.9, y: 0.8 }}
         style={styles.gradient}

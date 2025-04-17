@@ -14,7 +14,6 @@ import { router } from "expo-router";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { memo } from "react";
-import useCountRender from "@/hooks/useCountRender";
 
 const LeftDiscoveredModal = ({
   style,
@@ -47,7 +46,7 @@ const LeftDiscoveredModal = ({
           style={styles.favoritesImg}
         />
         <View style={{ marginTop: 20 }}></View>
-        <Text style={styles.swipeRight}>Bravo !</Text>
+        <Text style={styles.swipeLeft}>Bravo !</Text>
         <View style={{ marginTop: 10 }}></View>
         <Text style={styles.text}>
           {" "}
@@ -110,12 +109,12 @@ const useStyle = (width: number) => {
     },
     favoritesImg: {
       width: "100%",
-      height: 125,
+      height: 100,
     },
     scrollView: {
       width: 0.7 * width,
     },
-    swipeRight: {
+    swipeLeft: {
       fontFamily: "LatoHeavy",
       fontSize: 27,
       lineHeight: 34,

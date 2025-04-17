@@ -7,20 +7,17 @@ import {
   useWindowDimensions,
 } from "react-native";
 import ProgressTrackBar from "../ProgressTrackBar";
-import { memo, useState } from "react";
+import { memo } from "react";
 import DiscoverSound from "../../models/DiscoverSound";
-import ModalText from "./modalText";
-import Modal from "../Modal";
 import MarginSection from "../marginSection";
 import TabTitle from "../tabTitle";
 import GradientText from "../GradientText";
-import musicNote from "../../assets/images/music-note.png";
-import likeIcon from "../../assets/images/discoverIcons/like-icon.png";
-import dislikeIcon from "../../assets/images/discoverIcons/dislike-icon.png";
+import disLikeIcon from "../../assets/images/discoverIcons/dis-like-icon.png";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
 import useCountRender from "@/hooks/useCountRender";
+import OpenURLButton from "../OpenUrl";
 
 function DiscoverComp({
   sound,
@@ -32,8 +29,6 @@ function DiscoverComp({
   onSide: SharedValue<boolean>;
 }) {
   useCountRender(DiscoverComp.name + " " + sound.id);
-
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const setIsFlatListScrollEnable = useDiscoverStore(
     (state) => state.setIsFlatListScrollEnable
   );
@@ -42,25 +37,10 @@ function DiscoverComp({
 
   return (
     <View style={styles.container}>
-      <Modal
-        modalVisible={isModalVisible}
-        setModalVisible={setIsModalVisible}
-        closeButton={true}
-        onClose={() => setIsFlatListScrollEnable(true)}
-        zIndex={3}
-      >
-        <ModalText />
-      </Modal>
       <View style={styles.container}>
         <MarginSection style={styles.marginSection}>
           <View style={styles.topView}>
-            <TabTitle
-              title="Découverte"
-              onPressIcon={() => {
-                setIsModalVisible((currentState) => !currentState);
-                setIsFlatListScrollEnable(false);
-              }}
-            />
+            <TabTitle title="Découverte" />
             <View style={styles.gradientText}>
               <GradientText
                 fontSize={20}
@@ -71,7 +51,6 @@ function DiscoverComp({
           </View>
           <View style={styles.middleView}>
             <View style={styles.topMiddleView}>
-              <Image source={musicNote} style={styles.musicNote} />
               <View style={styles.songMiddleView}>
                 <View style={styles.gradientText}>
                   <GradientText
@@ -82,6 +61,15 @@ function DiscoverComp({
                   />
                 </View>
                 <Text style={styles.songTitle}>{sound.title}</Text>
+                <Text style={styles.songMetadata}>
+                  {"Par : " + sound.artist}
+                </Text>
+                <OpenURLButton
+                  url={"https://" + sound.sourceUrl}
+                  style={styles.songMetadata}
+                >
+                  {"Source : " + sound.sourceUrl}
+                </OpenURLButton>
               </View>
               <ProgressTrackBar
                 sound={sound}
@@ -100,7 +88,7 @@ function DiscoverComp({
                   onSide.value = false;
                 }}
               >
-                <Image source={dislikeIcon} style={styles.chooseIcon} />
+                <Image source={disLikeIcon} style={styles.chooseIcon} />
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -113,7 +101,10 @@ function DiscoverComp({
                   );
                 }}
               >
-                <Image source={likeIcon} style={styles.chooseIcon} />
+                <Image
+                  source={disLikeIcon}
+                  style={{ ...styles.chooseIcon, ...styles.likeIcon }}
+                />
               </Pressable>
             </View>
           </View>
@@ -158,12 +149,19 @@ const styles = StyleSheet.create({
   },
   songMiddleView: {
     justifyContent: "center",
-    gap: 20,
+    gap: 10,
   },
   songTitle: {
     color: "white",
     fontSize: 24,
     fontFamily: "PoppinsBold",
+    alignSelf: "center",
+    textAlign: "center",
+  },
+  songMetadata: {
+    color: "white",
+    fontSize: 20,
+    fontFamily: "PoppinsSemiBold",
     alignSelf: "center",
     textAlign: "center",
   },
@@ -174,6 +172,9 @@ const styles = StyleSheet.create({
   chooseIcon: {
     height: 70,
     width: 70,
+  },
+  likeIcon: {
+    transform: "rotate(45deg)",
   },
 });
 

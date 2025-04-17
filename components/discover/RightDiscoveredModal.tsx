@@ -45,7 +45,7 @@ const RightDiscoveredModal = ({
           style={styles.dislikesImg}
         />
         <View style={{ marginTop: 20 }}></View>
-        <Text style={styles.swipeLeft}>Swiper à gauche ?</Text>
+        <Text style={styles.swipeRight}>Retirer cet extrait ?</Text>
         <View style={{ marginTop: 10 }}></View>
         <Text style={styles.text}>
           <Text style={styles.bold}>{sound.title}</Text> n&apos;apparaîtra plus
@@ -109,7 +109,7 @@ const useStyle = (width: number) => {
     scrollView: {
       width: 0.7 * width,
     },
-    swipeLeft: {
+    swipeRight: {
       fontFamily: "LatoHeavy",
       fontSize: 27,
       lineHeight: 34,

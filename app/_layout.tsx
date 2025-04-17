@@ -52,7 +52,32 @@ const RootLayout = () => {
             screenOptions={{
               headerShown: false,
             }}
-          />
+          >
+            <Tabs.Screen
+              name="index"
+              options={{
+                title: "Découverte",
+              }}
+            />
+            <Tabs.Screen
+              name="genres"
+              options={{
+                title: "Genres",
+              }}
+            />
+            <Tabs.Screen
+              name="favorites"
+              options={{
+                title: "Favoris",
+              }}
+            />
+            <Tabs.Screen
+              name="storage"
+              options={{
+                title: "Stockage",
+              }}
+            />
+          </Tabs>
         </StoresInitializer>
       </GestureHandlerRootView>
     </SafeAreaView>

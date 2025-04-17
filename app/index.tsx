@@ -233,10 +233,11 @@ const getStyles = (
     },
     pressableContainer: {
       borderRadius: 40,
-      width: screenWidth - 80,
+      width: screenWidth - 60,
+      maxHeight: 500,
       marginHorizontal: 40,
       marginVertical: 0.15 * (screenHeight - 200),
-      height: 0.7 * (screenHeight - 200),
+      height: 0.9 * (screenHeight - 200),
       alignItems: "center",
     },
   });

@@ -1,10 +1,7 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import i from "@/assets/images/titleIcons/i.png";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function TabTitle({
   title,
-  onPressIcon,
-  hasIIcon = true,
   justifyContent = "flex-start",
 }: {
   title: string;
@@ -22,11 +19,6 @@ export default function TabTitle({
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>
-      {hasIIcon && (
-        <Pressable onPress={onPressIcon}>
-          <Image source={i} style={styles.icon} />
-        </Pressable>
-      )}
     </View>
   );
 }

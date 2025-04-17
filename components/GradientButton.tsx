@@ -44,7 +44,7 @@ export default function GradientButton({
   return (
     <TouchableOpacity style={[style]} onPress={onPress} disabled={loading}>
       <LinearGradient
-        colors={["#FCA445", "#FED03A"]}
+        colors={["#4FACFE", "#00F2FE"]}
         style={[
           styles.buttonGradient,
           { borderRadius: radius },
