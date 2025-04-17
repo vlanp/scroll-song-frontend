@@ -37,39 +37,36 @@ const initDownloadExcerptsState = () => {
           currentPosition + numberToDownload <= lastIndex
             ? currentPosition + numberToDownload
             : lastIndex;
-
         const downloadExcerptsState =
           useDiscoverStore.getState().downloadExcerptsState;
 
-        for (let i = limitMin; i <= limitMax; i += 1) {
+        for (let i = limitMin; i <= limitMax; i++) {
           const sound = discoverSoundsState.data[i];
-          if (downloadExcerptsState[sound.id]) {
-            return;
+          if (!downloadExcerptsState[sound.id]) {
+            storeDownloadSoundState(
+              sound,
+              setDownloadExcerptState,
+              setIsStorageOk,
+              excerptDirectory
+            );
           }
-          storeDownloadSoundState(
-            sound,
-            setDownloadExcerptState,
-            setIsStorageOk,
-            excerptDirectory
-          );
         }
       }
     },
     {
       fireImmediately: true,
-      equalityFn: (current, prev) => {
+      equalityFn: (c, p) => {
         const {
-          discoverSoundsState: currentDiscoverSoundsState,
-          position: currentPosition,
-        } = current;
+          discoverSoundsState: cDiscoverSoundsState,
+          position: cPosition,
+        } = c;
         const {
-          discoverSoundsState: prevDiscoverSoundsState,
-          position: prevPosition,
-        } = prev;
+          discoverSoundsState: pDiscoverSoundsState,
+          position: pPosition,
+        } = p;
         return (
-          currentDiscoverSoundsState.status ===
-            prevDiscoverSoundsState.status &&
-          currentPosition.currentPosition === prevPosition.currentPosition
+          cDiscoverSoundsState.status === pDiscoverSoundsState.status &&
+          cPosition.currentPosition === pPosition.currentPosition
         );
       },
     }

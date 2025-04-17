@@ -165,7 +165,7 @@ class SoundPlayer {
         this.sound.setPositionAsync(positionSec * 1000);
       }
     } catch (e) {
-      // setPlayingState((ps) => ({ ...ps, error: "play" })); // Not needed ?
+      this.setSoundPlayerState(this.soundId, { error: "play" }); // Not needed ?
       console.error(e);
     }
   };

@@ -65,10 +65,14 @@ function Index() {
           position.soundId && state.soundsPlayer[position.soundId]?.play;
         const stop =
           position.soundId && state.soundsPlayer[position.soundId]?.stop;
+        const downloadExceptStatus =
+          position.soundId &&
+          state.downloadExcerptsState[position.soundId]?.status;
         return {
           position,
           play,
           stop,
+          downloadExceptStatus,
         };
       },
       async (selectedState) => {
@@ -83,7 +87,6 @@ function Index() {
             stopSoundPlayer.current = stop || null;
           } else if (stop) {
             await stop();
-            // stopSoundPlayer.current = null;
           } else if (stopSoundPlayer.current) {
             await stopSoundPlayer.current();
           }
@@ -93,14 +96,25 @@ function Index() {
       {
         fireImmediately: true,
         equalityFn: (c, p) => {
-          const { position: cPosition, play: cPlay, stop: cStop } = c;
-          const { position: pPosition, play: pPlay, stop: pStop } = p;
+          const {
+            position: cPosition,
+            play: cPlay,
+            stop: cStop,
+            downloadExceptStatus: cDownloadExcerptStatus,
+          } = c;
+          const {
+            position: pPosition,
+            play: pPlay,
+            stop: pStop,
+            downloadExceptStatus: pDownloadExcerptStatus,
+          } = p;
           return (
             cPosition.currentPosition === pPosition.currentPosition &&
             cPosition.isScrolling === pPosition.isScrolling &&
             cPosition.soundId === pPosition.soundId &&
             cPlay === pPlay &&
-            cStop === pStop
+            cStop === pStop &&
+            cDownloadExcerptStatus === pDownloadExcerptStatus
           );
         },
       }
