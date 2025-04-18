@@ -1,8 +1,6 @@
-import "../wdyr";
+import "../../wdyr";
 import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import LottieLoading from "../components/LottieLoading";
-import DiscoverComp from "../components/discover/DiscoverComp";
 import useDiscoverStore, {
   ReceivedPosition,
 } from "@/zustands/useDiscoverStore";
@@ -13,6 +11,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { documentDirectory } from "expo-file-system";
 import { Mutex } from "async-mutex";
 import useCountRender from "@/hooks/useCountRender";
+import LottieLoading from "@/components/LottieLoading";
+import DiscoverComp from "@/components/discover/DiscoverComp";
 
 function Index() {
   useCountRender("Index");

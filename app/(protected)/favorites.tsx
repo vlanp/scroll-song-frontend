@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 
 const favorites = () => {
   return <Text>favorites</Text>;

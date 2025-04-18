@@ -1,95 +1,18 @@
-import { Tabs } from "expo-router";
-import {
-  ActivityIndicator,
-  Platform,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-} from "react-native";
-import { useFonts } from "expo-font";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import PoppinsRegularFont from "../assets/fonts/Poppins-Regular.ttf";
-import PoppinsBoldFont from "../assets/fonts/Poppins-Bold.ttf";
-import PoppinsMediumFont from "../assets/fonts/Poppins-Medium.ttf";
-import PoppinsSemiBoldFont from "../assets/fonts/Poppins-SemiBold.ttf";
-import LexendLightFont from "../assets/fonts/Lexend-Light.ttf";
-import LexendRegularFont from "../assets/fonts/Lexend-Regular.ttf";
-import LexendSemiBoldFont from "../assets/fonts/Lexend-SemiBold.ttf";
-import LexendBoldFont from "../assets/fonts/Lexend-Bold.ttf";
-import RobotoCondensedRegularFont from "../assets/fonts/RobotoCondensed-Regular.ttf";
-import RobotoCondensedBoldFont from "../assets/fonts/RobotoCondensed-Bold.ttf";
-import LatoBoldFont from "../assets/fonts/Lato-Bold.ttf";
-import LatoHeavyFont from "../assets/fonts/Lato-Heavy.ttf";
-import LatoSemiboldFont from "../assets/fonts/Lato-Semibold.ttf";
-import StoresInitializer from "@/components/stores/StoresInitializer";
+import { AuthProvider } from "@/contexts/authContext";
+import { EnvProvider } from "@/contexts/envContext";
+import { FontsProvider } from "@/contexts/fontsContext";
+import { Stack } from "expo-router";
 
 const RootLayout = () => {
-  const [fontsLoaded] = useFonts({
-    PoppinsRegular: PoppinsRegularFont,
-    PoppinsBold: PoppinsBoldFont,
-    PoppinsMedium: PoppinsMediumFont,
-    PoppinsSemiBold: PoppinsSemiBoldFont,
-    LexendLight: LexendLightFont,
-    LexendRegular: LexendRegularFont,
-    LexendSemiBold: LexendSemiBoldFont,
-    LexendBold: LexendBoldFont,
-    RobotoCondensedRegular: RobotoCondensedRegularFont,
-    RobotoCondensedBold: RobotoCondensedBoldFont,
-    LatoBold: LatoBoldFont,
-    LatoHeavy: LatoHeavyFont,
-    LatoSemibold: LatoSemiboldFont,
-  });
-
-  if (!fontsLoaded) {
-    return <ActivityIndicator />;
-  }
-
   return (
-    <SafeAreaView style={styles.AndroidSafeArea}>
-      <GestureHandlerRootView>
-        <StoresInitializer>
-          <Tabs
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Tabs.Screen
-              name="index"
-              options={{
-                title: "Découverte",
-              }}
-            />
-            <Tabs.Screen
-              name="genres"
-              options={{
-                title: "Genres",
-              }}
-            />
-            <Tabs.Screen
-              name="favorites"
-              options={{
-                title: "Favoris",
-              }}
-            />
-            <Tabs.Screen
-              name="storage"
-              options={{
-                title: "Stockage",
-              }}
-            />
-          </Tabs>
-        </StoresInitializer>
-      </GestureHandlerRootView>
-    </SafeAreaView>
+    <EnvProvider>
+      <FontsProvider>
+        <AuthProvider>
+          <Stack />
+        </AuthProvider>
+      </FontsProvider>
+    </EnvProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  AndroidSafeArea: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-});
 
 export default RootLayout;

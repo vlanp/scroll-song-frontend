@@ -3,7 +3,7 @@ import GradientText from "@/components/GradientText";
 import LottieLoading from "@/components/LottieLoading";
 import useFetchDataState from "@/hooks/useFetchDataState";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 const Genres = () => {
   const [retryGenres, setRetryGenres] = useState<number>(0);
