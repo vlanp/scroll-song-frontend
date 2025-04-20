@@ -1,18 +1,24 @@
+import Baseline from "@/components/Baseline";
+import { BasicText } from "@/components/forms/BasicText";
+import { ErrorText } from "@/components/forms/ErrorText";
+import { FormInput } from "@/components/forms/FormInput";
+import GradientButton from "@/components/GradientButton";
+import TabTitle from "@/components/TabTitle";
 import { useCheckedAuthContext } from "@/contexts/authContext";
 import { useCheckedEnvContext } from "@/contexts/envContext";
 import { IUser } from "@/models/IUser";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 const LoginScreen = () => {
   const router = useRouter();
   const authState = useCheckedAuthContext();
   const env = useCheckedEnvContext();
-  const [email, setEmail] = useState<string>("Adresse mail");
+  const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [password, setPassword] = useState<string>("Mot de passe");
+  const [password, setPassword] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -77,28 +83,63 @@ const LoginScreen = () => {
   };
 
   return (
-    <View>
-      <Text>Se connecter</Text>
-      <Text>
-        Merci de vous connecter afin d&apos;utiliser l&apos;application
-      </Text>
-      <TextInput value={email} onChangeText={setEmail} />
-      {emailError && <Text>{emailError}</Text>}
-      <TextInput value={password} onChangeText={setPassword} />
-      {passwordError && <Text>{passwordError}</Text>}
-      <Text>Mot de passe oublié</Text>
-      <Pressable onPress={handleSubmit}>
-        <Text>Connexion</Text>
-      </Pressable>
-      {formError && <Text>{formError}</Text>}
-      <View>
-        <Text>Vous n&apos;avez pas de compte ?</Text>
-        <Text onPress={() => router.push("/signup")}>
-          Inscrivez-vous maintenant !
-        </Text>
+    <View style={styles.mainView}>
+      <TabTitle
+        title="Se connecter"
+        baseline="Merci de vous connecter afin d'utiliser l'application"
+      />
+      <FormInput
+        value={email}
+        placeholder={"Adresse mail"}
+        onChangeText={setEmail}
+        autoComplete="email"
+        error={emailError}
+      />
+      <FormInput
+        value={password}
+        placeholder={"Mot de passe"}
+        onChangeText={setPassword}
+        autoComplete="current-password"
+        error={passwordError}
+      />
+      <View style={styles.connectView}>
+        <GradientButton
+          text={"Connexion"}
+          onPress={handleSubmit}
+        ></GradientButton>
+        {formError && <ErrorText>{formError}</ErrorText>}
+        <View style={styles.basicView}>
+          <BasicText>Mot de passe oublié ?</BasicText>
+          <BasicText onPress={() => router.push("/signup")}>
+            Réinitialisez le maintenant !
+          </BasicText>
+        </View>
+        <View style={styles.basicView}>
+          <BasicText>Vous n&apos;avez pas de compte ?</BasicText>
+          <BasicText onPress={() => router.push("/signup")}>
+            Inscrivez-vous maintenant !
+          </BasicText>
+        </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  mainView: {
+    backgroundColor: "black",
+    flex: 1,
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  connectView: {
+    alignSelf: "center",
+    gap: 15,
+    width: "90%",
+  },
+  basicView: {
+    gap: 5,
+  },
+});
 
 export default LoginScreen;

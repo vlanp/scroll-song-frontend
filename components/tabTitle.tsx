@@ -1,54 +1,28 @@
 import { StyleSheet, Text, View } from "react-native";
+import Baseline from "./Baseline";
 
 export default function TabTitle({
   title,
-  justifyContent = "flex-start",
+  baseline,
 }: {
   title: string;
-  onPressIcon?: () => void;
-  hasIIcon?: boolean;
-  justifyContent?:
-    | "flex-start"
-    | "flex-end"
-    | "center"
-    | "space-between"
-    | "space-around"
-    | "space-evenly";
+  baseline?: string | undefined;
 }) {
-  const styles = useStyle(justifyContent);
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{title}</Text>
+      {baseline && <Baseline>{baseline}</Baseline>}
     </View>
   );
 }
 
-const useStyle = (
-  justifyContent:
-    | "flex-start"
-    | "flex-end"
-    | "center"
-    | "space-between"
-    | "space-around"
-    | "space-evenly"
-) => {
-  const styles = StyleSheet.create({
-    container: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-      justifyContent: justifyContent,
-    },
-    text: {
-      color: "white",
-      fontSize: 24,
-      fontFamily: "PoppinsBold",
-    },
-    icon: {
-      width: 24,
-      height: 24,
-    },
-  });
-
-  return styles;
-};
+const styles = StyleSheet.create({
+  container: {
+    gap: 10,
+  },
+  text: {
+    color: "white",
+    fontSize: 24,
+    fontFamily: "PoppinsBold",
+  },
+});

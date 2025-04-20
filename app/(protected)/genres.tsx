@@ -45,21 +45,16 @@ const Genres = () => {
   }
 
   return (
-    <View style={styles.mainView}>
+    <>
       {genresFetchState.data.map((genre) => {
         return (
           <GradientText height={0} fontSize={20} text={genre} key={genre} />
         );
       })}
-    </View>
+    </>
   );
 };
 
-const styles = StyleSheet.create({
-  mainView: {
-    backgroundColor: "black",
-    flex: 1,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default Genres;
