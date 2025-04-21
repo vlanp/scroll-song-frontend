@@ -10,19 +10,51 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { passwordStrength } from "check-password-strength";
 
-const LoginScreen = () => {
+const SignupScreen = () => {
   const router = useRouter();
   const authState = useCheckedAuthContext();
   const env = useCheckedEnvContext();
+  const [username, setUsername] = useState<string>("");
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [password, setPassword] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [rePassword, setRePassword] = useState<string>("");
+  const [rePasswordError, setRePasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUsernameError(null);
+  }, [username]);
+
+  useEffect(() => {
+    setEmailError(null);
+  }, [email]);
+
+  useEffect(() => {
+    setPasswordError(null);
+  }, [password]);
+
+  useEffect(() => {
+    setRePasswordError(null);
+  }, [rePassword]);
 
   const checkForm = (): boolean => {
     let isThereInputErrors = false;
+    if (!username) {
+      isThereInputErrors = true;
+      setUsernameError("Un nom d'utilisateur est nécessaire.");
+    } else if (username.length < 5) {
+      isThereInputErrors = true;
+      setUsernameError(
+        "Le nom d'utilisateur doit faire au moins 5 caractères."
+      );
+    } else {
+      setUsernameError(null);
+    }
 
     if (!email) {
       isThereInputErrors = true;
@@ -37,20 +69,25 @@ const LoginScreen = () => {
     if (!password) {
       isThereInputErrors = true;
       setPasswordError("Un mot de passe est nécessaire.");
+    } else if (passwordStrength(password).id !== 3) {
+      isThereInputErrors = true;
+      setPasswordError("Merci de choisir un mot de passe fort.");
     } else {
       setPasswordError(null);
     }
 
+    if (!rePassword) {
+      isThereInputErrors = true;
+      setRePasswordError("Un mot de passe est nécessaire.");
+    } else if (rePassword !== password) {
+      isThereInputErrors = true;
+      setRePasswordError("Les 2 mots de passe ne correspondent pas.");
+    } else {
+      setRePasswordError(null);
+    }
+
     return isThereInputErrors;
   };
-
-  useEffect(() => {
-    setEmailError(null);
-  }, [email]);
-
-  useEffect(() => {
-    setPasswordError(null);
-  }, [password]);
 
   const handleSubmit = () => {
     setFormError(null);
@@ -62,9 +99,10 @@ const LoginScreen = () => {
     const signal = abortController.signal;
     axios
       .post<IUser>(
-        env.apiUrl + env.loginEndpoint,
+        env.apiUrl + env.signupEndpoint,
         {
           email,
+          username,
           password,
         },
         { signal: abortController.signal }
@@ -77,9 +115,9 @@ const LoginScreen = () => {
       })
       .catch((error) => {
         if (!axios.isCancel(error)) {
-          if (error?.response?.status === 404) {
+          if (error?.response?.status === 409) {
             setFormError(
-              "Aucun utilisateur trouvé avec ce mail et ce mot de passe."
+              "Cette adresse email est déjà associée à un utilisateur."
             );
           } else {
             console.log(error);
@@ -94,8 +132,15 @@ const LoginScreen = () => {
   return (
     <View style={styles.mainView}>
       <TabTitle
-        title="Se connecter"
-        baseline="Merci de vous connecter afin d'utiliser l'application"
+        title="S'inscrire"
+        baseline="Merci de vous inscrire afin d'utiliser l'application"
+      />
+      <FormInput
+        value={username}
+        placeholder={"Nom d'utilisateur"}
+        onChangeText={setUsername}
+        autoComplete="username"
+        error={usernameError}
       />
       <FormInput
         value={email}
@@ -108,8 +153,15 @@ const LoginScreen = () => {
         value={password}
         placeholder={"Mot de passe"}
         onChangeText={setPassword}
-        autoComplete="current-password"
+        autoComplete="new-password"
         error={passwordError}
+      />
+      <FormInput
+        value={rePassword}
+        placeholder={"Mot de passe"}
+        onChangeText={setRePassword}
+        autoComplete="new-password"
+        error={rePasswordError}
       />
       <View style={styles.connectView}>
         <GradientButton
@@ -118,15 +170,9 @@ const LoginScreen = () => {
         ></GradientButton>
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
-          <BasicText>Mot de passe oublié ?</BasicText>
-          <BasicText onPress={() => router.push("/signup")}>
-            Réinitialisez le maintenant !
-          </BasicText>
-        </View>
-        <View style={styles.basicView}>
-          <BasicText>Vous n&apos;avez pas de compte ?</BasicText>
-          <BasicText onPress={() => router.push("/signup")}>
-            Inscrivez-vous maintenant !
+          <BasicText>Vous avez déjà un compte ?</BasicText>
+          <BasicText onPress={() => router.push("/login")}>
+            Connectez-vous maintenant !
           </BasicText>
         </View>
       </View>
@@ -151,4 +197,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignupScreen;

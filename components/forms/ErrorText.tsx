@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "red",
     fontFamily: "PoppinsBold",
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 
