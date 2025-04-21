@@ -119,7 +119,7 @@ const LoginScreen = () => {
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
           <BasicText>Mot de passe oublié ?</BasicText>
-          <BasicText onPress={() => router.push("/signup")}>
+          <BasicText onPress={() => router.push("/verifEmail")}>
             Réinitialisez le maintenant !
           </BasicText>
         </View>

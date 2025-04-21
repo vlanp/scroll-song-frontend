@@ -109,8 +109,7 @@ const SignupScreen = () => {
       )
       .then((response) => {
         if (!signal.aborted) {
-          const data = response.data;
-          authState.logIn(data.token);
+          router.replace("/verifemail");
         }
       })
       .catch((error) => {
