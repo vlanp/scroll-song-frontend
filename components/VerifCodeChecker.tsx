@@ -46,20 +46,22 @@ const VerifCodeChecker = ({
     null,
   ]);
   const [timeRemeaning, setTimeRemeaning] = useState<number | null>(null);
-  const [newValidUntil, setNewValidUntil] = useState<Date | null>(null);
+  const [newValidUntil, setNewValidUntil] = useState<Date | null>(validUntil);
   const [waitingNewCode, setWaitingNewCode] = useState<boolean>(false);
 
-  const currentValidUntil = newValidUntil || validUntil;
-
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const now = new Date();
-      const diffMs = currentValidUntil.getTime() - now.getTime();
-      const diffSec = Math.max(0, Math.floor(diffMs / 1000));
-      setTimeRemeaning(diffSec);
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [currentValidUntil]);
+    if (newValidUntil !== null) {
+      const intervalId = setInterval(() => {
+        const now = new Date();
+        const diffMs = newValidUntil.getTime() - now.getTime();
+        const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+        setTimeRemeaning(diffSec);
+      }, 1000);
+      return () => clearInterval(intervalId);
+    } else {
+      setTimeRemeaning(null);
+    }
+  }, [newValidUntil]);
 
   useEffect(() => {
     setError(null);
@@ -94,6 +96,7 @@ const VerifCodeChecker = ({
 
   const askNewCode = () => {
     setWaitingNewCode(true);
+    setNewValidUntil(null);
     clearCode();
     const finalUrl =
       env.apiUrl +
