@@ -40,6 +40,9 @@ function SwipeModals({
   );
   const styles = getStyle(width);
 
+  // There is a weird behavior making sound undefined in panGesture while it not seems to be modified elsewhere
+  const panGestureSound = useMemo(() => ({ ...sound }), [sound]);
+
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
@@ -79,7 +82,7 @@ function SwipeModals({
           if (swipePosition.value > width / 3) {
             swipePosition.value = withTiming(width, { duration: 100 });
             onSide.value = false;
-            runOnJS(likeSound)(sound, authState.authToken);
+            runOnJS(likeSound)(panGestureSound, authState.authToken);
             runOnJS(setIsFlatListScrollEnable)(false);
           } else if (Math.abs(swipePosition.value) > width / 3) {
             swipePosition.value = withTiming(-width, { duration: 100 });
@@ -95,7 +98,7 @@ function SwipeModals({
       onSide,
       swipePosition,
       width,
-      sound,
+      panGestureSound,
       authState.authToken,
       setIsFlatListScrollEnable,
     ]
