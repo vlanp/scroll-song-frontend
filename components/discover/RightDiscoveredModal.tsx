@@ -15,6 +15,7 @@ import useDiscoverStore from "@/zustands/useDiscoverStore";
 import dislikeSound from "@/utils/discover/dislikeSound";
 import DiscoverSound from "@/models/DiscoverSound";
 import { memo } from "react";
+import { useSuccessfulAuthContext } from "@/contexts/authContext";
 
 const RightDiscoveredModal = ({
   style,
@@ -27,6 +28,7 @@ const RightDiscoveredModal = ({
   onSide: SharedValue<boolean>;
   sound: DiscoverSound;
 }) => {
+  const authState = useSuccessfulAuthContext();
   const { width } = useWindowDimensions();
   const styles = useStyle(width);
   const setIsFlatListScrollEnable = useDiscoverStore(
@@ -65,7 +67,7 @@ const RightDiscoveredModal = ({
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
             setIsFlatListScrollEnable(true);
-            dislikeSound(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
+            dislikeSound(sound, authState.authToken);
           }}
         />
         <View style={{ marginTop: 10 }}></View>

@@ -2,14 +2,16 @@ import { BasicText } from "@/components/forms/BasicText";
 import { ErrorText } from "@/components/forms/ErrorText";
 import { FormInput } from "@/components/forms/FormInput";
 import GradientButton from "@/components/GradientButton";
-import TabTitle from "@/components/TabTitle";
+import ScreenContainer from "@/components/ScreenContainer";
+import ScreenTitle from "@/components/ScreenTitle";
 import { useCheckedAuthContext } from "@/contexts/authContext";
 import { useCheckedEnvContext } from "@/contexts/envContext";
 import { IUser } from "@/models/IUser";
+import { IVerifCode } from "@/models/IVerifCode";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 const LoginScreen = () => {
   const router = useRouter();
@@ -20,6 +22,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const checkForm = (): boolean => {
     let isThereInputErrors = false;
@@ -53,15 +56,17 @@ const LoginScreen = () => {
   }, [password]);
 
   const handleSubmit = () => {
+    setIsLoading(true);
     setFormError(null);
     const isThereInputErrors = checkForm();
     if (isThereInputErrors) {
+      setIsLoading(false);
       return;
     }
     const abortController = new AbortController();
     const signal = abortController.signal;
     axios
-      .post<IUser>(
+      .post<IUser | IVerifCode>(
         env.apiUrl + env.loginEndpoint,
         {
           email,
@@ -72,7 +77,17 @@ const LoginScreen = () => {
       .then((response) => {
         if (!signal.aborted) {
           const data = response.data;
-          authState.logIn(data.token);
+          if ("validUntil" in data) {
+            const email = data.email;
+            const validUntil = data.validUntil;
+            router.replace({
+              pathname: "/verifEmail",
+              params: { email, validUntil },
+            });
+          } else {
+            authState.logIn(data.token);
+          }
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -87,13 +102,14 @@ const LoginScreen = () => {
               "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
             );
           }
+          setIsLoading(false);
         }
       });
   };
 
   return (
-    <View style={styles.mainView}>
-      <TabTitle
+    <ScreenContainer style={styles.mainView}>
+      <ScreenTitle
         title="Se connecter"
         baseline="Merci de vous connecter afin d'utiliser l'application"
       />
@@ -103,6 +119,7 @@ const LoginScreen = () => {
         onChangeText={setEmail}
         autoComplete="email"
         error={emailError}
+        editable={!isLoading}
       />
       <FormInput
         value={password}
@@ -110,12 +127,17 @@ const LoginScreen = () => {
         onChangeText={setPassword}
         autoComplete="current-password"
         error={passwordError}
+        editable={!isLoading}
       />
       <View style={styles.connectView}>
-        <GradientButton
-          text={"Connexion"}
-          onPress={handleSubmit}
-        ></GradientButton>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <GradientButton
+            text={"Connexion"}
+            onPress={handleSubmit}
+          ></GradientButton>
+        )}
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
           <BasicText>Mot de passe oublié ?</BasicText>
@@ -130,14 +152,12 @@ const LoginScreen = () => {
           </BasicText>
         </View>
       </View>
-    </View>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   mainView: {
-    backgroundColor: "black",
-    flex: 1,
     display: "flex",
     justifyContent: "space-between",
   },

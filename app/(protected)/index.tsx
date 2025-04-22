@@ -13,6 +13,7 @@ import { Mutex } from "async-mutex";
 import useCountRender from "@/hooks/useCountRender";
 import LottieLoading from "@/components/LottieLoading";
 import DiscoverComp from "@/components/discover/DiscoverComp";
+import ScreenContainer from "@/components/ScreenContainer";
 
 function Index() {
   useCountRender("Index");
@@ -155,8 +156,7 @@ function Index() {
   }
 
   return (
-    <View
-      style={styles.mainView}
+    <ScreenContainer
       onLayout={(event) => {
         setMainViewHeight(event.nativeEvent.layout.height);
       }}
@@ -213,7 +213,7 @@ function Index() {
           );
         }}
       />
-    </View>
+    </ScreenContainer>
   );
 }
 
@@ -225,9 +225,6 @@ const getStyles = (
   mainViewHeight: number
 ) => {
   const styles = StyleSheet.create({
-    mainView: {
-      flex: 1,
-    },
     scrollPageView: {
       height: mainViewHeight,
     },

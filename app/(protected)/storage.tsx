@@ -1,3 +1,4 @@
+import ScreenContainer from "@/components/ScreenContainer";
 import * as FileSystem from "expo-file-system";
 import { useState } from "react";
 import { Pressable, Text, StyleSheet, View, ScrollView } from "react-native";
@@ -60,7 +61,7 @@ const Storage = () => {
   };
 
   return (
-    <>
+    <ScreenContainer>
       <Pressable style={styles.storageButton} onPress={handleClick}>
         <Text>Récupérer les informations de stockage</Text>
       </Pressable>
@@ -73,7 +74,7 @@ const Storage = () => {
           return <Text key={index}>{uri}</Text>;
         })}
       </ScrollView>
-    </>
+    </ScreenContainer>
   );
 };
 

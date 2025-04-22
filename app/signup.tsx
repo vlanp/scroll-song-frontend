@@ -2,19 +2,18 @@ import { BasicText } from "@/components/forms/BasicText";
 import { ErrorText } from "@/components/forms/ErrorText";
 import { FormInput } from "@/components/forms/FormInput";
 import GradientButton from "@/components/GradientButton";
-import TabTitle from "@/components/TabTitle";
-import { useCheckedAuthContext } from "@/contexts/authContext";
+import ScreenTitle from "@/components/ScreenTitle";
 import { useCheckedEnvContext } from "@/contexts/envContext";
-import { IUser } from "@/models/IUser";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { passwordStrength } from "check-password-strength";
+import { IVerifCode } from "@/models/IVerifCode";
+import ScreenContainer from "@/components/ScreenContainer";
 
 const SignupScreen = () => {
   const router = useRouter();
-  const authState = useCheckedAuthContext();
   const env = useCheckedEnvContext();
   const [username, setUsername] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -25,6 +24,7 @@ const SignupScreen = () => {
   const [rePassword, setRePassword] = useState<string>("");
   const [rePasswordError, setRePasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setUsernameError(null);
@@ -90,15 +90,17 @@ const SignupScreen = () => {
   };
 
   const handleSubmit = () => {
+    setIsLoading(true);
     setFormError(null);
     const isThereInputErrors = checkForm();
     if (isThereInputErrors) {
+      setIsLoading(false);
       return;
     }
     const abortController = new AbortController();
     const signal = abortController.signal;
     axios
-      .post<IUser>(
+      .post<IVerifCode>(
         env.apiUrl + env.signupEndpoint,
         {
           email,
@@ -109,7 +111,13 @@ const SignupScreen = () => {
       )
       .then((response) => {
         if (!signal.aborted) {
-          router.replace("/verifemail");
+          const email = response.data.email;
+          const validUntil = response.data.validUntil;
+          router.replace({
+            pathname: "/verifEmail",
+            params: { email, validUntil },
+          });
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -124,13 +132,14 @@ const SignupScreen = () => {
               "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
             );
           }
+          setIsLoading(false);
         }
       });
   };
 
   return (
-    <View style={styles.mainView}>
-      <TabTitle
+    <ScreenContainer style={styles.mainView}>
+      <ScreenTitle
         title="S'inscrire"
         baseline="Merci de vous inscrire afin d'utiliser l'application"
       />
@@ -140,6 +149,7 @@ const SignupScreen = () => {
         onChangeText={setUsername}
         autoComplete="username"
         error={usernameError}
+        editable={!isLoading}
       />
       <FormInput
         value={email}
@@ -147,6 +157,7 @@ const SignupScreen = () => {
         onChangeText={setEmail}
         autoComplete="email"
         error={emailError}
+        editable={!isLoading}
       />
       <FormInput
         value={password}
@@ -154,6 +165,7 @@ const SignupScreen = () => {
         onChangeText={setPassword}
         autoComplete="new-password"
         error={passwordError}
+        editable={!isLoading}
       />
       <FormInput
         value={rePassword}
@@ -161,12 +173,17 @@ const SignupScreen = () => {
         onChangeText={setRePassword}
         autoComplete="new-password"
         error={rePasswordError}
+        editable={!isLoading}
       />
       <View style={styles.connectView}>
-        <GradientButton
-          text={"Connexion"}
-          onPress={handleSubmit}
-        ></GradientButton>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <GradientButton
+            text={"Connexion"}
+            onPress={handleSubmit}
+          ></GradientButton>
+        )}
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
           <BasicText>Vous avez déjà un compte ?</BasicText>
@@ -175,14 +192,12 @@ const SignupScreen = () => {
           </BasicText>
         </View>
       </View>
-    </View>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   mainView: {
-    backgroundColor: "black",
-    flex: 1,
     display: "flex",
     justifyContent: "space-between",
   },

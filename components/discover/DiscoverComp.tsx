@@ -9,7 +9,7 @@ import {
 import ProgressTrackBar from "./ProgressTrackBar";
 import { memo } from "react";
 import DiscoverSound from "../../models/DiscoverSound";
-import TabTitle from "../TabTitle";
+import ScreenTitle from "../ScreenTitle";
 import GradientText from "../GradientText";
 import disLikeIcon from "../../assets/images/discoverIcons/dis-like-icon.png";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
@@ -17,6 +17,7 @@ import { SharedValue, withTiming } from "react-native-reanimated";
 import likeSound from "@/utils/discover/likeSound";
 import useCountRender from "@/hooks/useCountRender";
 import OpenURLButton from "../OpenUrl";
+import { useSuccessfulAuthContext } from "@/contexts/authContext";
 
 function DiscoverComp({
   sound,
@@ -27,6 +28,7 @@ function DiscoverComp({
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
 }) {
+  const authState = useSuccessfulAuthContext();
   useCountRender(DiscoverComp.name + " " + sound.id);
   const setIsFlatListScrollEnable = useDiscoverStore(
     (state) => state.setIsFlatListScrollEnable
@@ -37,7 +39,7 @@ function DiscoverComp({
   return (
     <>
       <View style={styles.topView}>
-        <TabTitle title="Découverte" />
+        <ScreenTitle title="Découverte" />
         <View style={styles.gradientText}>
           <GradientText
             fontSize={20}
@@ -90,10 +92,7 @@ function DiscoverComp({
               setIsFlatListScrollEnable(false);
               swipePosition.value = withTiming(width, { duration: 100 });
               onSide.value = false;
-              likeSound(
-                sound,
-                "09454812-d5b2-4e33-896c-3b57056a4749" // TODO: Create a unique ID for each user
-              );
+              likeSound(sound, authState.authToken);
             }}
           >
             <Image

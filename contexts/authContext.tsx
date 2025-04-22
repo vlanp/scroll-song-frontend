@@ -54,4 +54,14 @@ const useCheckedAuthContext = (): IAuthState & ILogActions => {
   return authState as IAuthState & ILogActions;
 };
 
-export { useCheckedAuthContext, AuthProvider };
+const useSuccessfulAuthContext = (): AuthSuccess & ILogActions => {
+  const authState = useCheckedAuthContext();
+
+  if (authState.status !== "authSuccess") {
+    throw new Error("Error: AuthContext should have a successful status");
+  }
+
+  return authState as AuthSuccess & ILogActions;
+};
+
+export { useCheckedAuthContext, AuthProvider, useSuccessfulAuthContext };

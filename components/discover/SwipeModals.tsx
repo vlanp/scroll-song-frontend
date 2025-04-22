@@ -14,6 +14,7 @@ import likeSound from "@/utils/discover/likeSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
 import DiscoverSound from "@/models/DiscoverSound";
 import useCountRender from "@/hooks/useCountRender";
+import { useSuccessfulAuthContext } from "@/contexts/authContext";
 
 function SwipeModals({
   children,
@@ -29,6 +30,7 @@ function SwipeModals({
   sound: DiscoverSound;
 }) {
   useCountRender(SwipeModals.name + " " + sound.id);
+  const authState = useSuccessfulAuthContext();
   const { width } = useWindowDimensions();
   const initialTouchLocation = useSharedValue<{ x: number; y: number } | null>(
     null
@@ -77,7 +79,7 @@ function SwipeModals({
           if (swipePosition.value > width / 3) {
             swipePosition.value = withTiming(width, { duration: 100 });
             onSide.value = false;
-            runOnJS(likeSound)(sound, "09454812-d5b2-4e33-896c-3b57056a4749"); // TODO: Create a unique ID for each user
+            runOnJS(likeSound)(sound, authState.authToken);
             runOnJS(setIsFlatListScrollEnable)(false);
           } else if (Math.abs(swipePosition.value) > width / 3) {
             swipePosition.value = withTiming(-width, { duration: 100 });
@@ -91,10 +93,11 @@ function SwipeModals({
     [
       initialTouchLocation,
       onSide,
-      sound,
-      setIsFlatListScrollEnable,
       swipePosition,
       width,
+      sound,
+      authState.authToken,
+      setIsFlatListScrollEnable,
     ]
   );
 

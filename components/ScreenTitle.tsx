@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import Baseline from "./Baseline";
 
-export default function TabTitle({
+export default function ScreenTitle({
   title,
   baseline,
 }: {

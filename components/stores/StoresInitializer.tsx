@@ -1,3 +1,4 @@
+import { useSuccessfulAuthContext } from "@/contexts/authContext";
 import initDownloadExcerptsState from "@/zustands/initializer/initDownloadExcerptsState";
 import initFetchDiscoverSoundsState from "@/zustands/initializer/initFetchDiscoverSoundsState";
 import initNetworkState from "@/zustands/initializer/initNetworkState";
@@ -9,6 +10,7 @@ const StoresInitializer = ({
 }: {
   children: ReactNode;
 }): JSX.Element => {
+  const authState = useSuccessfulAuthContext();
   useEffect(() => {
     let abortController: AbortController | undefined;
     const unsubscribeDiscoverStore1 = useDiscoverStore.subscribe(
@@ -18,7 +20,7 @@ const StoresInitializer = ({
         if (abortController) {
           abortController.abort();
         }
-        abortController = initFetchDiscoverSoundsState();
+        abortController = initFetchDiscoverSoundsState(authState.authToken);
       },
       {
         fireImmediately: true,
@@ -39,7 +41,7 @@ const StoresInitializer = ({
       }
       unsubsribeNetworkUpdate();
     };
-  }, []);
+  }, [authState.authToken]);
 
   return <>{children}</>;
 };

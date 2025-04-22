@@ -11,6 +11,9 @@ interface IEnv {
   excerptDirectory: string | undefined;
   loginEndpoint: string | undefined;
   signupEndpoint: string | undefined;
+  mailCheckEndpoint: string | undefined;
+  askResetPwEndpoint: string | undefined;
+  resetPwEndpoint: string | undefined;
 }
 
 interface ICheckedEnv {
@@ -23,6 +26,9 @@ interface ICheckedEnv {
   excerptDirectory: string;
   loginEndpoint: string;
   signupEndpoint: string;
+  mailCheckEndpoint: string;
+  askResetPwEndpoint: string;
+  resetPwEndpoint: string;
 }
 
 const EnvContext = createContext<IEnv | null>(null);
@@ -38,6 +44,9 @@ const EnvProvider = ({ children }: PropsWithChildren) => {
     excerptDirectory: process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY,
     loginEndpoint: process.env.EXPO_PUBLIC_LOGIN_ENDPOINT,
     signupEndpoint: process.env.EXPO_PUBLIC_SIGNUP_ENDPOINT,
+    mailCheckEndpoint: process.env.EXPO_PUBLIC_MAILCHECK_ENDPOINT,
+    askResetPwEndpoint: process.env.EXPO_PUBLIC_ASKRESETPW_ENDPOINT,
+    resetPwEndpoint: process.env.EXPO_PUBLIC_RESETPW_ENDPOINT,
   };
 
   return <EnvContext.Provider value={env}>{children}</EnvContext.Provider>;

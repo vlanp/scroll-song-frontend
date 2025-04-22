@@ -33,12 +33,14 @@ const FormInput = ({
   onChangeText,
   autoComplete,
   error,
+  editable,
 }: {
   value: string;
   placeholder?: string | undefined;
   onChangeText?: ((text: string) => void) | undefined;
   autoComplete?: "email" | "current-password" | "new-password" | "username";
   error?: string | undefined | null;
+  editable?: boolean | undefined;
 }) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -59,13 +61,17 @@ const FormInput = ({
         <TextInput
           value={value}
           placeholder={placeholder}
-          onChangeText={onChangeText}
-          style={styles.formInput}
+          onChangeText={(text) =>
+            onChangeText &&
+            onChangeText(autoComplete === "email" ? text.toLowerCase() : text)
+          }
+          style={[styles.formInput, editable === false && styles.disabledInput]}
           maxLength={30}
           placeholderTextColor={"lightgrey"}
           autoCapitalize="none"
           autoComplete={autoComplete}
           secureTextEntry={isPasswordField && !showPassword}
+          editable={editable}
         />
         {isPasswordField && !showPassword && (
           <FontAwesome
@@ -126,6 +132,12 @@ const getStyles = (strengthColor: string) => {
       fontFamily: "PoppinsSemiBold",
       color: "white",
       fontSize: 16,
+    },
+    disabledInput: {
+      backgroundColor: "#1a1a1a",
+      borderColor: "#333",
+      color: "#666",
+      opacity: 0.7,
     },
   });
   return styles;
