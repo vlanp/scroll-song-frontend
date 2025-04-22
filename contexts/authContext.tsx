@@ -1,12 +1,25 @@
 import { useRouter } from "expo-router";
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type IAuthState = IAuthIdle | AuthSuccess;
+type IAuthState = IAuthLoading | IAuthIdle | AuthSuccess;
 interface IAuthIdle {
   status: "authIdle";
 }
 const authIdle: IAuthIdle = {
   status: "authIdle",
+};
+interface IAuthLoading {
+  status: "authLoading";
+}
+const authLoading: IAuthLoading = {
+  status: "authLoading",
 };
 class AuthSuccess {
   status = "authSuccess" as const;
@@ -21,21 +34,55 @@ interface ILogActions {
   logOut: () => void;
 }
 
-const AuthContext = createContext<IAuthState & Partial<ILogActions>>(authIdle);
+const AuthContext = createContext<IAuthState & Partial<ILogActions>>(
+  authLoading
+);
+
+const authStorageKey = "authKey";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-  const [authState, setAuthState] = useState<IAuthState>(authIdle);
+  const [authState, setAuthState] = useState<IAuthState>(authLoading);
   const router = useRouter();
 
   const logIn = (authToken: string) => {
     router.replace("/");
-    setAuthState(new AuthSuccess(authToken));
+    const authState = new AuthSuccess(authToken);
+    storeAuthState(authState);
+    setAuthState(authState);
   };
 
   const logOut = () => {
     router.replace("/login");
+    storeAuthState(authIdle);
     setAuthState(authIdle);
   };
+
+  const storeAuthState = async (authState: IAuthState) => {
+    try {
+      const jsonValue = JSON.stringify(authState);
+      await AsyncStorage.setItem(authStorageKey, jsonValue);
+    } catch (error) {
+      console.log("Error saving authToken into async storage", error);
+    }
+  };
+
+  useEffect(() => {
+    const getAuthFromStorage = async () => {
+      try {
+        const value = await AsyncStorage.getItem(authStorageKey);
+        if (value !== null) {
+          const authState: IAuthState = JSON.parse(value);
+          setAuthState(authState);
+        } else {
+          setAuthState(authIdle);
+        }
+      } catch (error) {
+        console.log("Error fetching authState from async storage", error);
+        setAuthState(authIdle);
+      }
+    };
+    getAuthFromStorage();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ ...authState, logIn, logOut }}>

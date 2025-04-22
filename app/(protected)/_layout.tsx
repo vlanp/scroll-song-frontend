@@ -5,7 +5,11 @@ import { useCheckedAuthContext } from "@/contexts/authContext";
 const ProtectedLayout = () => {
   const authState = useCheckedAuthContext();
 
-  if (authState.status !== "authSuccess") {
+  if (authState.status === "authLoading") {
+    return;
+  }
+
+  if (authState.status === "authIdle") {
     return <Redirect href={"/login"} />;
   }
 
