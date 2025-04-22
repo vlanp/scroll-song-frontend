@@ -1,9 +1,21 @@
-import { Redirect, Tabs } from "expo-router";
+import { Redirect, SplashScreen, Tabs } from "expo-router";
 import StoresInitializer from "@/components/stores/StoresInitializer";
 import { useCheckedAuthContext } from "@/contexts/authContext";
+import { useContext, useEffect } from "react";
+import { FontsContext } from "@/contexts/fontsContext";
 
 const ProtectedLayout = () => {
   const authState = useCheckedAuthContext();
+  const fontsState = useContext(FontsContext);
+
+  useEffect(() => {
+    if (
+      authState.status !== "authLoading" &&
+      fontsState.status !== "fontsLoading"
+    ) {
+      SplashScreen.hideAsync();
+    }
+  }, [authState, fontsState]);
 
   if (authState.status === "authLoading") {
     return;

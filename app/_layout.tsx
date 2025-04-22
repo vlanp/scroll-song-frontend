@@ -1,9 +1,11 @@
 import { AuthProvider } from "@/contexts/authContext";
 import { EnvProvider } from "@/contexts/envContext";
 import { FontsProvider } from "@/contexts/fontsContext";
-import { Stack } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   return (
