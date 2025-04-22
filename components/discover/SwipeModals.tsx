@@ -134,7 +134,7 @@ const getStyle = (width: number) => {
     globalContainer: {
       position: "relative",
       flex: 1,
-      width: 3 * width,
+      width: "100%",
       transform: [{ translateX: -width }],
     },
     container: {
@@ -162,7 +162,7 @@ const getStyle = (width: number) => {
       position: "absolute",
       top: 0,
       left: width,
-      width: width,
+      width: "100%",
       height: "100%",
     },
   });

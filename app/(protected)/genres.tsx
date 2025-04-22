@@ -5,7 +5,7 @@ import ScreenContainer from "@/components/ScreenContainer";
 import { useSuccessfulAuthContext } from "@/contexts/authContext";
 import useFetchDataState from "@/hooks/useFetchDataState";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const Genres = () => {
   const authState = useSuccessfulAuthContext();
@@ -49,6 +49,12 @@ const Genres = () => {
 
   return (
     <ScreenContainer>
+      <Text style={{ color: "white" }}>
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deserunt,
+        voluptas. Quasi officia a fugiat, sint et ex voluptas mollitia, eligendi
+        fugit minima officiis, illo vel omnis earum accusantium consequatur
+        perspiciatis.
+      </Text>
       {genresFetchState.data.map((genre) => {
         return (
           <GradientText height={0} fontSize={20} text={genre} key={genre} />

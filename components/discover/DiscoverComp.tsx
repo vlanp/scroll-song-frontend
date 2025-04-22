@@ -37,7 +37,7 @@ function DiscoverComp({
   const { width } = useWindowDimensions();
 
   return (
-    <>
+    <View style={styles.mainView}>
       <View style={styles.topView}>
         <ScreenTitle title="Découverte" />
         <View style={styles.gradientText}>
@@ -110,13 +110,14 @@ function DiscoverComp({
           textAlign="right"
         />
       </View>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainView: {
     flex: 1,
+    justifyContent: "space-between",
   },
   topView: {
     gap: 10,
@@ -129,12 +130,6 @@ const styles = StyleSheet.create({
   },
   topMiddleView: {
     gap: 40,
-  },
-  musicNote: {
-    height: 60,
-    width: 85,
-    objectFit: "contain",
-    alignSelf: "center",
   },
   songMiddleView: {
     justifyContent: "center",
