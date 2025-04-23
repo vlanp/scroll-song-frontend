@@ -1,21 +1,20 @@
 import { Redirect, SplashScreen, Tabs } from "expo-router";
 import StoresInitializer from "@/components/stores/StoresInitializer";
 import { useCheckedAuthContext } from "@/contexts/authContext";
-import { useContext, useEffect } from "react";
-import { FontsContext } from "@/contexts/fontsContext";
+import { useEffect } from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const ProtectedLayout = () => {
   const authState = useCheckedAuthContext();
-  const fontsState = useContext(FontsContext);
 
   useEffect(() => {
-    if (
-      authState.status !== "authLoading" &&
-      fontsState.status !== "fontsLoading"
-    ) {
+    if (authState.status !== "authLoading") {
       SplashScreen.hideAsync();
     }
-  }, [authState, fontsState]);
+  }, [authState]);
 
   if (authState.status === "authLoading") {
     return;
@@ -36,24 +35,36 @@ const ProtectedLayout = () => {
           name="index"
           options={{
             title: "Découverte",
-          }}
-        />
-        <Tabs.Screen
-          name="genres"
-          options={{
-            title: "Genres",
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name="cc-discover" size={28} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
           name="favorites"
           options={{
             title: "Favoris",
+            tabBarIcon: ({ color }) => (
+              <Fontisto name="favorite" size={28} color={color} />
+            ),
           }}
         />
         <Tabs.Screen
           name="storage"
           options={{
             title: "Stockage",
+            tabBarIcon: ({ color }) => (
+              <FontAwesome6 name="floppy-disk" size={28} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="parameters"
+          options={{
+            title: "Paramètres",
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name="user-cog" size={28} color={color} />
+            ),
           }}
         />
       </Tabs>

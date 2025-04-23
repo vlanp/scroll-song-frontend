@@ -112,7 +112,7 @@ const getStyles = (strengthColor: string) => {
     passwordStrength: {
       textAlign: "center",
       color: strengthColor,
-      fontFamily: "PoppinsBold",
+      fontFamily: "Poppins-Bold",
       fontSize: 14,
     },
     showHide: {
@@ -129,7 +129,7 @@ const getStyles = (strengthColor: string) => {
       borderColor: "white",
       borderWidth: 2,
       borderRadius: 10,
-      fontFamily: "PoppinsSemiBold",
+      fontFamily: "Poppins-SemiBold",
       color: "white",
       fontSize: 16,
     },

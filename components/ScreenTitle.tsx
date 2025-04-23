@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontSize: 24,
-    fontFamily: "PoppinsBold",
+    fontFamily: "Poppins-Bold",
   },
 });

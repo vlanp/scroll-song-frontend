@@ -5,7 +5,6 @@ import axios from "axios";
 const likeSound = async (sound: DiscoverSound, authToken: string) => {
   try {
     console.log(sound.id);
-
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
     const setLikedTitleToDisplay =
       useDiscoverStore.getState().setLikedTitleToDisplay;

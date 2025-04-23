@@ -1,4 +1,5 @@
 import ErrorScreen from "@/components/ErrorScreen";
+import GradientButton from "@/components/GradientButton";
 import GradientText from "@/components/GradientText";
 import LottieLoading from "@/components/LottieLoading";
 import ScreenContainer from "@/components/ScreenContainer";
@@ -7,7 +8,7 @@ import useFetchDataState from "@/hooks/useFetchDataState";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const Genres = () => {
+const Parameters = () => {
   const authState = useSuccessfulAuthContext();
   const [retryGenres, setRetryGenres] = useState<number>(0);
 
@@ -49,12 +50,7 @@ const Genres = () => {
 
   return (
     <ScreenContainer>
-      <Text style={{ color: "white" }}>
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Deserunt,
-        voluptas. Quasi officia a fugiat, sint et ex voluptas mollitia, eligendi
-        fugit minima officiis, illo vel omnis earum accusantium consequatur
-        perspiciatis.
-      </Text>
+      <GradientButton text="Se déconnecter" onPress={authState.logOut} />
       {genresFetchState.data.map((genre) => {
         return (
           <GradientText height={0} fontSize={20} text={genre} key={genre} />
@@ -66,4 +62,4 @@ const Genres = () => {
 
 const styles = StyleSheet.create({});
 
-export default Genres;
+export default Parameters;

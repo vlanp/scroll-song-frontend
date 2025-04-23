@@ -1,6 +1,5 @@
 import { AuthProvider } from "@/contexts/authContext";
 import { EnvProvider } from "@/contexts/envContext";
-import { FontsProvider } from "@/contexts/fontsContext";
 import { SplashScreen, Stack } from "expo-router";
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -8,19 +7,19 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+  // console.log(getLoadedFonts());
+
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <GestureHandlerRootView>
         <EnvProvider>
-          <FontsProvider>
-            <AuthProvider>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                }}
-              />
-            </AuthProvider>
-          </FontsProvider>
+          <AuthProvider>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            />
+          </AuthProvider>
         </EnvProvider>
       </GestureHandlerRootView>
     </SafeAreaView>
