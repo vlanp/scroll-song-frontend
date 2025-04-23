@@ -35,7 +35,7 @@ export default function GradientText({
             style={{
               fontSize: fontSize,
               color: "black",
-              fontFamily: "PoppinsBold",
+              fontFamily: "Poppins-Bold",
               textDecorationLine: underline ? "underline" : "none",
               textAlign: textAlign,
             }}

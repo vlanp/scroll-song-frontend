@@ -143,7 +143,7 @@ const getStyles = (
       flexDirection: "row",
     },
     progressText: {
-      fontFamily: "LatoBold",
+      fontFamily: "Lato-Bold",
       fontSize: 18,
       color: "white",
       width: 60,

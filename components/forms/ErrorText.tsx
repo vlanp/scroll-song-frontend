@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   text: {
     textAlign: "center",
     color: "red",
-    fontFamily: "PoppinsBold",
+    fontFamily: "Poppins-Bold",
     fontSize: 14,
   },
 });

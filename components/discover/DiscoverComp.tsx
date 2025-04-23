@@ -138,14 +138,14 @@ const styles = StyleSheet.create({
   songTitle: {
     color: "white",
     fontSize: 24,
-    fontFamily: "PoppinsBold",
+    fontFamily: "Poppins-Bold",
     alignSelf: "center",
     textAlign: "center",
   },
   songMetadata: {
     color: "white",
     fontSize: 20,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
     alignSelf: "center",
     textAlign: "center",
   },

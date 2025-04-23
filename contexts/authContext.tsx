@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { SplashScreen, useRouter } from "expo-router";
 import {
   createContext,
   PropsWithChildren,
@@ -45,16 +45,16 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
 
   const logIn = (authToken: string) => {
-    router.replace("/");
     const authState = new AuthSuccess(authToken);
     storeAuthState(authState);
     setAuthState(authState);
+    router.replace("/");
   };
 
   const logOut = () => {
-    router.replace("/login");
     storeAuthState(authIdle);
     setAuthState(authIdle);
+    router.replace("/login");
   };
 
   const storeAuthState = async (authState: IAuthState) => {
@@ -83,6 +83,12 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     };
     getAuthFromStorage();
   }, []);
+
+  useEffect(() => {
+    if (authState.status !== "authLoading") {
+      SplashScreen.hideAsync();
+    }
+  }, [authState]);
 
   return (
     <AuthContext.Provider value={{ ...authState, logIn, logOut }}>

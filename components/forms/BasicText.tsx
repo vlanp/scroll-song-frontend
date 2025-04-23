@@ -20,7 +20,7 @@ const getStyles = (onPress?: undefined | (() => void)) => {
     text: {
       alignSelf: "center",
       color: "white",
-      fontFamily: onPress ? "PoppinsBold" : "PoppinsSemiBold",
+      fontFamily: onPress ? "Poppins-Bold" : "Poppins-SemiBold",
       fontSize: 14,
       textDecorationLine: onPress ? "underline" : "none",
     },

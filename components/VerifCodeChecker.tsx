@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   NativeSyntheticEvent,
   TextInputKeyPressEventData,
-  Clipboard,
   ActivityIndicator,
 } from "react-native";
 import { useState, useRef, useEffect } from "react";
@@ -16,6 +15,7 @@ import { useCheckedAuthContext } from "@/contexts/authContext";
 import { IUser } from "@/models/IUser";
 import { ErrorText } from "./forms/ErrorText";
 import { IVerifCode } from "@/models/IVerifCode";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 type char = string & { length: 1 };
 type code = string & { length: 8 };
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   newCode: {
     fontSize: 16,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
     color: "#007BFF",
     textDecorationLine: "underline",
   },

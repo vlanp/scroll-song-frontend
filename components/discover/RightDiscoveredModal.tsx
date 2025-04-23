@@ -112,14 +112,14 @@ const useStyle = (width: number) => {
       width: 0.7 * width,
     },
     swipeRight: {
-      fontFamily: "LatoHeavy",
+      fontFamily: "Lato-Heavy",
       fontSize: 27,
       lineHeight: 34,
       padding: 10,
       alignSelf: "center",
     },
     text: {
-      fontFamily: "LatoSemibold",
+      fontFamily: "Lato-Semibold",
       paddingHorizontal: 20,
       textAlign: "center",
       fontSize: 17,

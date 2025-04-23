@@ -80,8 +80,8 @@ export default function GradientButton({
                       {
                         fontFamily:
                           fontWeight === "bold"
-                            ? "PoppinsSemiBold"
-                            : "PoppinsRegular",
+                            ? "Poppins-SemiBold"
+                            : "Poppins-Regular",
                       },
                       { fontSize: fontSize },
                     ]
@@ -90,8 +90,8 @@ export default function GradientButton({
                       {
                         fontFamily:
                           fontWeight === "bold"
-                            ? "PoppinsSemiBold"
-                            : "PoppinsRegular",
+                            ? "Poppins-SemiBold"
+                            : "Poppins-Regular",
                       },
                       { fontSize: fontSize },
                     ]

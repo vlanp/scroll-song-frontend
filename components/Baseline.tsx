@@ -8,6 +8,6 @@ const styles = StyleSheet.create({
   text: {
     color: "white",
     fontSize: 16,
-    fontFamily: "PoppinsSemiBold",
+    fontFamily: "Poppins-SemiBold",
   },
 });
