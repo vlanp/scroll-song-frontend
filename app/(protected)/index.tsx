@@ -11,7 +11,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { documentDirectory } from "expo-file-system";
 import { Mutex } from "async-mutex";
 import useCountRender from "@/hooks/useCountRender";
-import LottieLoading from "@/components/LottieLoading";
+import LottieLoadingScreen from "@/components/LottieLoading";
 import DiscoverComp from "@/components/discover/DiscoverComp";
 import ScreenContainer from "@/components/ScreenContainer";
 
@@ -130,7 +130,7 @@ function Index() {
     fetchDiscoverSoundsState.status === "fetchDataLoading" ||
     fetchDiscoverSoundsState.status === "fetchDataIdle"
   ) {
-    return <LottieLoading />;
+    return <LottieLoadingScreen />;
   }
 
   if (

@@ -1,10 +1,11 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import LottieView from "lottie-react-native";
 import lottieMusicNote from "../assets/lotties/music-note.json";
+import ScreenContainer from "./ScreenContainer";
 
-const LottieLoading = () => {
+const LottieLoadingScreen = () => {
   return (
-    <View style={styles.animationContainer}>
+    <ScreenContainer style={styles.animationContainer}>
       <LottieView
         autoPlay
         style={{
@@ -13,17 +14,15 @@ const LottieLoading = () => {
         }}
         source={lottieMusicNote}
       />
-    </View>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   animationContainer: {
-    backgroundColor: "#010101",
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
   },
 });
 
-export default LottieLoading;
+export default LottieLoadingScreen;

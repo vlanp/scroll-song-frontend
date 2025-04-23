@@ -1,7 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ActivityIndicator,
-  Dimensions,
   StyleProp,
   StyleSheet,
   Text,
@@ -9,8 +8,6 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-
-const screenWidth = Dimensions.get("window").width;
 
 export default function GradientButton({
   text,
@@ -25,7 +22,7 @@ export default function GradientButton({
   paddingVertical = 14,
   fontWeight = "bold",
   fontSize = 17,
-  row = false,
+  height,
 }: {
   text: string;
   borderOnly?: boolean;
@@ -39,33 +36,31 @@ export default function GradientButton({
   paddingVertical?: number;
   fontWeight?: "bold" | "normal";
   fontSize?: number;
-  row?: boolean;
+  height?: number;
 }) {
   return (
     <TouchableOpacity style={[style]} onPress={onPress} disabled={loading}>
       <LinearGradient
         colors={["#4FACFE", "#00F2FE"]}
-        style={[
-          styles.buttonGradient,
-          { borderRadius: radius },
-          row && { width: (screenWidth - 30) / 4 },
-        ]}
+        style={[styles.buttonGradient, { borderRadius: radius }]}
       >
         <View
           style={
             borderOnly
               ? [
                   styles.button,
-                  { backgroundColor: backgroundColor },
+                  { backgroundColor },
                   { borderRadius: radius },
-                  { paddingHorizontal: paddingHorizontal },
-                  { paddingVertical: paddingVertical },
+                  { paddingHorizontal },
+                  { paddingVertical },
+                  { height },
                 ]
               : [
                   styles.button,
                   { borderRadius: radius },
-                  { paddingHorizontal: paddingHorizontal },
-                  { paddingVertical: paddingVertical },
+                  { paddingHorizontal },
+                  { paddingVertical },
+                  { height },
                 ]
           }
         >
@@ -121,5 +116,6 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 20,
     paddingVertical: 14,
+    justifyContent: "center",
   },
 });

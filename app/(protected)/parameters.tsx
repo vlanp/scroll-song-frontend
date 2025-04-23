@@ -1,43 +1,37 @@
 import ErrorScreen from "@/components/ErrorScreen";
 import GradientButton from "@/components/GradientButton";
-import GradientText from "@/components/GradientText";
-import LottieLoading from "@/components/LottieLoading";
+import LottieLoadingScreen from "@/components/LottieLoading";
 import ScreenContainer from "@/components/ScreenContainer";
+import ScreenTitle from "@/components/ScreenTitle";
+import SelectableText from "@/components/SelectableText";
 import { useSuccessfulAuthContext } from "@/contexts/authContext";
+import { useCheckedEnvContext } from "@/contexts/envContext";
 import useFetchDataState from "@/hooks/useFetchDataState";
+import IGenreState from "@/models/IGenreState";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 const Parameters = () => {
   const authState = useSuccessfulAuthContext();
+  const env = useCheckedEnvContext();
   const [retryGenres, setRetryGenres] = useState<number>(0);
 
-  const expoPublicApiUrl = process.env.EXPO_PUBLIC_API_URL;
-  const genresEndpoint = process.env.EXPO_PUBLIC_GENRES_ENDPOINT;
-
-  if (!expoPublicApiUrl || !genresEndpoint) {
-    console.error(
-      "EXPO_PUBLIC_API_URL or EXPO_PUBLIC_GENRES_ENDPOINT is not defined"
-    );
-  }
-
-  const genresFetchState = useFetchDataState<string[], string[]>(
-    (expoPublicApiUrl || "") + (genresEndpoint || ""),
-    retryGenres,
-    authState.authToken
-  );
+  const genresStatesFetchState = useFetchDataState<
+    IGenreState[],
+    IGenreState[]
+  >(env.apiUrl + env.genresEndpoint, retryGenres, authState.authToken);
 
   if (
-    genresFetchState.status === "fetchDataLoading" ||
-    genresFetchState.status === "fetchDataIdle"
+    genresStatesFetchState.status === "fetchDataLoading" ||
+    genresStatesFetchState.status === "fetchDataIdle"
   ) {
-    return <LottieLoading />;
+    return <LottieLoadingScreen />;
   }
 
   if (
-    genresFetchState.status === "fetchDataError" ||
-    !genresFetchState.data ||
-    genresFetchState.data.length === 0
+    genresStatesFetchState.status === "fetchDataError" ||
+    !genresStatesFetchState.data ||
+    genresStatesFetchState.data.length === 0
   ) {
     return (
       <ErrorScreen
@@ -50,16 +44,40 @@ const Parameters = () => {
 
   return (
     <ScreenContainer>
+      <ScreenTitle title="Paramètres" />
       <GradientButton text="Se déconnecter" onPress={authState.logOut} />
-      {genresFetchState.data.map((genre) => {
-        return (
-          <GradientText height={0} fontSize={20} text={genre} key={genre} />
-        );
-      })}
+      <ScrollView
+        style={styles.genresScrollView}
+        contentContainerStyle={styles.genresContentContainer}
+      >
+        {genresStatesFetchState.data.map((genreState) => {
+          console.log(genreState);
+
+          return (
+            <SelectableText
+              text={genreState.genre}
+              key={genreState.genre}
+              initialState={genreState.isSelected}
+            />
+          );
+        })}
+      </ScrollView>
+      <GradientButton text="Sauvegarder" />
     </ScreenContainer>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  genresScrollView: {},
+  genresContentContainer: {
+    paddingVertical: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    flexWrap: "wrap",
+    rowGap: 10,
+    gap: 0,
+  },
+});
 
 export default Parameters;

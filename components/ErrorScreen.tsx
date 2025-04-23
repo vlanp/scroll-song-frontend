@@ -1,6 +1,7 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import GradientText from "./GradientText";
 import GradientButton from "./GradientButton";
+import ScreenContainer from "./ScreenContainer";
 
 const ErrorScreen = ({
   errorText,
@@ -10,7 +11,7 @@ const ErrorScreen = ({
   onRetry: () => void;
 }) => {
   return (
-    <View style={styles.container}>
+    <ScreenContainer style={styles.container}>
       <GradientText
         text={errorText}
         fontSize={20}
@@ -27,16 +28,14 @@ const ErrorScreen = ({
           alignItems: "center",
         }}
       />
-    </View>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black",
   },
   errorText: {
     fontSize: 20,
