@@ -27,6 +27,8 @@ const useDiscoverStore = create<IDiscoverStoreStates & IDiscoverStoreActions>()(
     retryDiscover: 0,
     setRetryDiscover: () =>
       set((state) => ({ retryDiscover: state.retryDiscover + 1 })),
+    updateTick: 0,
+    setUpdateTick: () => set((state) => ({ updateTick: state.updateTick + 1 })),
     soundsPlayer: {},
     setSoundPlayer: (soundId: ISoundId, uri: string) =>
       set((state) => ({

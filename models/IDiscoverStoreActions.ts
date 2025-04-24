@@ -16,6 +16,7 @@ import SoundPlayer from "@/models/SoundPlayer";
 
 interface IDiscoverStoreActions {
   setRetryDiscover: () => void;
+  setUpdateTick: () => void;
   setSoundPlayer: (soundId: ISoundId, uri: string) => void;
   setSoundPlayerState: (
     soundId: ISoundId,

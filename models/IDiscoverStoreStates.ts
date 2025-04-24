@@ -7,6 +7,7 @@ import { FlatList } from "react-native";
 
 interface IDiscoverStoreStates {
   retryDiscover: number;
+  updateTick: number;
   soundsPlayer: ISoundsPlayer;
   soundsPlayerState: ISoundsPlayerState;
   downloadExcerptsState: IDownloadExcerptsState;

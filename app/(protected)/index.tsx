@@ -15,8 +15,8 @@ import LottieLoadingScreen from "@/components/LottieLoading";
 import DiscoverComp from "@/components/discover/DiscoverComp";
 import ScreenContainer from "@/components/ScreenContainer";
 
-function Index() {
-  useCountRender("Index");
+function DiscoverScreen() {
+  useCountRender("DiscoverScreen");
   const fetchDiscoverSoundsState = useDiscoverStore(
     (state) => state.fetchDiscoverSoundsState
   );
@@ -242,4 +242,4 @@ const getStyles = (
   return styles;
 };
 
-export default Index;
+export default DiscoverScreen;

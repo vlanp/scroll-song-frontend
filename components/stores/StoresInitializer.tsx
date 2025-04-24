@@ -14,9 +14,8 @@ const StoresInitializer = ({
   useEffect(() => {
     let abortController: AbortController | undefined;
     const unsubscribeDiscoverStore1 = useDiscoverStore.subscribe(
-      (state) => state.retryDiscover,
-      (retryDiscover) => {
-        console.log("retryDiscover", retryDiscover);
+      (state) => ({ retry: state.retryDiscover, update: state.updateTick }),
+      () => {
         if (abortController) {
           abortController.abort();
         }
@@ -24,6 +23,11 @@ const StoresInitializer = ({
       },
       {
         fireImmediately: true,
+        equalityFn: (c, p) => {
+          const { retry: cRetry, update: cUpdate } = c;
+          const { retry: pRetry, update: pUpdate } = p;
+          return cRetry === pRetry && cUpdate === pUpdate;
+        },
       }
     );
 

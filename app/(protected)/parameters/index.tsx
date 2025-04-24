@@ -14,11 +14,10 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Snackbar, Button } from "@react-native-material/core";
 import { useGenresStore } from "@/zustands/useGenresStore";
 import { IVerifCode } from "@/models/IVerifCode";
-import { usePathname, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import useDiscoverStore from "@/zustands/useDiscoverStore";
 
 const ParametersScreen = () => {
-  const pathname = usePathname();
-  console.log("Chemin actuel:", pathname);
   const router = useRouter();
   const authState = useSuccessfulAuthContext();
   const env = useCheckedEnvContext();
@@ -26,6 +25,9 @@ const ParametersScreen = () => {
   const [updatingGenres, setUpdatingGenres] = useState<boolean>(false);
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
   const [loadingResetPw, setLoadingResetPw] = useState<boolean>(false);
+  const setDiscoverUpdateTick = useDiscoverStore(
+    (state) => state.setUpdateTick
+  );
   const snackbarMessage = useRef<string>("");
 
   const styles = getStyles(showSnackbar);
@@ -58,6 +60,7 @@ const ParametersScreen = () => {
       )
       .then(() => {
         setUpdatingGenres(false);
+        setDiscoverUpdateTick();
       })
       .catch((error) => {
         console.log("Error when updating genres", error);
