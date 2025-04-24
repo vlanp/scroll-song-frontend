@@ -14,11 +14,9 @@ import { useGenresStore } from "@/zustands/useGenresStore";
 const SelectableText = ({
   text,
   initialState,
-  key,
 }: {
   text: string;
   initialState: boolean;
-  key?: string | undefined;
 }) => {
   const isSelected = useGenresStore((state) => state.genresStates[text]);
   const setIsSelected = useGenresStore((state) => state.setGenreState);
@@ -36,7 +34,6 @@ const SelectableText = ({
   return (
     <View
       style={styles.mainView}
-      key={key}
       onLayout={(event) => {
         setHeight(event.nativeEvent.layout.height);
       }}

@@ -13,7 +13,8 @@ const setGenreState = (
   genresStates: Record<string, boolean>,
   isSelected?: boolean | undefined
 ) => {
-  const newSelectedState = isSelected || !genresStates[genre];
+  const newSelectedState =
+    isSelected !== undefined ? isSelected : !genresStates[genre];
   return {
     ...genresStates,
     [genre]: newSelectedState,

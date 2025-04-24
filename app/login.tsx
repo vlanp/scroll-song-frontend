@@ -81,7 +81,7 @@ const LoginScreen = () => {
             const email = data.email;
             const validUntil = data.validUntil;
             router.replace({
-              pathname: "/verifEmail",
+              pathname: "/emailValidation",
               params: { email, validUntil },
             });
           } else {
@@ -141,7 +141,7 @@ const LoginScreen = () => {
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
           <BasicText>Mot de passe oublié ?</BasicText>
-          <BasicText onPress={() => router.push("/verifEmail")}>
+          <BasicText onPress={() => router.push("/emailValidation")}>
             Réinitialisez le maintenant !
           </BasicText>
         </View>

@@ -7,8 +7,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
-  // console.log(getLoadedFonts());
-
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <GestureHandlerRootView>

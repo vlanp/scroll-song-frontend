@@ -9,18 +9,24 @@ import { useCheckedEnvContext } from "@/contexts/envContext";
 import useFetchDataState from "@/hooks/useFetchDataState";
 import IGenreState from "@/models/IGenreState";
 import axios from "axios";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Snackbar, Button } from "@react-native-material/core";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
 import { useGenresStore } from "@/zustands/useGenresStore";
+import { IVerifCode } from "@/models/IVerifCode";
+import { usePathname, useRouter } from "expo-router";
 
-const Parameters = () => {
+const ParametersScreen = () => {
+  const pathname = usePathname();
+  console.log("Chemin actuel:", pathname);
+  const router = useRouter();
   const authState = useSuccessfulAuthContext();
   const env = useCheckedEnvContext();
   const [retryGenres, setRetryGenres] = useState<number>(0);
   const [updatingGenres, setUpdatingGenres] = useState<boolean>(false);
   const [showSnackbar, setShowSnackbar] = useState<boolean>(false);
+  const [loadingResetPw, setLoadingResetPw] = useState<boolean>(false);
+  const snackbarMessage = useRef<string>("");
 
   const styles = getStyles(showSnackbar);
 
@@ -56,7 +62,34 @@ const Parameters = () => {
       .catch((error) => {
         console.log("Error when updating genres", error);
         setUpdatingGenres(false);
+        snackbarMessage.current = "La sauvegarde a échoué.";
         setShowSnackbar(true);
+      });
+  };
+
+  const onAskedPwReset = () => {
+    setLoadingResetPw(true);
+    axios
+      .get<IVerifCode>(env.apiUrl + env.askResetPwEndpoint, {
+        headers: { Authorization: "Bearer " + authState.authToken },
+      })
+      .then((response) => {
+        const email = response.data.email;
+        const validUntil = response.data.validUntil;
+        router.push({
+          pathname: "/resetPwValidation",
+          params: { email, validUntil },
+        });
+        setLoadingResetPw(false);
+      })
+      .catch((error) => {
+        console.log(
+          "Une erreur est survenue lors de la demande de réinitialisation de mdp",
+          error
+        );
+        snackbarMessage.current =
+          "La demande de réinitialisation n'a pas pu aboutir.";
+        setLoadingResetPw(false);
       });
   };
 
@@ -82,12 +115,16 @@ const Parameters = () => {
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer style={styles.mainView}>
       <ScreenTitle title="Paramètres" />
       <GradientButton
         text="Se déconnecter"
         onPress={authState.logOut}
         gradientColor="red"
+      />
+      <GradientButton
+        text="Modifier mon mot de passe"
+        onPress={onAskedPwReset}
       />
       <ScrollView
         style={styles.genresScrollView}
@@ -105,7 +142,7 @@ const Parameters = () => {
       </ScrollView>
       <GradientButton text="Sauvegarder" onPress={saveUnselectedGenres} />
       <Snackbar
-        message="La sauvegarde a échoué."
+        message={snackbarMessage.current}
         action={
           <Button
             variant="text"
@@ -125,6 +162,9 @@ const Parameters = () => {
 
 const getStyles = (showSnackbar: boolean) => {
   const styles = StyleSheet.create({
+    mainView: {
+      gap: 10,
+    },
     genresScrollView: {},
     genresContentContainer: {
       paddingVertical: 10,
@@ -146,4 +186,4 @@ const getStyles = (showSnackbar: boolean) => {
   return styles;
 };
 
-export default Parameters;
+export default ParametersScreen;

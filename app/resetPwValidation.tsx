@@ -1,8 +1,8 @@
+import ScreenContainer from "@/components/ScreenContainer";
 import ScreenTitle from "@/components/ScreenTitle";
 import { VerifCodeChecker } from "@/components/VerifCodeChecker";
 import { IVerifCode } from "@/models/IVerifCode";
 import { useLocalSearchParams } from "expo-router";
-import { ScreenContainer } from "react-native-screens";
 
 const ResetPwValidationScreen = () => {
   const { email, validUntil } = useLocalSearchParams<IVerifCode>();

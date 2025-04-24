@@ -16,6 +16,7 @@ import { IUser } from "@/models/IUser";
 import { ErrorText } from "./forms/ErrorText";
 import { IVerifCode } from "@/models/IVerifCode";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { useRouter } from "expo-router";
 
 type char = string & { length: 1 };
 type code = string & { length: 8 };
@@ -30,6 +31,7 @@ const VerifCodeChecker = ({
   verifType: IVerifType;
   email: string;
 }) => {
+  const router = useRouter();
   const authState = useCheckedAuthContext();
   const env = useCheckedEnvContext();
   const [code, setCode] = useState<string[]>(["", "", "", "", "", "", "", ""]);
@@ -134,6 +136,9 @@ const VerifCodeChecker = ({
       .then((response) => {
         authState.logIn(response.data.token);
         setIsLoading(false);
+        if (verifType === "PWReset") {
+          router.replace("/parameters/resetPw");
+        }
       })
       .catch((error) => {
         if (error?.response?.status === 403) {

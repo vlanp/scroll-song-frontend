@@ -97,43 +97,33 @@ const SignupScreen = () => {
       setIsLoading(false);
       return;
     }
-    const abortController = new AbortController();
-    const signal = abortController.signal;
     axios
-      .post<IVerifCode>(
-        env.apiUrl + env.signupEndpoint,
-        {
-          email,
-          username,
-          password,
-        },
-        { signal: abortController.signal }
-      )
+      .post<IVerifCode>(env.apiUrl + env.signupEndpoint, {
+        email,
+        username,
+        password,
+      })
       .then((response) => {
-        if (!signal.aborted) {
-          const email = response.data.email;
-          const validUntil = response.data.validUntil;
-          router.replace({
-            pathname: "/verifEmail",
-            params: { email, validUntil },
-          });
-          setIsLoading(false);
-        }
+        const email = response.data.email;
+        const validUntil = response.data.validUntil;
+        router.replace({
+          pathname: "/emailValidation",
+          params: { email, validUntil },
+        });
+        setIsLoading(false);
       })
       .catch((error) => {
-        if (!axios.isCancel(error)) {
-          if (error?.response?.status === 409) {
-            setFormError(
-              "Cette adresse email est déjà associée à un utilisateur."
-            );
-          } else {
-            console.log(error);
-            setFormError(
-              "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
-            );
-          }
-          setIsLoading(false);
+        if (error?.response?.status === 409) {
+          setFormError(
+            "Cette adresse email est déjà associée à un utilisateur."
+          );
+        } else {
+          console.log(error);
+          setFormError(
+            "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
+          );
         }
+        setIsLoading(false);
       });
   };
 
