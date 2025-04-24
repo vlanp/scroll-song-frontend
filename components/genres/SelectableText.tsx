@@ -1,9 +1,15 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import GradientText from "./GradientText";
-import checked from "../assets/images/icons/checked.png";
-import unchecked from "../assets/images/icons/unchecked.png";
-import GradientButton from "./GradientButton";
-import { useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
+import checked from "../../assets/images/icons/checked.png";
+import unchecked from "../../assets/images/icons/unchecked.png";
+import GradientButton from "../GradientButton";
+import { useEffect, useState } from "react";
+import { useGenresStore } from "@/zustands/useGenresStore";
 
 const SelectableText = ({
   text,
@@ -14,8 +20,17 @@ const SelectableText = ({
   initialState: boolean;
   key?: string | undefined;
 }) => {
-  const [isSelected, setIsSelected] = useState<boolean>(initialState);
+  const isSelected = useGenresStore((state) => state.genresStates[text]);
+  const setIsSelected = useGenresStore((state) => state.setGenreState);
   const [height, setHeight] = useState<number>(0);
+
+  useEffect(() => {
+    setIsSelected(text, initialState);
+  }, [initialState, setIsSelected, text]);
+
+  if (isSelected === undefined) {
+    <ActivityIndicator />;
+  }
 
   const styles = getStyles(height, isSelected);
   return (
@@ -28,17 +43,17 @@ const SelectableText = ({
     >
       <GradientButton
         text={text}
-        fontSize={16}
+        fontSize={14}
         style={styles.gradientButtonStyle}
         radius={10}
         paddingVertical={0}
         paddingHorizontal={10}
         height={50}
-        onPress={() => setIsSelected((prev) => !prev)}
+        onPress={() => setIsSelected(text)}
       />
       <Pressable
         style={styles.selectedPressable}
-        onPress={() => setIsSelected((prev) => !prev)}
+        onPress={() => setIsSelected(text)}
       >
         <Image
           source={isSelected ? checked : unchecked}
@@ -50,13 +65,14 @@ const SelectableText = ({
 };
 
 const getStyles = (height: number, isSelected: boolean) => {
+  const width = 120;
   const styles = StyleSheet.create({
     mainView: {
-      width: 140 + height,
+      width: width + height,
     },
     gradientButtonStyle: {
       justifyContent: "center",
-      width: 140,
+      width: width,
     },
     selectedPressable: {
       position: "absolute",

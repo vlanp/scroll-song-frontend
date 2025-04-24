@@ -8,7 +8,7 @@ import {
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const useFetchDataState = <T, K>(
+const useFetchDataState = <T, K = T>(
   url: string,
   retry: number,
   authToken?: string,

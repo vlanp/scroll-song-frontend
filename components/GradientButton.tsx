@@ -23,6 +23,7 @@ export default function GradientButton({
   fontWeight = "bold",
   fontSize = 17,
   height,
+  gradientColor,
 }: {
   text: string;
   borderOnly?: boolean;
@@ -37,11 +38,16 @@ export default function GradientButton({
   fontWeight?: "bold" | "normal";
   fontSize?: number;
   height?: number;
+  gradientColor?: "blue" | "red" | undefined;
 }) {
   return (
     <TouchableOpacity style={[style]} onPress={onPress} disabled={loading}>
       <LinearGradient
-        colors={["#4FACFE", "#00F2FE"]}
+        colors={
+          gradientColor === "red"
+            ? ["#FF5E62", "#FF2C65"]
+            : ["#4FACFE", "#00F2FE"]
+        }
         style={[styles.buttonGradient, { borderRadius: radius }]}
       >
         <View
