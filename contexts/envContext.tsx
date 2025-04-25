@@ -15,6 +15,7 @@ interface IEnv {
   askResetPwEndpoint: string | undefined;
   resetPwEndpoint: string | undefined;
   updatedGenresEndpoint: string | undefined;
+  favoritesEndpoint: string | undefined;
 }
 
 interface ICheckedEnv {
@@ -31,6 +32,7 @@ interface ICheckedEnv {
   askResetPwEndpoint: string;
   resetPwEndpoint: string;
   updatedGenresEndpoint: string;
+  favoritesEndpoint: string;
 }
 
 const EnvContext = createContext<IEnv | null>(null);
@@ -50,6 +52,7 @@ const EnvProvider = ({ children }: PropsWithChildren) => {
     askResetPwEndpoint: process.env.EXPO_PUBLIC_ASKRESETPW_ENDPOINT,
     resetPwEndpoint: process.env.EXPO_PUBLIC_RESETPW_ENDPOINT,
     updatedGenresEndpoint: process.env.EXPO_PUBLIC_UPDATEGENRES_ENDPOINT,
+    favoritesEndpoint: process.env.EXPO_PUBLIC_FAVORITES_ENDPOINT,
   };
 
   return <EnvContext.Provider value={env}>{children}</EnvContext.Provider>;

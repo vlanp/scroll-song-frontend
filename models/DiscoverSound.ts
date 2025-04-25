@@ -5,8 +5,6 @@ class DiscoverSound implements ISound {
   artist: string;
   sourceUrl: string;
   title: string;
-  pictureUrl: string;
-  genres: string[];
   audioUrl: string;
   startTimeExcerptMs: number;
   endTimeExcerptMs: number;
@@ -15,8 +13,6 @@ class DiscoverSound implements ISound {
     artist: string,
     sourceUrl: string,
     title: string,
-    pictureUrl: string,
-    genres: string[],
     audioUrl: string,
     startTimeExcerptMs: number,
     endTimeExcerptMs: number
@@ -25,8 +21,6 @@ class DiscoverSound implements ISound {
     this.artist = artist;
     this.sourceUrl = sourceUrl;
     this.title = title;
-    this.pictureUrl = pictureUrl;
-    this.genres = genres;
     this.audioUrl = audioUrl;
     this.startTimeExcerptMs = startTimeExcerptMs;
     this.endTimeExcerptMs = endTimeExcerptMs;

@@ -9,8 +9,6 @@ const handleReceivedData = (sounds: DiscoverSound[]) => {
       sound.artist,
       sound.sourceUrl,
       sound.title,
-      sound.pictureUrl,
-      sound.genres,
       sound.audioUrl,
       sound.startTimeExcerptMs,
       sound.endTimeExcerptMs

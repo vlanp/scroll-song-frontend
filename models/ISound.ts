@@ -3,8 +3,6 @@ interface ISound {
   artist: string;
   sourceUrl: string;
   title: string;
-  pictureUrl: string;
-  genres: string[];
   audioUrl: string;
 }
 

@@ -1,11 +1,12 @@
 import DiscoverSound from "@/models/DiscoverSound";
 import useDiscoverStore from "@/zustands/useDiscoverStore";
+import { useFavoritesStore } from "@/zustands/useFavoritesStore";
 import axios from "axios";
 
 const likeSound = async (sound: DiscoverSound, authToken: string) => {
   try {
-    console.log(sound.id);
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
+    useFavoritesStore.getState().setUpdateTick();
     const setLikedTitleToDisplay =
       useDiscoverStore.getState().setLikedTitleToDisplay;
     setLikedTitleToDisplay({

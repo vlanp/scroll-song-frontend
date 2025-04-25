@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 const useFetchDataState = <T, K = T>(
   url: string,
-  retry: number,
+  refresh: number,
   authToken?: string,
   onReceivedData?: (data: T) => K
 ): IFetchDataState<T | K> => {
@@ -45,7 +45,7 @@ const useFetchDataState = <T, K = T>(
       });
 
     return () => controller.abort();
-  }, [authToken, onReceivedData, url, retry]);
+  }, [authToken, onReceivedData, url, refresh]);
 
   return fetchDataState;
 };
