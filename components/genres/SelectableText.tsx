@@ -14,9 +14,11 @@ import { useGenresStore } from "@/zustands/useGenresStore";
 const SelectableText = ({
   text,
   initialState,
+  disabled = false,
 }: {
   text: string;
   initialState: boolean;
+  disabled?: boolean;
 }) => {
   const isSelected = useGenresStore((state) => state.genresStates[text]);
   const setIsSelected = useGenresStore((state) => state.setGenreState);
@@ -30,7 +32,7 @@ const SelectableText = ({
     <ActivityIndicator />;
   }
 
-  const styles = getStyles(height, isSelected);
+  const styles = getStyles(height, isSelected, disabled);
   return (
     <View
       style={styles.mainView}
@@ -47,21 +49,25 @@ const SelectableText = ({
         paddingHorizontal={10}
         height={50}
         onPress={() => setIsSelected(text)}
+        disabled={disabled}
       />
       <Pressable
         style={styles.selectedPressable}
         onPress={() => setIsSelected(text)}
+        disabled={disabled}
       >
-        <Image
-          source={isSelected ? checked : unchecked}
-          style={styles.selectedImage}
-        />
+        {!disabled && (
+          <Image
+            source={isSelected ? checked : unchecked}
+            style={styles.selectedImage}
+          />
+        )}
       </Pressable>
     </View>
   );
 };
 
-const getStyles = (height: number, isSelected: boolean) => {
+const getStyles = (height: number, isSelected: boolean, disabled: boolean) => {
   const width = 120;
   const styles = StyleSheet.create({
     mainView: {
@@ -78,6 +84,7 @@ const getStyles = (height: number, isSelected: boolean) => {
       width: height,
       height: "100%",
       backgroundColor: isSelected ? "#17ca40" : "#ca1e17",
+      opacity: disabled ? 0.7 : 1,
       borderRadius: 10,
     },
     selectedImage: {

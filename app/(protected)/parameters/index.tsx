@@ -124,10 +124,13 @@ const ParametersScreen = () => {
         text="Se déconnecter"
         onPress={authState.logOut}
         gradientColor="red"
+        disabled={updatingGenres || loadingResetPw}
       />
       <GradientButton
         text="Modifier mon mot de passe"
         onPress={onAskedPwReset}
+        loading={loadingResetPw}
+        disabled={updatingGenres}
       />
       <ScrollView
         style={styles.genresScrollView}
@@ -139,11 +142,17 @@ const ParametersScreen = () => {
               text={genreState.genre}
               key={genreState.genre}
               initialState={genreState.isSelected}
+              disabled={updatingGenres || loadingResetPw}
             />
           );
         })}
       </ScrollView>
-      <GradientButton text="Sauvegarder" onPress={saveUnselectedGenres} />
+      <GradientButton
+        text="Sauvegarder"
+        onPress={saveUnselectedGenres}
+        loading={updatingGenres}
+        disabled={loadingResetPw}
+      />
       <Snackbar
         message={snackbarMessage.current}
         action={

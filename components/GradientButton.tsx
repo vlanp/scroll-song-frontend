@@ -24,6 +24,7 @@ export default function GradientButton({
   fontSize = 17,
   height,
   gradientColor,
+  disabled,
 }: {
   text: string;
   borderOnly?: boolean;
@@ -39,16 +40,25 @@ export default function GradientButton({
   fontSize?: number;
   height?: number;
   gradientColor?: "blue" | "red" | undefined;
+  disabled?: boolean | undefined;
 }) {
   return (
-    <TouchableOpacity style={[style]} onPress={onPress} disabled={loading}>
+    <TouchableOpacity
+      style={[style]}
+      onPress={onPress}
+      disabled={disabled || loading}
+    >
       <LinearGradient
         colors={
           gradientColor === "red"
             ? ["#FF5E62", "#FF2C65"]
             : ["#4FACFE", "#00F2FE"]
         }
-        style={[styles.buttonGradient, { borderRadius: radius }]}
+        style={[
+          styles.buttonGradient,
+          { borderRadius: radius },
+          (disabled || loading) && styles.disabledInput,
+        ]}
       >
         <View
           style={
@@ -123,5 +133,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
     justifyContent: "center",
+  },
+  disabledInput: {
+    backgroundColor: "#1a1a1a",
+    borderColor: "#333",
+    color: "#666",
+    opacity: 0.7,
   },
 });

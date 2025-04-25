@@ -3,7 +3,7 @@ import * as FileSystem from "expo-file-system";
 import { useState } from "react";
 import { Pressable, Text, StyleSheet, View, ScrollView } from "react-native";
 
-const Storage = () => {
+const StorageScreen = () => {
   const [documentStorageInfo, setDocumentStorageInfo] = useState<string[]>([]);
   const [cacheStorageInfo, setCacheStorageInfo] = useState<string[]>([]);
 
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Storage;
+export default StorageScreen;

@@ -9,7 +9,7 @@ import { IUser } from "@/models/IUser";
 import axios from "axios";
 import { passwordStrength } from "check-password-strength";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 const ResetPwScreen = () => {
@@ -22,6 +22,14 @@ const ResetPwScreen = () => {
   const [rePassword, setRePassword] = useState<string>("");
   const [rePasswordError, setRePasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPasswordError(null);
+  }, [password]);
+
+  useEffect(() => {
+    setRePasswordError(null);
+  }, [rePassword]);
 
   const checkForm = (): boolean => {
     let isThereInputErrors = false;
