@@ -11,9 +11,16 @@ import { LikedSound } from "@/models/LikedSound";
 import handleReceivedData from "@/utils/favorites/handleReceivedData";
 import { useFavoritesStore } from "@/zustands/useFavoritesStore";
 import { useState } from "react";
-import { Text } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { StyleSheet, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 
-type ISortingBy = "Genres" | "Artists";
+export const SortedByValues = {
+  ARTISTS: "Artists",
+  GENRES: "Genres",
+} as const;
+
+type ISortingBy = (typeof SortedByValues)[keyof typeof SortedByValues];
 
 const FavoritesScreen = () => {
   const env = useCheckedEnvContext();
@@ -93,9 +100,72 @@ const FavoritesScreen = () => {
   return (
     <ScreenContainer>
       <ScreenTitle title="Favoris" />
+      <Dropdown
+        value={sortingBy}
+        onChange={(item) => setSortingBy(item.value)}
+        style={styles.dropdown}
+        data={Object.values(SortedByValues).map((sortedByValue) => ({
+          label: sortedByValue,
+          value: sortedByValue,
+        }))}
+        labelField={"label"}
+        valueField={"value"}
+        selectedTextStyle={styles.selectedTextStyle}
+        itemTextStyle={styles.itemTextStyle}
+        containerStyle={styles.containerStyle}
+        itemContainerStyle={styles.itemContainerStyle}
+        activeColor={"gray"}
+        renderLeftIcon={() => (
+          <View style={styles.iconView}>
+            <MaterialIcons name="category" size={30} color="white" />
+          </View>
+        )}
+      />
       <MultiCarousel favoritesCategories={favoritesCategories} />
     </ScreenContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  dropdown: {
+    borderColor: "white",
+    borderWidth: 2,
+    borderRadius: 10,
+    paddingVertical: 10,
+    backgroundColor: "gray",
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+    display: "flex",
+    justifyContent: "center",
+    margin: 20,
+  },
+  selectedTextStyle: {
+    fontSize: 18,
+    fontFamily: "Poppins-Bold",
+    color: "white",
+    alignItems: "flex-start",
+    flex: 1.2,
+    paddingHorizontal: 5,
+  },
+  containerStyle: {
+    borderRadius: 10,
+    backgroundColor: "gray",
+    borderColor: "white",
+    borderWidth: 2,
+  },
+  itemContainerStyle: {
+    borderRadius: 10,
+  },
+  itemTextStyle: {
+    textAlign: "center",
+    color: "white",
+    fontFamily: "Poppins-SemiBold",
+  },
+  iconView: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingHorizontal: 5,
+  },
+});
 
 export default FavoritesScreen;

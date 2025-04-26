@@ -1,5 +1,5 @@
 import { IFavoritesCategory } from "@/models/IFavoritesCategory";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import CoversCarousel from "./CoversCarousel";
 import { ScrollView } from "react-native-gesture-handler";
 

@@ -40,7 +40,7 @@ const getStyles = () => {
       paddingVertical: 5,
     },
     gradientView: {
-      height: 50,
+      height: 40,
     },
   });
   return styles;
