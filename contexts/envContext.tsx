@@ -9,6 +9,7 @@ interface IEnv {
   dislikeEndpoint: string | undefined;
   genresEndpoint: string | undefined;
   excerptDirectory: string | undefined;
+  favoritesDirectory: string | undefined;
   loginEndpoint: string | undefined;
   signupEndpoint: string | undefined;
   mailCheckEndpoint: string | undefined;
@@ -26,6 +27,7 @@ interface ICheckedEnv {
   dislikeEndpoint: string;
   genresEndpoint: string;
   excerptDirectory: string;
+  favoritesDirectory: string;
   loginEndpoint: string;
   signupEndpoint: string;
   mailCheckEndpoint: string;
@@ -46,6 +48,7 @@ const EnvProvider = ({ children }: PropsWithChildren) => {
     dislikeEndpoint: process.env.EXPO_PUBLIC_DISLIKE_ENDPOINT,
     genresEndpoint: process.env.EXPO_PUBLIC_GENRES_ENDPOINT,
     excerptDirectory: process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY,
+    favoritesDirectory: process.env.EXPO_PUBLIC_FAVORITES_DIRECTORY,
     loginEndpoint: process.env.EXPO_PUBLIC_LOGIN_ENDPOINT,
     signupEndpoint: process.env.EXPO_PUBLIC_SIGNUP_ENDPOINT,
     mailCheckEndpoint: process.env.EXPO_PUBLIC_MAILCHECK_ENDPOINT,

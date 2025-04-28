@@ -14,9 +14,11 @@ import useCountRender from "@/hooks/useCountRender";
 import LottieLoadingScreen from "@/components/LottieLoading";
 import DiscoverComp from "@/components/discover/DiscoverComp";
 import ScreenContainer from "@/components/ScreenContainer";
+import { useCheckedEnvContext } from "@/contexts/envContext";
 
 function DiscoverScreen() {
   useCountRender("DiscoverScreen");
+  const env = useCheckedEnvContext();
   const fetchDiscoverSoundsState = useDiscoverStore(
     (state) => state.fetchDiscoverSoundsState
   );
@@ -50,16 +52,13 @@ function DiscoverScreen() {
       )
     );
     const setSoundPlayer = useDiscoverStore.getState().setSoundPlayer;
-    const excerptDirectory = process.env.EXPO_PUBLIC_EXCERPT_DIRECTORY;
+    const excerptDirectory = env.excerptDirectory;
     fetchDiscoverSoundsState.data.forEach((discoverSound) => {
       const uri =
-        documentDirectory +
-        (excerptDirectory ? excerptDirectory + "/" : "") +
-        discoverSound.id +
-        ".mp3";
+        documentDirectory + excerptDirectory + "/" + discoverSound.id + ".mp3";
       setSoundPlayer(discoverSound.id, uri);
     });
-  }, [fetchDiscoverSoundsState, setPosition]);
+  }, [env.excerptDirectory, fetchDiscoverSoundsState, setPosition]);
 
   useEffect(() => {
     const unsubscribe = useDiscoverStore.subscribe(

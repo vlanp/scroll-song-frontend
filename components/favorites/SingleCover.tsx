@@ -1,26 +1,31 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { LikedSound } from "@/models/LikedSound";
+import { stringifyObject } from "@/models/Stringify";
+import { useRouter } from "expo-router";
+import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 
-const SingleCover = ({
-  singleCoverUrl,
-  title,
-  artist,
-}: {
-  singleCoverUrl: string;
-  title: string;
-  artist: string;
-}) => {
+const SingleCover = ({ sound }: { sound: LikedSound }) => {
+  const router = useRouter();
   const styles = getStyles();
   return (
     <View style={styles.mainView}>
-      <Image source={{ uri: singleCoverUrl }} style={styles.cover} />
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/favorites/singlePlayer",
+            params: stringifyObject(sound),
+          })
+        }
+      >
+        <Image source={{ uri: sound.pictureUrl }} style={styles.cover} />
+      </Pressable>
       <View>
         <Text style={styles.coverTitle}>{"Titre :"}</Text>
         <Text numberOfLines={2} ellipsizeMode={"tail"} style={styles.coverText}>
-          {title}
+          {sound.title}
         </Text>
         <Text style={styles.coverTitle}>{"Artiste :"}</Text>
         <Text numberOfLines={1} style={styles.coverText}>
-          {artist}
+          {sound.artist}
         </Text>
       </View>
     </View>

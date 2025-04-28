@@ -30,9 +30,15 @@ const useDiscoverStore = create<IDiscoverStoreStates & IDiscoverStoreActions>()(
     updateTick: 0,
     setUpdateTick: () => set((state) => ({ updateTick: state.updateTick + 1 })),
     soundsPlayer: {},
-    setSoundPlayer: (soundId: ISoundId, uri: string) =>
+    setSoundPlayer: (soundId: ISoundId, uri: string): void =>
       set((state) => ({
-        soundsPlayer: setSoundPlayer(soundId, state.soundsPlayer, uri),
+        soundsPlayer: setSoundPlayer(
+          soundId,
+          state.soundsPlayer,
+          uri,
+          state.setSoundPlayerState,
+          () => useDiscoverStore.getState().soundsPlayerState[soundId]
+        ),
       })),
     soundsPlayerState: {},
     setSoundPlayerState: (

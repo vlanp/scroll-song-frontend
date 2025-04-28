@@ -83,6 +83,7 @@ const downloadSound = async (
     createDirectory(directory, setIsStorageOk);
 
     if (await isFileExisting(soundId, directory)) {
+      setDownloadSoundState(soundId, downloadSoundSuccess);
       console.warn(`${downloadSound.name}: File already exists`); // TODO: Replace by a retry in certain conditions ?
       return;
     }

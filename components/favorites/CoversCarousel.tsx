@@ -19,12 +19,7 @@ const CoversCarousel = ({
       </View>
       <ScrollView horizontal contentContainerStyle={styles.carousel}>
         {sounds.map((sound) => (
-          <SingleCover
-            key={sound.id}
-            singleCoverUrl={sound.pictureUrl}
-            artist={sound.artist}
-            title={sound.title}
-          />
+          <SingleCover key={sound.id} sound={sound} />
         ))}
       </ScrollView>
     </View>

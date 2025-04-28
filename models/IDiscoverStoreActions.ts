@@ -50,14 +50,24 @@ const setIsFlatListScrollEnable = (
 const setSoundPlayer = (
   soundId: string,
   soundsPlayer: ISoundsPlayer,
-  uri: string
+  uri: string,
+  setSoundPlayerState: (
+    soundId: ISoundId,
+    soundPlayerState: Partial<SoundPlayerState>
+  ) => void,
+  getSoundPlayerState: () => SoundPlayerState
 ): ISoundsPlayer => {
   if (soundsPlayer[soundId]) {
     return soundsPlayer;
   }
   return {
     ...soundsPlayer,
-    [soundId]: new SoundPlayer(uri, soundId),
+    [soundId]: new SoundPlayer(
+      uri,
+      soundId,
+      setSoundPlayerState,
+      getSoundPlayerState
+    ),
   };
 };
 

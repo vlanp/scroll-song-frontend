@@ -1,6 +1,5 @@
 import { Audio, AVPlaybackStatus } from "expo-av";
 import * as FileSystem from "expo-file-system";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
 import SoundPlayerState from "./SoundPlayerState";
 
 class SoundPlayer {
@@ -11,19 +10,27 @@ class SoundPlayer {
   private setSoundPlayerState: (
     soundId: string,
     soundPlayerState: Partial<SoundPlayerState>
-  ) => void = useDiscoverStore.getState().setSoundPlayerState;
+  ) => void;
+  private getSoundPlayerState: () => SoundPlayerState;
 
-  constructor(uri: string, soundId: string) {
+  constructor(
+    uri: string,
+    soundId: string,
+    setSoundPlayerState: (
+      soundId: string,
+      soundPlayerState: Partial<SoundPlayerState>
+    ) => void,
+    getSoundPlayerState: () => SoundPlayerState
+  ) {
     this.uri = uri;
     this.soundId = soundId;
+    this.setSoundPlayerState = setSoundPlayerState;
+    this.getSoundPlayerState = getSoundPlayerState;
     this.setSoundPlayerState(
       soundId,
       new SoundPlayerState(false, false, false, false, false, null, 0)
     );
   }
-
-  private getPlayingState = () =>
-    useDiscoverStore.getState().soundsPlayerState[this.soundId];
 
   private onPlaybackStatusUpdate = async (playbackStatus: AVPlaybackStatus) => {
     if (!playbackStatus.isLoaded) {
@@ -70,8 +77,8 @@ class SoundPlayer {
     try {
       // console.log("try playing");
       if (
-        this.getPlayingState().isPlaying ||
-        this.getPlayingState().isPlayLoading
+        this.getSoundPlayerState().isPlaying ||
+        this.getSoundPlayerState().isPlayLoading
       ) {
         return false;
       }
@@ -84,7 +91,7 @@ class SoundPlayer {
         });
         return false;
       }
-      if (!this.sound || !this.getPlayingState().isLoaded) {
+      if (!this.sound || !this.getSoundPlayerState().isLoaded) {
         this.sound = (
           await Audio.Sound.createAsync(
             {
@@ -116,8 +123,8 @@ class SoundPlayer {
   stop = async (isPause = false) => {
     try {
       if (
-        !this.getPlayingState().isPlaying ||
-        this.getPlayingState().isStopLoading
+        !this.getSoundPlayerState().isPlaying ||
+        this.getSoundPlayerState().isStopLoading
       ) {
         return;
       }
@@ -142,8 +149,8 @@ class SoundPlayer {
   changePositionSec = async (positionSec: number) => {
     try {
       if (
-        !this.getPlayingState().isPlaying &&
-        !this.getPlayingState().isPlayLoading
+        !this.getSoundPlayerState().isPlaying &&
+        !this.getSoundPlayerState().isPlayLoading
       ) {
         await this.play();
       }
