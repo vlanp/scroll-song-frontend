@@ -80,12 +80,12 @@ function SwipeModals({
         })
         .onEnd(() => {
           if (swipePosition.value > width / 3) {
-            swipePosition.value = withTiming(width, { duration: 100 });
+            swipePosition.value = withTiming(width - 20, { duration: 100 });
             onSide.value = false;
             runOnJS(likeSound)(panGestureSound, authState.authToken);
             runOnJS(setIsFlatListScrollEnable)(false);
           } else if (Math.abs(swipePosition.value) > width / 3) {
-            swipePosition.value = withTiming(-width, { duration: 100 });
+            swipePosition.value = withTiming(-width - 20, { duration: 100 });
             onSide.value = false;
             runOnJS(setIsFlatListScrollEnable)(false);
           } else {

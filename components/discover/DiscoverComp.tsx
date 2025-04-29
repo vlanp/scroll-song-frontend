@@ -81,7 +81,7 @@ function DiscoverComp({
           <Pressable
             onPress={() => {
               setIsFlatListScrollEnable(false);
-              swipePosition.value = withTiming(-width, { duration: 100 });
+              swipePosition.value = withTiming(-width - 20, { duration: 100 });
               onSide.value = false;
             }}
           >
@@ -90,7 +90,7 @@ function DiscoverComp({
           <Pressable
             onPress={() => {
               setIsFlatListScrollEnable(false);
-              swipePosition.value = withTiming(width, { duration: 100 });
+              swipePosition.value = withTiming(width - 20, { duration: 100 });
               onSide.value = false;
               likeSound(sound, authState.authToken);
             }}
