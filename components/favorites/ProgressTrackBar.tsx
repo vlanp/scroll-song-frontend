@@ -10,9 +10,8 @@ import {
   Text,
   ActivityIndicator,
 } from "react-native";
-import SoundPlayer from "@/models/SoundPlayer";
 import { LikedSound } from "@/models/LikedSound";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import downloadSound from "@/utils/download";
 import useStorageStore from "@/zustands/useStorageStore";
 import { useCheckedEnvContext } from "@/contexts/envContext";
@@ -21,6 +20,7 @@ import { useFavoritesStore } from "@/zustands/useFavoritesStore";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { usePathname, useSegments } from "expo-router";
 
 const ProgressTrackBar = ({
   trackBarWidth,
@@ -42,8 +42,10 @@ const ProgressTrackBar = ({
   const networkState = useNetworkStore((state) => state.networkState);
   const [downloadSoundState, setDownloadSoundState] =
     useState<IDownloadSoundState>(new DownloadSoundLoading(0));
-  const soundPlayer = useRef<SoundPlayer | null>(null);
-  const setSoundPlayerState = useFavoritesStore.getState().setSoundPlayerState;
+  const soundPlayer = useFavoritesStore(
+    (state) => state.soundsPlayer[sound.id]
+  );
+  const setSoundPlayer = useFavoritesStore((state) => state.setSoundPlayer);
   const soundPlayerState = useFavoritesStore(
     (state) => state.soundsPlayerState[sound.id]
   );
@@ -62,20 +64,13 @@ const ProgressTrackBar = ({
     if (downloadSoundState.status !== "downloadSoundSuccess") {
       return;
     }
-    const getSoundPlayerState = () =>
-      useFavoritesStore.getState().soundsPlayerState[sound.id];
     const uri =
       documentDirectory + env.favoritesDirectory + "/" + sound.id + ".mp3";
-    soundPlayer.current = new SoundPlayer(
-      uri,
-      sound.id,
-      setSoundPlayerState,
-      getSoundPlayerState
-    );
+    setSoundPlayer(sound.id, uri);
   }, [
     downloadSoundState.status,
     env.favoritesDirectory,
-    setSoundPlayerState,
+    setSoundPlayer,
     sound.id,
   ]);
 
@@ -111,8 +106,8 @@ const ProgressTrackBar = ({
   );
 
   const handleTouchAndDrag = (e: GestureResponderEvent) => {
-    soundPlayer.current?.stop(true);
-    soundPlayer.current?.changePositionSec(
+    soundPlayer?.stop(true);
+    soundPlayer?.changePositionSec(
       durationSec * (e.nativeEvent.locationX / 200)
     );
   };
@@ -128,7 +123,7 @@ const ProgressTrackBar = ({
               name="triangle-right"
               size={70}
               color="white"
-              onPress={() => soundPlayer.current?.play()}
+              onPress={() => soundPlayer?.play()}
             />
           )}
         {!soundPlayerState.isStopLoading &&
@@ -139,7 +134,7 @@ const ProgressTrackBar = ({
               name="pause"
               size={40}
               color="white"
-              onPress={() => soundPlayer.current?.stop(true)}
+              onPress={() => soundPlayer?.stop(true)}
             />
           )}
         {!soundPlayerState.isStopLoading &&
@@ -149,7 +144,7 @@ const ProgressTrackBar = ({
               name="restart"
               size={50}
               color="white"
-              onPress={() => soundPlayer.current?.changePositionSec(0)}
+              onPress={() => soundPlayer?.changePositionSec(0)}
             />
           )}
       </View>
@@ -165,13 +160,13 @@ const ProgressTrackBar = ({
             style={[styles.progressView, styles.loadingProgressView]}
             onTouchStart={handleTouchAndDrag}
             onTouchMove={handleTouchAndDrag}
-            onTouchEnd={soundPlayer.current?.play}
+            onTouchEnd={soundPlayer?.play}
           ></View>
           <View
             style={[styles.progressView, styles.readingProgressView]}
             onTouchStart={handleTouchAndDrag}
             onTouchMove={handleTouchAndDrag}
-            onTouchEnd={soundPlayer.current?.play}
+            onTouchEnd={soundPlayer?.play}
           ></View>
         </View>
         <Text style={styles.progressText}>

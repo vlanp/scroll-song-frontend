@@ -1,12 +1,15 @@
+import SoundPlayer from "@/models/SoundPlayer";
 import SoundPlayerState from "@/models/SoundPlayerState";
 import { create } from "zustand";
 
 type ISoundsPlayerState = Record<ISoundId, SoundPlayerState>;
+type ISoundsPlayer = Record<ISoundId, SoundPlayer>;
 type ISoundId = string;
 
 interface IFavoritesStoreStates {
   updateTick: number;
   soundsPlayerState: ISoundsPlayerState;
+  soundsPlayer: ISoundsPlayer;
 }
 
 interface IFavoritesStoreActions {
@@ -15,6 +18,7 @@ interface IFavoritesStoreActions {
     soundId: ISoundId,
     soundPlayerState: Partial<SoundPlayerState>
   ) => void;
+  setSoundPlayer: (soundId: ISoundId, uri: string) => void;
 }
 
 const setSoundPlayerState = (
@@ -28,6 +32,30 @@ const setSoundPlayerState = (
       ...soundsPlayerState[soundId],
       ...soundPlayerState,
     },
+  };
+};
+
+const setSoundPlayer = (
+  soundId: string,
+  soundsPlayer: ISoundsPlayer,
+  uri: string,
+  setSoundPlayerState: (
+    soundId: ISoundId,
+    soundPlayerState: Partial<SoundPlayerState>
+  ) => void,
+  getSoundPlayerState: () => SoundPlayerState
+): ISoundsPlayer => {
+  if (soundsPlayer[soundId]) {
+    return soundsPlayer;
+  }
+  return {
+    ...soundsPlayer,
+    [soundId]: new SoundPlayer(
+      uri,
+      soundId,
+      setSoundPlayerState,
+      getSoundPlayerState
+    ),
   };
 };
 
@@ -46,6 +74,17 @@ const useFavoritesStore = create<
         soundId,
         state.soundsPlayerState,
         soundPlayerState
+      ),
+    })),
+  soundsPlayer: {},
+  setSoundPlayer: (soundId: ISoundId, uri: string): void =>
+    set((state) => ({
+      soundsPlayer: setSoundPlayer(
+        soundId,
+        state.soundsPlayer,
+        uri,
+        state.setSoundPlayerState,
+        () => useFavoritesStore.getState().soundsPlayerState[soundId]
       ),
     })),
 }));
