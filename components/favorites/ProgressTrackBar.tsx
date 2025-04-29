@@ -20,7 +20,6 @@ import { useFavoritesStore } from "@/zustands/useFavoritesStore";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { usePathname, useSegments } from "expo-router";
 
 const ProgressTrackBar = ({
   trackBarWidth,

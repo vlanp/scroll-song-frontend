@@ -52,7 +52,7 @@ const LeftDiscoveredModal = ({
           {" "}
           Vous avez ajouté{" "}
           <Text style={styles.bold}>{likedTitleToDisplay}</Text> à vos favoris,
-          vous pouvez maintenant voter pour découvrir l&apos;artiste !
+          vous pouvez maintenant l&apos;écouter en entier depuis vos favoris !
         </Text>
         <View style={{ marginTop: 20 }}></View>
         <GradientButton
@@ -63,9 +63,9 @@ const LeftDiscoveredModal = ({
           paddingVertical={10}
           radius={50}
           fontSize={16}
-          text="Aller voter"
+          text="Accéder à vos favoris"
           onPress={() => {
-            router.navigate("/vote");
+            router.navigate("/favorites");
             swipePosition.value = withTiming(0, { duration: 100 });
             onSide.value = true;
             setIsFlatListScrollEnable(true);
