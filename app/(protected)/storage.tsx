@@ -35,9 +35,14 @@ const StorageScreen = () => {
         const foldersUris = [env.excerptDirectory, env.favoritesDirectory];
         const documentsInfos: IDocInfo[] = [];
         for (const folderUri of foldersUris) {
-          const documentDirectoryContent = await FileSystem.readDirectoryAsync(
-            FileSystem.documentDirectory + (folderUri || "")
-          );
+          let documentDirectoryContent: string[];
+          try {
+            documentDirectoryContent = await FileSystem.readDirectoryAsync(
+              FileSystem.documentDirectory + (folderUri || "")
+            );
+          } catch {
+            documentDirectoryContent = [];
+          }
           for (const docName of documentDirectoryContent) {
             const fullUri =
               FileSystem.documentDirectory +
@@ -95,7 +100,7 @@ const StorageScreen = () => {
           Math.round(
             documentsInfosState.data
               .map((v) => v.sizeMo)
-              .reduce((acc, cv) => acc + cv) * 100
+              .reduce((acc, cv) => acc + cv, 0) * 100
           ) /
             100 +
           " Mo"
@@ -112,7 +117,7 @@ const StorageScreen = () => {
               documentsInfosState.data
                 .filter((docInfo) => docInfo.folder === env.excerptDirectory)
                 .map((v) => v.sizeMo)
-                .reduce((acc, cv) => acc + cv) * 100
+                .reduce((acc, cv) => acc + cv, 0) * 100
             ) /
               100 +
             " Mo"}
@@ -144,7 +149,7 @@ const StorageScreen = () => {
               documentsInfosState.data
                 .filter((docInfo) => docInfo.folder === env.favoritesDirectory)
                 .map((v) => v.sizeMo)
-                .reduce((acc, cv) => acc + cv) * 100
+                .reduce((acc, cv) => acc + cv, 0) * 100
             ) /
               100 +
             " Mo"}

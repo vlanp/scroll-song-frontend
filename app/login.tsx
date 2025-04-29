@@ -23,6 +23,7 @@ const LoginScreen = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingResetPw, setLoadingResetPw] = useState<boolean>(false);
 
   const checkForm = (): boolean => {
     let isThereInputErrors = false;
@@ -63,47 +64,68 @@ const LoginScreen = () => {
       setIsLoading(false);
       return;
     }
-    const abortController = new AbortController();
-    const signal = abortController.signal;
     axios
-      .post<IUser | IVerifCode>(
-        env.apiUrl + env.loginEndpoint,
-        {
-          email,
-          password,
-        },
-        { signal: abortController.signal }
-      )
+      .post<IUser | IVerifCode>(env.apiUrl + env.loginEndpoint, {
+        email,
+        password,
+      })
       .then((response) => {
-        if (!signal.aborted) {
-          const data = response.data;
-          if ("validUntil" in data) {
-            const email = data.email;
-            const validUntil = data.validUntil;
-            router.replace({
-              pathname: "/emailValidation",
-              params: { email, validUntil },
-            });
-          } else {
-            authState.logIn(data.token);
-          }
-          setIsLoading(false);
+        const data = response.data;
+        if ("validUntil" in data) {
+          const email = data.email;
+          const validUntil = data.validUntil;
+          router.replace({
+            pathname: "/emailValidation",
+            params: { email, validUntil },
+          });
+        } else {
+          authState.logIn(data.token);
         }
+        setIsLoading(false);
       })
       .catch((error) => {
-        if (!axios.isCancel(error)) {
-          if (error?.response?.status === 404) {
-            setFormError(
-              "Aucun utilisateur trouvé avec ce mail et ce mot de passe."
-            );
-          } else {
-            console.log(error);
-            setFormError(
-              "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
-            );
-          }
-          setIsLoading(false);
+        if (error?.response?.status === 404) {
+          setFormError(
+            "Aucun utilisateur trouvé avec ce mail et ce mot de passe."
+          );
+        } else {
+          console.log(error);
+          setFormError(
+            "Une erreur inconnue s'est produite. Merci de réessayer ultérieurement."
+          );
         }
+        setIsLoading(false);
+      });
+  };
+
+  const handleAskedPwReset = () => {
+    setLoadingResetPw(true);
+    axios
+      .get<IVerifCode>(env.apiUrl + env.askResetPwEndpoint, {
+        params: { email },
+      })
+      .then((response) => {
+        const email = response.data.email;
+        const validUntil = response.data.validUntil;
+        router.push({
+          pathname: "/resetPwValidation",
+          params: { email, validUntil },
+        });
+        setLoadingResetPw(false);
+      })
+      .catch((error) => {
+        if (error?.response?.status === 400) {
+          setFormError("Veuillez indiquer votre adresse email.");
+        } else if (error?.response?.status === 404) {
+          setFormError("Aucune utilisateur trouvé avec cet email.");
+        } else {
+          console.log(
+            "Une erreur est survenue lors de la demande de réinitialisation de mdp",
+            error
+          );
+          setFormError("La demande de réinitialisation n'a pas pu aboutir.");
+        }
+        setLoadingResetPw(false);
       });
   };
 
@@ -119,7 +141,7 @@ const LoginScreen = () => {
         onChangeText={setEmail}
         autoComplete="email"
         error={emailError}
-        editable={!isLoading}
+        editable={!isLoading && !loadingResetPw}
       />
       <FormInput
         value={password}
@@ -127,7 +149,7 @@ const LoginScreen = () => {
         onChangeText={setPassword}
         autoComplete="current-password"
         error={passwordError}
-        editable={!isLoading}
+        editable={!isLoading && !loadingResetPw}
       />
       <View style={styles.connectView}>
         {isLoading ? (
@@ -141,13 +163,27 @@ const LoginScreen = () => {
         {formError && <ErrorText>{formError}</ErrorText>}
         <View style={styles.basicView}>
           <BasicText>Mot de passe oublié ?</BasicText>
-          <BasicText onPress={() => {}}>
+          <BasicText
+            onPress={() => {
+              if (isLoading || loadingResetPw) {
+                return;
+              }
+              handleAskedPwReset();
+            }}
+          >
             Réinitialisez le maintenant !
           </BasicText>
         </View>
         <View style={styles.basicView}>
           <BasicText>Vous n&apos;avez pas de compte ?</BasicText>
-          <BasicText onPress={() => router.push("/signup")}>
+          <BasicText
+            onPress={() => {
+              if (isLoading || loadingResetPw) {
+                return;
+              }
+              router.push("/signup");
+            }}
+          >
             Inscrivez-vous maintenant !
           </BasicText>
         </View>

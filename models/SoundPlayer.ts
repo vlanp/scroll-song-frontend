@@ -123,7 +123,8 @@ class SoundPlayer {
   stop = async (isPause = false) => {
     try {
       if (
-        !this.getSoundPlayerState().isPlaying ||
+        (!this.getSoundPlayerState().isPlaying &&
+          !this.getSoundPlayerState().isPlayLoading) ||
         this.getSoundPlayerState().isStopLoading
       ) {
         return;
