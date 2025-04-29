@@ -153,17 +153,14 @@ const getStyles = (
       position: "relative",
       width: width,
       height: heigth,
-      borderColor: "black",
       borderWidth: borderWidth,
-      borderRadius: 50,
     },
     progressView: {
       position: "absolute",
       borderTopLeftRadius: 50,
       borderBottomLeftRadius: 50,
-      left: 0,
-      top: 0,
-      height: heigth - 2 * borderWidth,
+      // height: heigth - 2 * borderWidth,
+      height: Math.round((heigth - 2 * borderWidth) / 2) * 2, // This version is used because their is a weird bug adding a fadded zone when the height is odd
     },
     loadingProgressView: {
       width: loadingWidth,
