@@ -23,10 +23,12 @@ function DiscoverComp({
   sound,
   swipePosition,
   onSide,
+  remainingSounds,
 }: {
   sound: DiscoverSound;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
+  remainingSounds: number;
 }) {
   const authState = useSuccessfulAuthContext();
   useCountRender(DiscoverComp.name + " " + sound.id);
@@ -90,8 +92,19 @@ function DiscoverComp({
           <Pressable
             onPress={() => {
               setIsFlatListScrollEnable(false);
-              swipePosition.value = withTiming(width - 20, { duration: 100 });
-              onSide.value = false;
+              if (remainingSounds === 1) {
+                swipePosition.value = withTiming(
+                  width - 20,
+                  { duration: 100 },
+                  () => {
+                    swipePosition.value = withTiming(0, { duration: 100 });
+                  }
+                );
+                onSide.value = true;
+              } else {
+                swipePosition.value = withTiming(width - 20, { duration: 100 });
+                onSide.value = false;
+              }
               likeSound(sound, authState.authToken);
             }}
           >

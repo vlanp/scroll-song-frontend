@@ -6,7 +6,6 @@ import axios from "axios";
 const likeSound = async (sound: DiscoverSound, authToken: string) => {
   try {
     const removeDiscoverSound = useDiscoverStore.getState().removeDiscoverSound;
-    useFavoritesStore.getState().setUpdateTick();
     const setLikedTitleToDisplay =
       useDiscoverStore.getState().setLikedTitleToDisplay;
     setLikedTitleToDisplay({
@@ -26,6 +25,7 @@ const likeSound = async (sound: DiscoverSound, authToken: string) => {
         headers: { Authorization: "Bearer " + authToken },
       }
     );
+    useFavoritesStore.getState().setUpdateTick();
     removeDiscoverSound(sound.id);
   } catch (error) {
     console.log("An error occured while liking the song: " + error);

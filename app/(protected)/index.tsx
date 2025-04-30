@@ -171,11 +171,13 @@ function DiscoverScreen() {
               swipePosition={swipePosition}
               onSide={onSide}
               sound={item}
+              remainingSounds={fetchDiscoverSoundsState.data.length}
             >
               <DiscoverComp
                 sound={item}
                 onSide={onSide}
                 swipePosition={swipePosition}
+                remainingSounds={fetchDiscoverSoundsState.data.length}
               />
             </SwipeModals>
           </View>

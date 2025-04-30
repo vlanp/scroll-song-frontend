@@ -6,22 +6,25 @@ import { useRouter } from "expo-router";
 export default function ScreenTitle({
   title,
   baseline,
+  showBackButton = false,
 }: {
   title: string;
   baseline?: string | undefined;
+  showBackButton?: boolean;
 }) {
   const router = useRouter();
-  const canGoBack = router.canGoBack();
 
   return (
     <View style={styles.container}>
       <View style={styles.titleView}>
         <Text style={styles.text}>{title}</Text>
-        {canGoBack && (
-          <Pressable style={styles.iconView} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color="white" />
-            <Text style={styles.iconText}>Retour</Text>
-          </Pressable>
+        {showBackButton && (
+          <View style={styles.iconViewContainer}>
+            <Pressable style={styles.iconView} onPress={() => router.back()}>
+              <MaterialIcons name="arrow-back" size={24} color="white" />
+              <Text style={styles.iconText}>Retour</Text>
+            </Pressable>
+          </View>
         )}
       </View>
       {baseline && <Baseline>{baseline}</Baseline>}
@@ -36,6 +39,9 @@ const styles = StyleSheet.create({
   titleView: {
     flexDirection: "row",
     justifyContent: "space-between",
+    rowGap: 20,
+    columnGap: 40,
+    flexWrap: "wrap",
   },
   text: {
     color: "white",
@@ -56,5 +62,12 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingVertical: 5,
     paddingHorizontal: 10,
+  },
+  iconViewContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    flex: 1,
+    minWidth: 200,
   },
 });

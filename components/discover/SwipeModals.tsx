@@ -22,12 +22,14 @@ function SwipeModals({
   swipePosition,
   onSide,
   sound,
+  remainingSounds,
 }: {
   children: ReactNode;
   style: ViewStyle;
   swipePosition: SharedValue<number>;
   onSide: SharedValue<boolean>;
   sound: DiscoverSound;
+  remainingSounds: number;
 }) {
   useCountRender(SwipeModals.name + " " + sound.id);
   const authState = useSuccessfulAuthContext();
@@ -80,8 +82,19 @@ function SwipeModals({
         })
         .onEnd(() => {
           if (swipePosition.value > width / 3) {
-            swipePosition.value = withTiming(width - 20, { duration: 100 });
-            onSide.value = false;
+            if (remainingSounds === 1) {
+              swipePosition.value = withTiming(
+                width - 20,
+                { duration: 100 },
+                () => {
+                  swipePosition.value = withTiming(0, { duration: 100 });
+                }
+              );
+              onSide.value = true;
+            } else {
+              swipePosition.value = withTiming(width - 20, { duration: 100 });
+              onSide.value = false;
+            }
             runOnJS(likeSound)(panGestureSound, authState.authToken);
             runOnJS(setIsFlatListScrollEnable)(false);
           } else if (Math.abs(swipePosition.value) > width / 3) {
@@ -101,6 +114,7 @@ function SwipeModals({
       panGestureSound,
       authState.authToken,
       setIsFlatListScrollEnable,
+      remainingSounds,
     ]
   );
 

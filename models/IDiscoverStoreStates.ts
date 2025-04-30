@@ -24,13 +24,13 @@ type ISoundsPlayer = Record<ISoundId, SoundPlayer>;
 type ISoundsPlayerState = Record<ISoundId, SoundPlayerState>;
 
 class ReceivedPosition {
-  currentPosition: number | "keepPosition";
-  isScrolling: boolean | "keepScrollingState";
-  soundId: ISoundId | "keepSoundId";
+  currentPosition: number | "keepPosition" | "resetPosition";
+  isScrolling: boolean | "keepScrollingState" | "resetScrollingState";
+  soundId: ISoundId | "keepSoundId" | "resetSoundId";
   constructor(
-    currentPosition: number | "keepPosition",
-    isScrolling: boolean | "keepScrollingState",
-    soundId: ISoundId | "keepSoundId"
+    currentPosition: number | "keepPosition" | "resetPosition",
+    isScrolling: boolean | "keepScrollingState" | "resetScrollingState",
+    soundId: ISoundId | "keepSoundId" | "resetSoundId"
   ) {
     this.currentPosition = currentPosition;
     this.isScrolling = isScrolling;

@@ -2,7 +2,9 @@ import { useSuccessfulAuthContext } from "@/contexts/authContext";
 import initDownloadExcerptsState from "@/zustands/initializer/initDownloadExcerptsState";
 import initFetchDiscoverSoundsState from "@/zustands/initializer/initFetchDiscoverSoundsState";
 import initNetworkState from "@/zustands/initializer/initNetworkState";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useDiscoverStore, {
+  ReceivedPosition,
+} from "@/zustands/useDiscoverStore";
 import { ReactNode, useEffect } from "react";
 
 const StoresInitializer = ({
@@ -19,6 +21,14 @@ const StoresInitializer = ({
         if (abortController) {
           abortController.abort();
         }
+        const setPosition = useDiscoverStore.getState().setPosition;
+        setPosition(
+          new ReceivedPosition(
+            "resetPosition",
+            "resetScrollingState",
+            "resetSoundId"
+          )
+        );
         abortController = initFetchDiscoverSoundsState(authState.authToken);
       },
       {

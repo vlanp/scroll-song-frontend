@@ -115,11 +115,19 @@ const setPosition = (
   return new SavedPosition(
     position.currentPosition === "keepPosition"
       ? prevPosition.currentPosition
-      : position.currentPosition,
+      : position.currentPosition === "resetPosition"
+        ? 0
+        : position.currentPosition,
     position.isScrolling === "keepScrollingState"
       ? prevPosition.isScrolling
-      : position.isScrolling,
-    position.soundId === "keepSoundId" ? prevPosition.soundId : position.soundId
+      : position.isScrolling === "resetScrollingState"
+        ? false
+        : position.isScrolling,
+    position.soundId === "keepSoundId"
+      ? prevPosition.soundId
+      : position.soundId === "resetSoundId"
+        ? null
+        : position.soundId
   );
 };
 

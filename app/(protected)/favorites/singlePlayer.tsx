@@ -22,7 +22,7 @@ const SinglePlayerScreen = () => {
   const styles = getStyles();
   return (
     <ScreenContainer style={styles.mainView}>
-      <ScreenTitle title={"Favoris"} />
+      <ScreenTitle title={"Favoris"} showBackButton />
       <Image
         source={{ uri: stringifiedSound.pictureUrl }}
         style={styles.cover}
