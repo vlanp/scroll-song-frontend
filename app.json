@@ -7,19 +7,11 @@
     "icon": "./assets/splash-screen.png",
     "userInterfaceStyle": "light",
     "scheme": "scrollsong",
-    "splash": {
-      "image": "./assets/splash-screen.png",
-      "resizeMode": "cover"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vlanp.ScrollSong"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
       "package": "com.vlanp.ScrollSong"
     },
     "web": {
@@ -49,6 +41,14 @@
             "./assets/fonts/RobotoCondensed-Bold.ttf",
             "./assets/fonts/RobotoCondensed-Regular.ttf"
           ]
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-screen.png",
+          "enableFullScreenImage_legacy": true,
+          "resizeMode": "cover"
         }
       ]
     ]
