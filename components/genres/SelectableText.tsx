@@ -9,7 +9,7 @@ import checked from "../../assets/images/icons/checked.png";
 import unchecked from "../../assets/images/icons/unchecked.png";
 import GradientButton from "../GradientButton";
 import { useEffect, useState } from "react";
-import { useGenresStore } from "@/zustands/useGenresStore";
+import { useGenresStore } from "../../zustands/useGenresStore";
 
 const SelectableText = ({
   text,

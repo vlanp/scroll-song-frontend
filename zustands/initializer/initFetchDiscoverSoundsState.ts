@@ -1,4 +1,4 @@
-import handleReceivedData from "@/utils/discover/handleReceivedData";
+import handleReceivedData from "../../utils/discover/handleReceivedData";
 import storeFetchDataState from "../storeFetchDataState";
 import useDiscoverStore from "../useDiscoverStore";
 

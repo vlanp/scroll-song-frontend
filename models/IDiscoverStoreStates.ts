@@ -1,8 +1,8 @@
-import DiscoverSound from "@/models/DiscoverSound";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
-import { IFetchDataState } from "@/models/IFetchDataState";
-import SoundPlayer from "@/models/SoundPlayer";
-import SoundPlayerState from "@/models/SoundPlayerState";
+import DiscoverSound from "../models/DiscoverSound";
+import { IDownloadSoundState } from "../models/IDownloadSoundState";
+import { IFetchDataState } from "../models/IFetchDataState";
+import SoundPlayer from "../models/SoundPlayer";
+import SoundPlayerState from "../models/SoundPlayerState";
 import { FlatList } from "react-native";
 
 interface IDiscoverStoreStates {

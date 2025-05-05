@@ -1,21 +1,21 @@
-import ErrorScreen from "@/components/ErrorScreen";
-import GradientButton from "@/components/GradientButton";
-import LottieLoadingScreen from "@/components/LottieLoading";
-import ScreenContainer from "@/components/ScreenContainer";
-import ScreenTitle from "@/components/ScreenTitle";
-import SelectableText from "@/components/genres/SelectableText";
-import { useSuccessfulAuthContext } from "@/contexts/authContext";
-import { useCheckedEnvContext } from "@/contexts/envContext";
-import useFetchDataState from "@/hooks/useFetchDataState";
-import IGenreState from "@/models/IGenreState";
+import ErrorScreen from "../../../components/ErrorScreen";
+import GradientButton from "../../../components/GradientButton";
+import LottieLoadingScreen from "../../../components/LottieLoading";
+import ScreenContainer from "../../../components/ScreenContainer";
+import ScreenTitle from "../../../components/ScreenTitle";
+import SelectableText from "../../../components/genres/SelectableText";
+import { useSuccessfulAuthContext } from "../../../contexts/authContext";
+import { useCheckedEnvContext } from "../../../contexts/envContext";
+import useFetchDataState from "../../../hooks/useFetchDataState";
+import IGenreState from "../../../models/IGenreState";
 import axios from "axios";
 import { useRef, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { Snackbar, Button } from "@react-native-material/core";
-import { useGenresStore } from "@/zustands/useGenresStore";
-import { IVerifCode } from "@/models/IVerifCode";
+import { useGenresStore } from "../../../zustands/useGenresStore";
+import { IVerifCode } from "../../../models/IVerifCode";
 import { useRouter } from "expo-router";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "../../../zustands/useDiscoverStore";
 
 const ParametersScreen = () => {
   const router = useRouter();

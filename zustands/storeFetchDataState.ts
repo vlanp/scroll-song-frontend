@@ -3,7 +3,7 @@ import {
   fetchDataLoading,
   FetchDataSuccess,
   IFetchDataState,
-} from "@/models/IFetchDataState";
+} from "../models/IFetchDataState";
 import axios from "axios";
 
 const storeFetchDataState = <T, K>(

@@ -1,4 +1,4 @@
-import { LikedSound } from "@/models/LikedSound";
+import { LikedSound } from "../../models/LikedSound";
 import { View, StyleSheet } from "react-native";
 import SingleCover from "./SingleCover";
 import GradientText from "../GradientText";

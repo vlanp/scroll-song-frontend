@@ -1,16 +1,16 @@
-import { BasicText } from "@/components/forms/BasicText";
-import { ErrorText } from "@/components/forms/ErrorText";
-import { FormInput } from "@/components/forms/FormInput";
-import GradientButton from "@/components/GradientButton";
-import ScreenTitle from "@/components/ScreenTitle";
-import { useCheckedEnvContext } from "@/contexts/envContext";
+import { BasicText } from "../components/forms/BasicText";
+import { ErrorText } from "../components/forms/ErrorText";
+import { FormInput } from "../components/forms/FormInput";
+import GradientButton from "../components/GradientButton";
+import ScreenTitle from "../components/ScreenTitle";
+import { useCheckedEnvContext } from "../contexts/envContext";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { passwordStrength } from "check-password-strength";
-import { IVerifCode } from "@/models/IVerifCode";
-import ScreenContainer from "@/components/ScreenContainer";
+import { IVerifCode } from "../models/IVerifCode";
+import ScreenContainer from "../components/ScreenContainer";
 
 const SignupScreen = () => {
   const router = useRouter();

@@ -1,5 +1,5 @@
-import { LikedSound } from "@/models/LikedSound";
-import { stringifyObject } from "@/models/Stringify";
+import { LikedSound } from "../../models/LikedSound";
+import { stringifyObject } from "../../models/Stringify";
 import { useRouter } from "expo-router";
 import { View, Text, StyleSheet, Image, Pressable } from "react-native";
 

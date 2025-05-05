@@ -1,6 +1,6 @@
 import useDiscoverStore from "../useDiscoverStore";
 import useStorageStore from "../useStorageStore";
-import storeDownloadSoundState from "@/zustands/storeDownloadSoundState";
+import storeDownloadSoundState from "../../zustands/storeDownloadSoundState";
 
 const numberToDownload = 30;
 

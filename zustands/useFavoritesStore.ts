@@ -1,5 +1,5 @@
-import SoundPlayer from "@/models/SoundPlayer";
-import SoundPlayerState from "@/models/SoundPlayerState";
+import SoundPlayer from "../models/SoundPlayer";
+import SoundPlayerState from "../models/SoundPlayerState";
 import { create } from "zustand";
 
 type ISoundsPlayerState = Record<ISoundId, SoundPlayerState>;

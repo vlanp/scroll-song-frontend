@@ -1,17 +1,17 @@
-import ErrorScreen from "@/components/ErrorScreen";
-import GradientText from "@/components/GradientText";
-import LottieLoadingScreen from "@/components/LottieLoading";
-import ScreenContainer from "@/components/ScreenContainer";
-import ScreenTitle from "@/components/ScreenTitle";
-import { useCheckedEnvContext } from "@/contexts/envContext";
-import { IDocInfo } from "@/models/IDocInfo";
+import ErrorScreen from "../../components/ErrorScreen";
+import GradientText from "../../components/GradientText";
+import LottieLoadingScreen from "../../components/LottieLoading";
+import ScreenContainer from "../../components/ScreenContainer";
+import ScreenTitle from "../../components/ScreenTitle";
+import { useCheckedEnvContext } from "../../contexts/envContext";
+import { IDocInfo } from "../../models/IDocInfo";
 import {
   fetchDataError,
   fetchDataIdle,
   fetchDataLoading,
   FetchDataSuccess,
   IFetchDataState,
-} from "@/models/IFetchDataState";
+} from "../../models/IFetchDataState";
 import { useIsFocused } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
 import { useEffect, useState } from "react";

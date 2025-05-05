@@ -1,8 +1,8 @@
-import DiscoverSound from "@/models/DiscoverSound";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
-import SoundPlayerState from "@/models/SoundPlayerState";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
-import useNetworkStore from "@/zustands/useNetworkStore";
+import DiscoverSound from "../../models/DiscoverSound";
+import { IDownloadSoundState } from "../../models/IDownloadSoundState";
+import SoundPlayerState from "../../models/SoundPlayerState";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
+import useNetworkStore from "../../zustands/useNetworkStore";
 import {
   GestureResponderEvent,
   StyleSheet,
@@ -10,7 +10,7 @@ import {
   Text,
   ActivityIndicator,
 } from "react-native";
-import SoundPlayer from "@/models/SoundPlayer";
+import SoundPlayer from "../../models/SoundPlayer";
 
 const ProgressTrackBar = ({
   trackBarWidth,

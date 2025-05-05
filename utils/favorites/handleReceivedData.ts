@@ -1,4 +1,4 @@
-import { LikedSound } from "@/models/LikedSound";
+import { LikedSound } from "../../models/LikedSound";
 
 const handleReceivedData = (sounds: LikedSound[]) => {
   return sounds.map((sound) => {

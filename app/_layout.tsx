@@ -1,5 +1,5 @@
-import { AuthProvider } from "@/contexts/authContext";
-import { EnvProvider } from "@/contexts/envContext";
+import { AuthProvider } from "../contexts/authContext";
+import { EnvProvider } from "../contexts/envContext";
 import { SplashScreen, Stack } from "expo-router";
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";

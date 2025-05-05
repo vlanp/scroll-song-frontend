@@ -11,11 +11,11 @@ import {
 import GradientButton from "../GradientButton";
 import dislikesImg from "../../assets/images/discoverImages/dislikes-img.png";
 import { SharedValue, withTiming } from "react-native-reanimated";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
-import dislikeSound from "@/utils/discover/dislikeSound";
-import DiscoverSound from "@/models/DiscoverSound";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
+import dislikeSound from "../../utils/discover/dislikeSound";
+import DiscoverSound from "../../models/DiscoverSound";
 import { memo } from "react";
-import { useSuccessfulAuthContext } from "@/contexts/authContext";
+import { useSuccessfulAuthContext } from "../../contexts/authContext";
 
 const RightDiscoveredModal = ({
   style,

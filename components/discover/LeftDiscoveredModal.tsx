@@ -12,7 +12,7 @@ import GradientButton from "../GradientButton";
 import favoritesImg from "../../assets/images/discoverImages/favorites-img.png";
 import { router } from "expo-router";
 import { SharedValue, withTiming } from "react-native-reanimated";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
 import { memo } from "react";
 
 const LeftDiscoveredModal = ({

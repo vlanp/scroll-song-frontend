@@ -1,9 +1,9 @@
-import ProgressTrackBar from "@/components/favorites/ProgressTrackBar";
-import OpenURLButton from "@/components/OpenUrl";
-import ScreenContainer from "@/components/ScreenContainer";
-import ScreenTitle from "@/components/ScreenTitle";
-import { LikedSound } from "@/models/LikedSound";
-import { parseObject, Stringify } from "@/models/Stringify";
+import ProgressTrackBar from "../../../components/favorites/ProgressTrackBar";
+import OpenURLButton from "../../../components/OpenUrl";
+import ScreenContainer from "../../../components/ScreenContainer";
+import ScreenTitle from "../../../components/ScreenTitle";
+import { LikedSound } from "../../../models/LikedSound";
+import { parseObject, Stringify } from "../../../models/Stringify";
 import { useLocalSearchParams } from "expo-router";
 import {
   View,

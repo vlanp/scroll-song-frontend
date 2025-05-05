@@ -1,20 +1,19 @@
-import "../../wdyr";
 import { FlatList, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import useDiscoverStore, {
   ReceivedPosition,
-} from "@/zustands/useDiscoverStore";
-import SwipeModals from "@/components/discover/SwipeModals";
+} from "../../zustands/useDiscoverStore";
+import SwipeModals from "../../components/discover/SwipeModals";
 import { useSharedValue } from "react-native-reanimated";
-import ErrorScreen from "@/components/ErrorScreen";
+import ErrorScreen from "../../components/ErrorScreen";
 import { useIsFocused } from "@react-navigation/native";
 import { documentDirectory } from "expo-file-system";
 import { Mutex } from "async-mutex";
-import useCountRender from "@/hooks/useCountRender";
-import LottieLoadingScreen from "@/components/LottieLoading";
-import DiscoverComp from "@/components/discover/DiscoverComp";
-import ScreenContainer from "@/components/ScreenContainer";
-import { useCheckedEnvContext } from "@/contexts/envContext";
+import useCountRender from "../../hooks/useCountRender";
+import LottieLoadingScreen from "../../components/LottieLoading";
+import DiscoverComp from "../../components/discover/DiscoverComp";
+import ScreenContainer from "../../components/ScreenContainer";
+import { useCheckedEnvContext } from "../../contexts/envContext";
 
 function DiscoverScreen() {
   useCountRender("DiscoverScreen");

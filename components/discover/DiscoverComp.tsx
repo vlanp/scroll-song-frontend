@@ -12,12 +12,12 @@ import DiscoverSound from "../../models/DiscoverSound";
 import ScreenTitle from "../ScreenTitle";
 import GradientText from "../GradientText";
 import disLikeIcon from "../../assets/images/discoverIcons/dis-like-icon.png";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
 import { SharedValue, withTiming } from "react-native-reanimated";
-import likeSound from "@/utils/discover/likeSound";
-import useCountRender from "@/hooks/useCountRender";
+import likeSound from "../../utils/discover/likeSound";
+import useCountRender from "../../hooks/useCountRender";
 import OpenURLButton from "../OpenUrl";
-import { useSuccessfulAuthContext } from "@/contexts/authContext";
+import { useSuccessfulAuthContext } from "../../contexts/authContext";
 
 function DiscoverComp({
   sound,

@@ -1,6 +1,6 @@
-import DiscoverSound from "@/models/DiscoverSound";
+import DiscoverSound from "../../models/DiscoverSound";
 
-import useDiscoverStore from "@/zustands/useDiscoverStore";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
 import axios from "axios";
 
 const dislikeSound = async (sound: DiscoverSound, authToken: string) => {

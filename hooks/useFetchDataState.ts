@@ -4,7 +4,7 @@ import {
   fetchDataLoading,
   FetchDataSuccess,
   IFetchDataState,
-} from "@/models/IFetchDataState";
+} from "../models/IFetchDataState";
 import axios from "axios";
 import { useEffect, useState } from "react";
 

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { fetchDataIdle, IFetchDataState } from "@/models/IFetchDataState";
-import DiscoverSound from "@/models/DiscoverSound";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
+import { fetchDataIdle, IFetchDataState } from "../models/IFetchDataState";
+import DiscoverSound from "../models/DiscoverSound";
+import { IDownloadSoundState } from "../models/IDownloadSoundState";
 import { FlatList } from "react-native";
-import SoundPlayerState from "@/models/SoundPlayerState";
+import SoundPlayerState from "../models/SoundPlayerState";
 import {
   IDiscoverStoreStates,
   ISoundId,

@@ -1,8 +1,8 @@
 import {
   DownloadSoundLoading,
   IDownloadSoundState,
-} from "@/models/IDownloadSoundState";
-import useNetworkStore from "@/zustands/useNetworkStore";
+} from "../../models/IDownloadSoundState";
+import useNetworkStore from "../../zustands/useNetworkStore";
 import {
   GestureResponderEvent,
   StyleSheet,
@@ -10,13 +10,13 @@ import {
   Text,
   ActivityIndicator,
 } from "react-native";
-import { LikedSound } from "@/models/LikedSound";
+import { LikedSound } from "../../models/LikedSound";
 import { useEffect, useState } from "react";
-import downloadSound from "@/utils/download";
-import useStorageStore from "@/zustands/useStorageStore";
-import { useCheckedEnvContext } from "@/contexts/envContext";
+import downloadSound from "../../utils/download";
+import useStorageStore from "../../zustands/useStorageStore";
+import { useCheckedEnvContext } from "../../contexts/envContext";
 import { documentDirectory } from "expo-file-system";
-import { useFavoritesStore } from "@/zustands/useFavoritesStore";
+import { useFavoritesStore } from "../../zustands/useFavoritesStore";
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";

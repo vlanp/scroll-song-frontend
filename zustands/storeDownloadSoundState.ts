@@ -1,12 +1,12 @@
 import downloadSound, { isFileExisting } from "../utils/download";
 import getExcerptUri from "../utils/getExcerptUri";
 
-import ISound from "@/models/ISound";
-import DiscoverSound from "@/models/DiscoverSound";
+import ISound from "../models/ISound";
+import DiscoverSound from "../models/DiscoverSound";
 import {
   downloadSoundSuccess,
   IDownloadSoundState,
-} from "@/models/IDownloadSoundState";
+} from "../models/IDownloadSoundState";
 
 const storeDownloadSoundState = async (
   sound: ISound,

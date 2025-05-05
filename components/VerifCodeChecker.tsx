@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { useCheckedEnvContext } from "@/contexts/envContext";
-import { useCheckedAuthContext } from "@/contexts/authContext";
-import { IUser } from "@/models/IUser";
+import { useCheckedEnvContext } from "../contexts/envContext";
+import { useCheckedAuthContext } from "../contexts/authContext";
+import { IUser } from "../models/IUser";
 import { ErrorText } from "./forms/ErrorText";
-import { IVerifCode } from "@/models/IVerifCode";
+import { IVerifCode } from "../models/IVerifCode";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { useRouter } from "expo-router";
 

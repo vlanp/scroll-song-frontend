@@ -1,6 +1,6 @@
 import { Redirect, Tabs } from "expo-router";
-import StoresInitializer from "@/components/stores/StoresInitializer";
-import { useCheckedAuthContext } from "@/contexts/authContext";
+import StoresInitializer from "../../components/stores/StoresInitializer";
+import { useCheckedAuthContext } from "../../contexts/authContext";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";

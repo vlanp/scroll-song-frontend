@@ -10,11 +10,11 @@ import Animated, {
 } from "react-native-reanimated";
 import LeftDiscoveredModal from "./LeftDiscoveredModal";
 import RightDiscoveredModal from "./RightDiscoveredModal";
-import likeSound from "@/utils/discover/likeSound";
-import useDiscoverStore from "@/zustands/useDiscoverStore";
-import DiscoverSound from "@/models/DiscoverSound";
-import useCountRender from "@/hooks/useCountRender";
-import { useSuccessfulAuthContext } from "@/contexts/authContext";
+import likeSound from "../../utils/discover/likeSound";
+import useDiscoverStore from "../../zustands/useDiscoverStore";
+import DiscoverSound from "../../models/DiscoverSound";
+import useCountRender from "../../hooks/useCountRender";
+import { useSuccessfulAuthContext } from "../../contexts/authContext";
 
 function SwipeModals({
   children,

@@ -1,4 +1,4 @@
-import SoundPlayerState from "@/models/SoundPlayerState";
+import SoundPlayerState from "../models/SoundPlayerState";
 import {
   IDownloadExcerptsState,
   ISoundId,
@@ -8,11 +8,11 @@ import {
   SavedPosition,
   TitleToDisplay,
 } from "./IDiscoverStoreStates";
-import { IDownloadSoundState } from "@/models/IDownloadSoundState";
-import { FetchDataSuccess, IFetchDataState } from "@/models/IFetchDataState";
-import DiscoverSound from "@/models/DiscoverSound";
+import { IDownloadSoundState } from "../models/IDownloadSoundState";
+import { FetchDataSuccess, IFetchDataState } from "../models/IFetchDataState";
+import DiscoverSound from "../models/DiscoverSound";
 import { FlatList } from "react-native";
-import SoundPlayer from "@/models/SoundPlayer";
+import SoundPlayer from "../models/SoundPlayer";
 
 interface IDiscoverStoreActions {
   setRetryDiscover: () => void;

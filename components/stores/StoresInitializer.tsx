@@ -1,10 +1,10 @@
-import { useSuccessfulAuthContext } from "@/contexts/authContext";
-import initDownloadExcerptsState from "@/zustands/initializer/initDownloadExcerptsState";
-import initFetchDiscoverSoundsState from "@/zustands/initializer/initFetchDiscoverSoundsState";
-import initNetworkState from "@/zustands/initializer/initNetworkState";
+import { useSuccessfulAuthContext } from "../../contexts/authContext";
+import initDownloadExcerptsState from "../../zustands/initializer/initDownloadExcerptsState";
+import initFetchDiscoverSoundsState from "../../zustands/initializer/initFetchDiscoverSoundsState";
+import initNetworkState from "../../zustands/initializer/initNetworkState";
 import useDiscoverStore, {
   ReceivedPosition,
-} from "@/zustands/useDiscoverStore";
+} from "../../zustands/useDiscoverStore";
 import { ReactNode, useEffect } from "react";
 
 const StoresInitializer = ({
