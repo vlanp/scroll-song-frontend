@@ -62,6 +62,57 @@ Mobile music discovery app offering 30-second clips in a vertical scrollable for
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Try it
+
+1. Install Node.js version manager
+   - For Windows : Download and install [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
+   - For Linux and MacOS : Download and install **_nvm_** by lauching a script using **_curl_**
+     ```sh
+     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+     ```
+2. Install latest version of Node.js and npm
+   ```sh
+   nvm install latest
+   ```
+3. Use the latest version of Node.js and npm
+   ```sh
+   nvm use <version>
+   ```
+4. Clone the repository
+   ```sh
+   git clone https://github.com/vlanp/scroll-song-frontend.git
+   ```
+5. Enter the project folder
+   ```sh
+   cd scroll-song-frontend
+   ```
+6. Install all the dependencies
+   ```sh
+   npm i
+   ```
+7. Generate and install a developpement build on either iOS or Android
+   physical or emulated device by following this [instructions](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local)
+
+> [!NOTE]
+> The application may be slower on emulated device than in physical device depending on your configuration. You may prefer to use a physical device.
+
+> [!NOTE]
+> For emulated Android device, I found the app working better in API 27
+
+> [!NOTE]
+> If for some reason you can't connect your device to install a developpement build, you can try to generate an apk (only for Android) and launch this apk on your device to install the app.  
+> For this, you need to launch the following commands in the project folder
+>
+> ```sh
+> npx expo prebuild
+> ```
+>
+> ```sh
+> cd android && gradlew assembleRelease
+> ```
+>
+> You can retrieve the apk here : android/app/build/outputs/apk/release/app-release.apk
+
 <!-- LICENSE -->
 
 ## License
